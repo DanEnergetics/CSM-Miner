@@ -1,0 +1,159 @@
+<html>
+	<head>
+		<title>
+			A CSM-Miner dummy 
+		</title>
+		<style>
+			body{}
+			form{
+				min-width: fit-content;
+				background: white;
+				min-height: fit-content;
+				height: 10em;
+				margin: 100px;
+				padding: 20px;
+				position: relative;
+				text-align : center;
+				-webkit-box-shadow: 0px 0px 50px -1px rgba(0,0,0,0.79);
+				-moz-box-shadow: 0px 0px 50px -1px rgba(0,0,0,0.79);
+				box-shadow: 0px 0px 50px -1px rgba(0,0,0,0.79);
+			}
+			.SUBMIT{
+				left : 50%;
+				bottom: 10px;
+				position: absolute;
+			}
+			.hideMe{
+				visibility : hidden;
+			}
+			#loading{
+				position: fixed;
+				left: 50%;
+				top: 50%;
+			}
+			#main{
+				
+			}
+			.bgEdit{
+				background-image : url("./Images/matrix.png");
+			}
+		</style>
+		<script>
+			function upload(){
+				var uForm = document.querySelector("#prep");
+				var lding = document.querySelector("#loading");
+				uForm.classList.add("hideMe");
+				lding.classList.remove("hideMe");
+				/*const files = document.querySelector('type=[file]').files;
+				const formData = new FormData();
+				for(let i = 0; i < files.length; i++){
+					let file = files[i];
+					formData.append('files[]' file);
+				}
+				fetch(url, {
+					method: 'POST',
+					body:	formData,
+				}).then(response => {
+					console.log("File uploaded.");
+					lding.classList.add("hideMe");
+					produce();
+				});
+				*/
+				alert("Since this is a dummy this would be where the backend does its job.");
+				produce();
+				return true;
+			}
+			function update(){
+				var lding = document.querySelector("#main");
+				lding.classList.remove("hideMe");
+				
+				var b = document.querySelector("#update");
+				b.classList.remove("hideMe");
+				
+				var c = document.querySelector("#prep");
+				c.classList.add("hideMe");
+				
+				var d = document.querySelector("#updateButton");
+				d.classList.add("hideMe");
+				return true;
+			}
+			function start(){
+				var uForm = document.querySelector("#prep");
+				var _main = document.querySelector("#main");
+				var lding = document.querySelector("#update");
+				_main.classList.add("hideMe");
+				uForm.classList.remove("hideMe");
+				lding.classList.add("hideMe");
+			}
+			function edit(){
+				var _main = document.querySelector("#main");
+				var lding = document.querySelector("#update");
+				_main.classList.add("hideMe");
+				lding.classList.remove("hideMe");
+				alert("There is no edit right now.");
+				produce();
+				return true;
+			}
+			function dummyTest(){
+				var choice = document.getElementById("labels");
+				var option = document.createElement("option");
+				var text = document.getElementById("lblName");
+				option.text = text.value;
+				choice.add(option);
+			}
+			function produce(){
+				var bdy = document.body;
+				bdy.classList.add("bgEdit");
+				var _main = document.querySelector("#main");
+				var lding = document.querySelector("#loading");
+				_main.classList.remove("hideMe");
+				lding.classList.add("hideMe");
+				var b = document.querySelector("#update");
+				b.classList.add("hideMe");
+				var b = document.querySelector("#updateButton");
+				b.classList.remove("hideMe");
+			}
+			function changed(e){
+				var obj = e.value;
+				document.getElementById("lblName").value = obj;
+			}
+			function editCh(){
+				var text = document.getElementById("lblName").value;
+				var obj = document.getElementById("labels");
+				obj.options[obj.selectedIndex].text = text;
+				alert("Set labelname!");
+				return true;
+			}
+		</script>
+	</head>
+	<body>
+		<div id="loading" class="hideMe">
+			<center> Loading... </center>
+		</div>
+		<div id="mainContainer">
+			<div id="prep">
+				<form> 
+					Please choose files to upload.<br>
+					<input name="datei[]" type="file" multiple> 
+					<input type="button" value="Upload file/s" onclick="return upload();" class="SUBMIT" >
+				</form>
+			</div>
+			<div id="update" class="hideMe">
+				<form> 
+					Eidt labels:<br>
+					<select id="labels" onchange="return changed(this);">
+					
+					</select>
+					<input type="text" id="lblName"><br>
+					<input type="button" value="Edit choice" onclick="return editCh();" ><br>
+					<input type="button" value="Add choice" onclick="return dummyTest();" ><br>
+					<input type="button" value="Add file" onclick="return start();" ><br>
+					<input type="button" value="Edit" onclick="return edit();" class="SUBMIT" >
+				</form>
+			</div>
+		</div>
+		<div id="main" class="hideMe">
+			<input id="updateButton" type="button" value="Update data" onclick="return update();" class="SUBMIT">
+		</div>
+	</body>
+</html>
