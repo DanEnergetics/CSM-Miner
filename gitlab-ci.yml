@@ -1,7 +1,0 @@
-compile_latex_to_pdf:
-  image: philipptempel/docker-ubuntu-tug-texlive:latest
-  script: python3 make.py
-  artifacts:
-    paths:
-    - ./*.pdf
-    expire_in: 1 week
