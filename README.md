@@ -5,6 +5,6 @@ This Project is part of a software project lab and thus contains all accompanyin
 
 [Current Phase review](Phase%20reviews/main.pdf)
 
-[Main source link](Source/index.html)
+[Main source link](Source/Frontend/index.html)
 
 [Project initiation PDF](CSM%20Project%20Initiation/main.pdf)
