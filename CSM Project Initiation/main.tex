@@ -57,7 +57,9 @@ The states space of the event log oftentimes occurs naturally in an orthogonal s
 such that an example of a state would be $s = (\texttt{hungry, awake})$. Even if this is not the case, a set of states can always be partitioned into logical subsets\footnote{In fact our software is explicitly supposed to enable the user to make her own partitioning choice}. For instance, the set of states $\{1, 2, ..., 10\}$ can be partitioned into the set of numbers that are even and those that are odd. Every partition corresponds to an orthogonal decomposition and vice versa.
 
 In the next step the state machine is projected onto the i-th orthogonal component. The new state space consists of the component states $S_i$ where the additional information is added or averages, respectively. The number of transitions from $s_i$ and $s'_i$ in $s_i$ is then the number
-\[ \sum_{s,s' \in S:\ \pi_i(s) = s_i,\, \pi_i(s') = s'_i} N(s,s') \]
+\[ 
+    \sum_{s,s' \in S:\ \pi_i(s) = s_i,\, \pi_i(s') = s'_i} N(s,s')
+\]
 where $N(s,s')$ denotes the number of transitions observed between $s$ and $s'$ and $\pi_i(s)$ is the i-th component of state $s$. The relative frequency of transitions between the projected states $s_i$ and $s'_i$ is then given by the above sum divided by the number
 \[
     \sum_{s,s' \in S:\ \pi_i(s) = s_i} N(s,s')
