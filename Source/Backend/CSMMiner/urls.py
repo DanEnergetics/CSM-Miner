@@ -43,17 +43,21 @@ def file_get_contents(filename):
 @csrf_protect
 def get(request):
 	if request.method == 'POST':
+		file = request.FILES.get('file',"EMPTY_REQ")
+		if file == "EMPTY_REQ":
+			context = {}
+			return render(request, os.path.join(BASE_DIR,'./HTMLDocs/index.html'), context)
 		file = request.FILES['file']
 		filename = file.name
 		if not filename.endswith('.csm'):
 			context = {}
-			return render(request, os.path.join(BASE_DIR,'.\HTMLDocs\index.html'), context)
+			return render(request, os.path.join(BASE_DIR,'./HTMLDocs/index.html'), context)
 		md = File(file)
 		with open(os.path.join(BASE_DIR,'./Storage/',filename),'wb+') as dest:
 			for chunk in md.chunks():
 				dest.write(chunk)
 	context = {}
-	return render(request, os.path.join(BASE_DIR,'.\HTMLDocs\index.html'), context)
+	return render(request, os.path.join(BASE_DIR,'./HTMLDocs/index.html'), context)
 
 
 def mainHandle(request,string):
