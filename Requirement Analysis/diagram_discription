@@ -1,0 +1,10 @@
+CSM Miner
+
+In the following text, the general functions of the CSM Miner web application will be outlined.
+After connecting to the web application, the user can copy his event log into a textbox where he is able to define labels for the different states of the resulting graphs.
+When every label is defined, the user can upload the modified log to the backend, where the graphs are computed and returned to the web application, providing crucial information for transitions and states which is displayed after the user clicks on the graph.
+On the web application, the graphs will be displayed and the user can then interact with them.
+He or she will be able to drag the graphs to reposition them, zoom in and out, click on states and transitions to get information and switch between the graphs of the different perspectives.
+After clicking on a transition or state, additionally to the information mentioned above, the related states and transitions are highlighted in the other views aswell.
+Every time the user edits the graph, the edited request will be transmitted to the backend, where the changes are interpreted and the new resulting graph will be displayed on the web application. 
+After the basic project ist finished, combining multiple states to one merged state and delete states that are not needed in practice can be implemented.
