@@ -448,13 +448,18 @@
 				<form method="POST" action="" enctype="multipart/form-data">{% csrf_token %}
 					<label>Choose an event log file to upload.
 						<input type="button" value="Choose .csm" onclick="document.getElementById('upFile').click();">
-						<input id="upFile" name="file" type="file" size="50" accept=".csm" class="hideMe"> 
+						<input id="upFile" name="file" type="file" size="50" accept=".xes" class="hideMe"> 
 					</label>  
 					<input type="submit" />
 				</form>
 			</div>
 			<h3 style="text-align:center;">Projects</h3>
 			<div class="projectContainer">
+				{% for p in  projects %}
+					<div onclick="return load(this);" class="{{ p.name }}" id="app" style="background-image: url('{{ p.bgURL }}');">
+						<p class="bottom">{{ p.name }}</p>
+					</div>
+				{% endfor %}
 				<div onclick="return load(this);" class="project1" id="app" style="background-image: url('https://cdn.pixabay.com/photo/2015/11/15/07/47/geometry-1044090_960_720.jpg');">
 				<p class="bottom">Project 1</p>
 				<!--

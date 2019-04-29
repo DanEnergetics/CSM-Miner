@@ -26,6 +26,8 @@ from django.template import RequestContext, loader, Template, Context
 from django.views.decorators.csrf import csrf_protect
 from django import forms
 from django.core.files import File
+from django.http import HttpResponseNotFound
+from django.conf.urls import (handler400, handler403, handler404, handler500)
 
 class UploadFileForm(forms.Form):
     title = forms.CharField(max_length=50)
@@ -37,9 +39,16 @@ register = template.Library()
 def file_get_contents(filename):
     with open(filename) as f:
         return f.read()
-		
-		
+"""	
+def set_projects():
+	dirs = []
+	for d in os.walk(os.path.join(BASE_DIR,''))
+		for directory in d
+			dirs.append(d)
+	return dirs
 	
+projects = set_projects()	
+"""
 @csrf_protect
 def get(request):
 	if request.method == 'POST':
@@ -49,16 +58,21 @@ def get(request):
 			return render(request, os.path.join(BASE_DIR,'./HTMLDocs/index.html'), context)
 		file = request.FILES['file']
 		filename = file.name
-		if not filename.endswith('.csm'):
+		if not filename.endswith('.xes'):
 			context = {}
 			return render(request, os.path.join(BASE_DIR,'./HTMLDocs/index.html'), context)
 		md = File(file)
 		with open(os.path.join(BASE_DIR,'./Storage/',filename),'wb+') as dest:
 			for chunk in md.chunks():
 				dest.write(chunk)
+			
 	context = {}
 	return render(request, os.path.join(BASE_DIR,'./HTMLDocs/index.html'), context)
 
+
+def request(rq):
+	if not rq.method == 'GET':
+		return HttpResponseNotFound("Error.")
 
 def mainHandle(request,string):
 	handleForm(request)
@@ -67,4 +81,5 @@ def mainHandle(request,string):
 urlpatterns = [
     path('admin/', admin.site.urls),
 	path('', get),
+	path('request/', request),
 ]

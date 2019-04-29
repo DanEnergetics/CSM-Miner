@@ -1,0 +1,8 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.2}{Functional Requirements}{}% 2
+\BOOKMARK [2][-]{subsection.2.1}{Input}{section.2}% 3
+\BOOKMARK [2][-]{subsection.2.2}{Output}{section.2}% 4
+\BOOKMARK [1][-]{section.3}{Technical Requirement}{}% 5
+\BOOKMARK [2][-]{subsection.3.1}{Needed software}{section.3}% 6
+\BOOKMARK [2][-]{subsection.3.2}{Client-Server architecture}{section.3}% 7
+\BOOKMARK [2][-]{subsection.3.3}{Django management}{section.3}% 8
