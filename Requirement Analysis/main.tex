@@ -12,7 +12,8 @@
             labelfont={bf},
             textfont=it]{caption}
 \lstset{
-basicstyle=\fontsize{11}{13}\selectfont\ttfamily.
+basicstyle=\fontsize{11}{13}\selectfont\ttfamily,
+frame=single
 }
 \usepackage{hyperref}
 
@@ -39,20 +40,23 @@ Daniel Rein\\
 \section{Introduction}
 
 
-\section{Functional Requirements}
+\section{Input/Output Specification}
 \label{sec:FR}
 
 The planned software can be understood as a mapping of a given input to an output. In our case, the input is an XES log file and one or more views and the output is a state chart. Since this function is our core feature it is important to discuss the details of input and output.
 
 \subsection{Input}
 
-The initial input of our software will be an XES file. XES stands for extensible event stream. It is a standard format for the representation of causally linked and ordered events and makes use of the XML format \cite{xes}. Generally, the structure of an XES file includes a trace and an event element where an event is a subelement of a trace. An event can contain attributes such as a timestamp, a name and other indivually specified properties. An excerpt of an XES file can look as follows\footnote{Usually an XES file contains additional metadata and definition of elements and attributes which we omitted in our example.}:
+The initial input of our software will be an XES file. XES stands for extensible event stream. It is a standard format for the representation of causally linked and ordered events and makes use of the XML format \cite{xes}. Generally, the structure of an XES file includes a trace and an event element where an event is a subelement of a trace. An event can contain attributes such as a timestamp, a name and other individually specified properties. An excerpt of an XES file can look as follows\footnote{Usually an XES file contains additional metadata and definition of elements and attributes which we omitted in our example.}:
+
 
 \begin{lstlisting}
 <trace>
-    <string key="concept:name" value="Trace number one"/>
+    <string key="concept:name" 
+        value="Trace number one"/>
     <event>
-        <string key="concept:name" value="Register client"/>
+        <string key="concept:name" 
+            value="Register client"/>
         <string key="system" value="alpha" />
         <date key="time:timestamp" 
             value="2009-11-25T14:12:45:000+02:00" />
@@ -61,7 +65,8 @@ The initial input of our software will be an XES file. XES stands for extensible
         </int>
     </event>
     <event>
-        <string key="concept:name" value="Mail rejection"/>
+        <string key="concept:name" 
+            value="Mail rejection"/>
         <string key="system" value="beta" />
         <date key="time:timestamp" 
             value="2009-11-28T11:18:45:000+02:00" />
@@ -69,117 +74,115 @@ The initial input of our software will be an XES file. XES stands for extensible
 </trace>
 \end{lstlisting}
 
+
 A trace represents a closed and ordered process in the system while events depict stages or key points in the process. For example in an insurance company, one could consider all milestones of an insurance case as events belonging to the same trace. Another case would then necessitate another trace.
 
-In our case the event log will have a particular semantic. We will understand the events as states that a process goes through where these states are spread in time. That is every event has a duration attribute denoting how long a given process, represented by a trace, spend in the corresponding event. To make this clearer, we will take the example of a grocery store. A trace and thus a process corresponds to a customer pathing through the store. On his way through the store he will go through different locations which will be his states. These locations can be the entrance ($S$), two different sections of the bakery ($B_1$ and $B_2$), two different subsections of the beverage section ($G_1$, $G_2$) and finally the cash register ($P$) and the exit section $E$. A possible log file can look as follows:
+In our case the event log will have a particular semantic. We will understand the events as states that a process goes through where these states are spread in time. That is every event has a duration attribute denoting how long a given process, represented by a trace, spent in the corresponding event. To make this clearer, we will take the example of a grocery store. A trace and thus a process corresponds to a customer pathing through the store. On his way through the store he will go through different locations which will be his states. These locations can be the entrance ($S$), two different sections of the bakery ($B_1$ and $B_2$), two different subsections of the beverage section ($G_1$, $G_2$) and finally the cash register ($P$) and the exit section $E$. A possible log file can look as follows:
 
-\begin{lstlisting}
-Trace	State   Duration
-1 	S   	1
-1 	B_1 	3
-1 	G_2 	4
-1 	P   	5
-1 	E   	1
+\begin{center}
+    \begin{lstlisting}
+        Trace	State   Duration
+        1 	S   	1
+        1 	B_1 	3
+        1 	G_2 	4
+        1 	P   	5
+        1 	E   	1
+        
+        2 	S   	1
+        2 	G_1 	3
+        2 	P   	4
+        2 	E   	1
+        
+        3 	S   	1
+        3 	E   	1
+        
+        4 	S   	1
+        4 	B_2 	3
+        4 	P   	3
+        4 	E   	1
+    \end{lstlisting}
+\end{center}
 
-2 	S   	1
-2 	G_1 	3
-2 	P   	4
-2 	E   	1
-
-3 	S   	1
-3 	E   	1
-
-4 	S   	1
-4 	B_2 	3
-4 	P   	3
-4 	E   	1
-\end{lstlisting}
 
 Here we chose a different more simple representation that captures the order of states, their respective duration and their affiliated trace.
 
-The log file is not the only input we expect. The user should furthermore be able to create views as discussed in the Use case section. A view is an explicitly non-injective mapping from the initial state space to the target state space. Both the mapping the target state space are determined by the user and comprise the view. We use the example of the grocery store from above and give two example views:
+The log file is not the only input we expect. The user should furthermore be able to input a grouping as discussed in the Use case section. A grouping is an explicitly non-injective mapping from the initial state space to the target state space. We use the example of the grocery store from above and give two example groupings:
 
-\begin{lstlisting}
-States 	View1	View2
-
-S	S	S'
-B_1	B	S'
-B_2	B	S'
-G_1	G	G
-G_2	G	G
-P	E'	E'
-E	E'	E'
-\end{lstlisting}
+\begin{center}
+    \begin{lstlisting}
+        States 	Grouping1	Grouping2
+        
+        S	S	S'
+        B_1	B	S'
+        B_2	B	S'
+        G_1	G	G
+        G_2	G	G
+        P	E'	E'
+        E	E'	E'
+    \end{lstlisting}
+\end{center}
 
 \subsection{Output}
 
-In the Feasibility Study of the our Project Initiation we already discussed some structure of the output. In general, our output will be a set of graphs depicted in different views. One of these views will be the original view that is computed from the log file directly. Nodes in this graph represent states in the logs. Each node contains the name of the state, the average duration and the total number of occurrences in the event log. The average is computed over all occurrences.
-The edges represent state transitions. When in a trace, one state directly follows another one then their corresponding nodes are to be connected by a directed edge where this edge points to the later, successor state. Each such transition is annotated with the relative frequency of transitions to the target state given the total number of occurrences from that state \textbf{or the total number of outgoing transitions from that state}. This is illustrated in Figure \ref{fig:ogview}.
+We shall now specify in more detail what the output of our software should look like. For that we mostly require the same behaviour as the already existent and deployed software tool ProM \cite{prom}.
 
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.7\textwidth]{../Diagrams/Statecharts/statemachine.png}
-    \caption{An example output following the log presented above. We see that the transition from $S$ to $B_1$ is annotated by the numeric value $0.25$. This follows from that fact that $B_1$ followed $S$ in a fourth of the times. The dashed ellipses represent a possible view on could choose.}
-    \label{fig:ogview}
-\end{figure}
-
-The other output graphs correspond to the views as specified in the subsection on the input. In a view, a number of states can be lumped into the same state. In the above example view 1, the states $B_1$ and $B_2$ are combined to the state $B$. The resulting state holds again an average duration time. We imagine two different possibilities for the computation of this value. Either we could average over all occurrences of every state in the combined state or for every trace sum up the total duration time in the combined state and then average over all traces\footnote{We deem the latter option to be more meaningful but leave the discussion to be open until our advisor has been consulted about this issue.}. The total number of occurrences of the composite state is the sum of the number of occurrences of every component state. 
-
-
-
-We shall investigate the transition frequencies of the composite states further. Let $\Omega$ denote the state space. We consider a transition from the composite states $S \subset \Omega$ to $T \subset \Omega$ where we understand both states as sets of basic states. The number of transitions from states all substates of $S$ to all substates of $Q$ is then the number
-\[ 
-    \sum_{(s,q) \in S \times Q} N(s,q)
-\]
-where $N(s,q)$ denotes the number of transitions observed between the original, raw states $s$ and $q$. The relative frequency of transitions between the composite states $S$ and $Q$ is then given by the above sum divided by the number
-\[
-    \sum_{(s,t) \in S \times \Omega} N(s,t)
-\]
-of outgoing transitions from the lumped state $S$.
-
-To illustrate this procedure let us consider the partitioning chosen in figure \ref{fig:ogview}. Here a we have the state space $\Omega = \{ S, B_1, B_2, G_1, G_2, P, E \}$\footnote{Mind that $S$ is here a basic state while in our notation about $S$ is composite}. The composite states we chose in the first example view are $B := \{ B_1, B_2 \} $, $G = \{ G_1, G_2 \}$ and $E' = \{ P, E \}$. The graph is then transformed according to the rules discussed above, yielding the graph in figure \ref{fig:view1}.
-
-\begin{figure}[hb]
-    \centering
-    \includegraphics[width=0.5\textwidth]{Diagrams/Statecharts/statemachine_view1.png}
-    \caption{State composition of figure \ref{fig:ogview} has been applied and the transitions and state informations adjusted according to the rules discussed in the text.}
-    \label{fig:view1}
-\end{figure}
-
-Another example for how a view is supposed to transform the graph we can find in figure \ref{fig:pandv}.
+On a given input, that is, a log and an appropriate grouping, the user should obtain a view for each group of states that she determined or that came predetermined with the log file. Each view contains a graph of states and their transitions. Here, we require the states to contain statistics about the number of its occurrences and optionally their average duration times. We require the transitions to be annotated with the relative frequency of their occurrence. That is, if the source state occurs $N$ times and it is directly followed in $M$ of these $N$ times, then we annotate this transition from source to target state with the number $M / N$. Each view is supposed to contain only states from one of the groups chosen prior. An example of such a graphical output is shown in figure \ref{fig:exampleview}.
 
 \begin{figure}[H]
     \centering
-    \begin{subfigure}[b]{0.6\textwidth}
-        \includegraphics[width=\textwidth]{Diagrams/Statecharts/statemachine_preview2.png}
-        \caption{State chart with a differen partitioning of states.}
-        \label{fig:preview2}
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{../Diagrams/sleeping.png}
+        \caption{}
+        \label{fig:sleeping}
     \end{subfigure}
-    \\ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+    ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
       %(or a blank line to force the subfigure onto a new line)
     \begin{subfigure}[b]{0.45\textwidth}
-        \includegraphics[width=\textwidth]{Diagrams/Statecharts/statemachine_view2.png}
-        \caption{The resulting view.}
-        \label{fig:view2}
+        \includegraphics[width=\textwidth]{../Diagrams/feeding.png}
+        \caption{}
+        \label{fig:feeding}
     \end{subfigure}
-    \caption{A different selection of composite states in the same example and the requirement for the output graph.}
-    \label{fig:pandv}
+    \caption{An example output for a system that is partitioned in a sleeping (\ref{fig:sleeping}) and a feeding (\ref{fig:sleeping}) cycle. The states and transitions are annotated with the statistics described in the text. The output is computed with the CSM Miner provided by the ProM tool.}
+    \label{fig:exampleview}
 \end{figure}
+
+Generally, the output graphs should also illustrate the interactions between the views. A requirement taken from this might be that a click of a state in a view should mark the co-occurring states in the other views and annotate them with additional statistics of their relative frequency of co-occurrence conditioned on the number of occurrences of the clicked state. This functionality is implemented by the ProM CSM Miner. An example of such a click functionality we find in figure \ref{fig:exampleclick}.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{../Diagrams/sleeping_clicked.png}
+        \caption{}
+        \label{fig:sleep_clicked}
+    \end{subfigure}
+    ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+      %(or a blank line to force the subfigure onto a new line)
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{../Diagrams/feeding_marked.png}
+        \caption{}
+        \label{fig:feed_marked}
+    \end{subfigure}
+    \caption{An example click behaviour for the system introduced as an example above. In the feeding view (\ref{fig:sleep_clicked}) the state "light sleep" has been clicked. This leads to the highlighting of the two co-occurring states "inactive" and "after-care" in the feeding view (\ref{fig:feed_marked}). Also shown is information about the relative frequency of co-occurrence conditioned on the frequency of the clicked state.}
+    \label{fig:exampleclick}
+\end{figure}
+
+A consultation of the advisor/client has resulted in another requirement on the click behaviour: A click in one view will result in the marking of direct and indirect successors in the other views and every such marked state is again annotated with appropriate relative frequencies.
 
 \section{Technical Requirement}
 
 \subsection{Needed software}
-To deploy the solution there are multiple requirements. Firstly a python version greater 3 is needed. Next there is pip the software that will manage our server application. Now all we need server-wise is django , the project was written under django 2.2 , therefor it is recommended to use at least version 2.2.
+To deploy the solution there are multiple requirements. Firstly a python version greater 3 is needed. Next there is pip the software that will manage our server application. Now all we need server-wise is Django , the project was written under Django 2.2 , therefore it is recommended to use at least version 2.2.
 
 \subsection{Client-Server architecture}
-The solution requires a rather extensive client-server architecture for computational and quality of service reasons. Since the main computation is on the server the client would normally need to refresh every time a request is sent. This is not optimal for a mobile work environment since wireless networks are not as consistant as wired ones. Therefor the software only causes the client to do a complete refresh once a major computation needs to be done (e.g. create a new view), but smaller requests (e.g. labeling in current view) are computed client side. Since a project is not stored locally we will implement a reuqest queue that will be used to handle the asynchronous work load. This queue also ensures, that a request is never lost, because an element is not deleted before the corresponding confirmation is received. 
+The solution requires a rather extensive client-server architecture for computational and quality of service reasons. Since the main computation is on the server the client would normally need to refresh every time a request is sent. This is not optimal for a mobile work environment since wireless networks are not as consistent as wired ones. Therefor the software only causes the client to do a complete refresh once a major computation needs to be done (e.g. create a new view), but smaller requests (e.g. labeling in current view) are computed client side. Since a project is not stored locally we will implement a request queue that will be used to handle the asynchronous work load. This queue also ensures, that a request is never lost, because an element is not deleted before the corresponding confirmation is received. 
 
 \subsection{Django management}
-To connect the front-end with the back-end django will be used as a web server. The main tasks consist out of the following :
+To connect the front-end with the back-end Django will be used as a web server. The main tasks consist out of the following :
 \begin{itemize}
 	\item Receive requests and files and sent them to the back-end.
-	\item Sent processed information to the client in form of a httprequest.
+	\item Sent processed information to the client in form of a http request.
 \end{itemize}
 
+\printbibliography
 
 \end{document}
