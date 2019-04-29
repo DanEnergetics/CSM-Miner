@@ -3,9 +3,14 @@
 %\usepackage{cite}
 \usepackage[autolang=other,backend=biber,dateabbrev=false,sorting=none]{biblatex}
 \usepackage{graphicx}
+\usepackage{subcaption}
 \usepackage{amsmath}
 \usepackage{pdfpages}
 \usepackage{listings}
+\usepackage{float}
+\usepackage[format=plain,
+            labelfont={bf},
+            textfont=it]{caption}
 \lstset{
 basicstyle=\fontsize{11}{13}\selectfont\ttfamily.
 }
@@ -132,7 +137,34 @@ where $N(s,q)$ denotes the number of transitions observed between the original, 
 \]
 of outgoing transitions from the lumped state $S$.
 
-To illustrate this procedure let us consider the partitioning chosen in figure \ref{fig:ogview}. Here a we have the state space $\Omega = \{ S, B_1, B_2, G_1, G_2, P, E \}$\footnote{Mind that $S$ is here a basic state while in our notation about $S$ is composite}. The composite states we chose in the first example view are $B := \{ B_1, B_2 \} $, $G = \{ G_1, G_2 \}$ and $E' = \{ P, E \}$. The graph is then transformed according to the rules discussed above, yielding the graph in figure \
+To illustrate this procedure let us consider the partitioning chosen in figure \ref{fig:ogview}. Here a we have the state space $\Omega = \{ S, B_1, B_2, G_1, G_2, P, E \}$\footnote{Mind that $S$ is here a basic state while in our notation about $S$ is composite}. The composite states we chose in the first example view are $B := \{ B_1, B_2 \} $, $G = \{ G_1, G_2 \}$ and $E' = \{ P, E \}$. The graph is then transformed according to the rules discussed above, yielding the graph in figure \ref{fig:view1}.
+
+\begin{figure}[hb]
+    \centering
+    \includegraphics[width=0.5\textwidth]{Diagrams/Statecharts/statemachine_view1.png}
+    \caption{State composition of figure \ref{fig:ogview} has been applied and the transitions and state informations adjusted according to the rules discussed in the text.}
+    \label{fig:view1}
+\end{figure}
+
+Another example for how a view is supposed to transform the graph we can find in figure \ref{fig:pandv}.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.6\textwidth}
+        \includegraphics[width=\textwidth]{Diagrams/Statecharts/statemachine_preview2.png}
+        \caption{State chart with a differen partitioning of states.}
+        \label{fig:preview2}
+    \end{subfigure}
+    \\ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+      %(or a blank line to force the subfigure onto a new line)
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{Diagrams/Statecharts/statemachine_view2.png}
+        \caption{The resulting view.}
+        \label{fig:view2}
+    \end{subfigure}
+    \caption{A different selection of composite states in the same example and the requirement for the output graph.}
+    \label{fig:pandv}
+\end{figure}
 
 \section{Technical Requirement}
 
