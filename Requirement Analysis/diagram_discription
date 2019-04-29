@@ -1,0 +1,4 @@
+CSM Miner
+
+After connecting to the web application, the user can copy his event log into a textbox where he is able to define labels for the different states of the resulting graphs When every label is defined, the user can upload the modified log to the backend, where the graphs are computed and returned to the web application. There, the graphs will be displayed and the user can then interact with them. He will be able to drag the graphs, zoom in and out, combine multiple states to one merged state, click on states and transitions to get information and delete states that are not needed and switch between the graphs of the different perspectives.
+Every time the user edits the graph, the edited request will be transmitted to the backend, where the changes are interpreted and the new resulting graph will be displayed on the web application. 

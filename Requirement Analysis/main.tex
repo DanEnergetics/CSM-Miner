@@ -14,6 +14,7 @@
 \lstset{
 basicstyle=\fontsize{11}{13}\selectfont\ttfamily.
 }
+\usepackage{hyperref}
 
 \addbibresource{ra.bib}
 
@@ -37,7 +38,9 @@ Daniel Rein\\
 
 \section{Introduction}
 
+
 \section{Functional Requirements}
+\label{sec:FR}
 
 The planned software can be understood as a mapping of a given input to an output. In our case, the input is an XES log file and one or more views and the output is a state chart. Since this function is our core feature it is important to discuss the details of input and output.
 
@@ -115,7 +118,7 @@ The edges represent state transitions. When in a trace, one state directly follo
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.7\textwidth]{Diagrams/Statecharts/statemachine.png}
+    \includegraphics[width=0.7\textwidth]{../Diagrams/Statecharts/statemachine.png}
     \caption{An example output following the log presented above. We see that the transition from $S$ to $B_1$ is annotated by the numeric value $0.25$. This follows from that fact that $B_1$ followed $S$ in a fourth of the times. The dashed ellipses represent a possible view on could choose.}
     \label{fig:ogview}
 \end{figure}
@@ -162,5 +165,21 @@ Another example for how a view is supposed to transform the graph we can find in
     \caption{A different selection of composite states in the same example and the requirement for the output graph.}
     \label{fig:pandv}
 \end{figure}
+
+\section{Technical Requirement}
+
+\subsection{Needed software}
+To deploy the solution there are multiple requirements. Firstly a python version greater 3 is needed. Next there is pip the software that will manage our server application. Now all we need server-wise is django , the project was written under django 2.2 , therefor it is recommended to use at least version 2.2.
+
+\subsection{Client-Server architecture}
+The solution requires a rather extensive client-server architecture for computational and quality of service reasons. Since the main computation is on the server the client would normally need to refresh every time a request is sent. This is not optimal for a mobile work environment since wireless networks are not as consistant as wired ones. Therefor the software only causes the client to do a complete refresh once a major computation needs to be done (e.g. create a new view), but smaller requests (e.g. labeling in current view) are computed client side. Since a project is not stored locally we will implement a reuqest queue that will be used to handle the asynchronous work load. This queue also ensures, that a request is never lost, because an element is not deleted before the corresponding confirmation is received. 
+
+\subsection{Django management}
+To connect the front-end with the back-end django will be used as a web server. The main tasks consist out of the following :
+\begin{itemize}
+	\item Receive requests and files and sent them to the back-end.
+	\item Sent processed information to the client in form of a httprequest.
+\end{itemize}
+
 
 \end{document}

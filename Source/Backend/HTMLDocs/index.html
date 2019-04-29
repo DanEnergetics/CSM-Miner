@@ -179,12 +179,12 @@
 				width: 100%;
 				height: 100%;
 			}
-			.projectContainer{
-				diplay : grid;
-				grid-column-gap: 50px;
-				grid-template-columns: auto auto auto;
-				padding: 10px;
-				grid-row-gap: 50px;
+			#add-project{
+				position : fixed;
+				z-index : 999;
+				left: 50% !important;
+				top: 50% !important;
+				transform: translate(-50%, -50%) !important;
 			}
 		</style>
 		<script>
@@ -430,12 +430,36 @@
 			}
 			
 			var timer = setInterval(resize, 100);
+			
+			function load (e){
+				alert("Dummy");
+				document.getElementById('projectDrawer').classList.add('hideMe');
+			}
+			
+			function add(){
+				var rm = document.getElementById('add-project');
+				rm.classList.remove('hideMe');
+			}
 		</script>
 	</head>
 	<body>
-		<div id="projectDrawer"> 
+		<div id="projectDrawer" > 
+			<div id="add-project" class="hideMe">
+				<form method="POST" action="" enctype="multipart/form-data">{% csrf_token %}
+					<label>Choose an event log file to upload.
+						<input type="button" value="Choose .csm" onclick="document.getElementById('upFile').click();">
+						<input id="upFile" name="file" type="file" size="50" accept=".xes" class="hideMe"> 
+					</label>  
+					<input type="submit" />
+				</form>
+			</div>
 			<h3 style="text-align:center;">Projects</h3>
 			<div class="projectContainer">
+				{% for p in  projects %}
+					<div onclick="return load(this);" class="{{ p.name }}" id="app" style="background-image: url('{{ p.bgURL }}');">
+						<p class="bottom">{{ p.name }}</p>
+					</div>
+				{% endfor %}
 				<div onclick="return load(this);" class="project1" id="app" style="background-image: url('https://cdn.pixabay.com/photo/2015/11/15/07/47/geometry-1044090_960_720.jpg');">
 				<p class="bottom">Project 1</p>
 				<!--
