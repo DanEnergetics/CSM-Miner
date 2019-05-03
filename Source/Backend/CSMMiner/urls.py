@@ -69,22 +69,24 @@ def iframe(request,file):
 		file = request.FILES.get('file',"EMPTY_REQ")
 		if file == "EMPTY_REQ":
 			context = {
-				'msg' : "No file
-				 detected.",
+				'msg' : "No file detected.",
 			}
-			return render(request, os.path.join(BASE_DIR,'./HTMLDocs/index.html'), context)
+			return render(request, os.path.join(BASE_DIR,"./HTMLDocs/",file,".html"), context)
 		file = request.FILES['file']
 		filename = file.name
 		if not filename.endswith('.xes'):
 			context = {
 				'msg' : "Wrong format detected.",
 			}
-			return render(request, os.path.join(BASE_DIR,'./HTMLDocs/',file,'.html'), context)
+			return render(request, os.path.join(BASE_DIR,"./HTMLDocs/",file,".html"), context)
 		md = File(file)
 		with open(os.path.join(BASE_DIR,'./Storage/',filename),'wb+') as dest:
 			for chunk in md.chunks():
 				dest.write(chunk)
-	
+	context = {
+		'msg' : "";
+	}
+	return render(request, os.path.join(BASE_DIR,"./HTMLDocs/",file,".html"), context)	
 
 
 def mainHandle(request,string):

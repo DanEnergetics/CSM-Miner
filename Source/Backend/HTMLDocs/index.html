@@ -4,7 +4,6 @@
 			A CSM-Miner dummy 
 		</title>
 		<style>
-			body{}
 			#projectDrawer{
 				position: fixed; 
 				top: 0; 
@@ -16,6 +15,13 @@
 				width : 100%;
 				height : 100%;
 			}
+			.projectContainer{
+				margin : 10px;
+				display: grid;
+				grid-gap: 20px;
+				grid-template-columns: repeat(auto-fill, 150px);
+				grid-template-rows: repeat(auto-fill, 150px);
+			}
 			#app{
 				position : relative;
 				border-radius: 25px;
@@ -23,7 +29,7 @@
 				width: 150px;
 				height: 150px; 
 				text-align : center;
-				margin : 10px;
+				margin : 0;
 				background-size: cover;
 			}
 			#app .centered{
@@ -40,7 +46,7 @@
 			#app:hover{
 				cursor :pointer;
 			}
-			form{
+			iframe{
 				min-width: fit-content;
 				background: white;
 				min-height: fit-content;
@@ -73,87 +79,101 @@
 				height : 100%;
 				width : 100%;
 			}
-			#rightMain{
-				height: 100%;
+			#mainGraph{
+				z-index : 5;
+				width: 100%
+				height : 100%;
+				top :0;
+				left : 0;
+				
+			}
+			#statusBar{
+				opacity : 1;
+				-o-transition: .5s;
+				-ms-transition: .5s;
+				-moz-transition: .5s;
+				-webkit-transition: .5s;
+				position : fixed;
+				left : 0;
+				bottom : 0;
+				z-index : 9;
+				width: 100%;
+				background-color :  grey;
+				min-height : fit-content;
+				max-height : fit-content;
+			}
+			#statusBar:hover { 
+				opacity : 1;
+			}
+			#statusBar:leave {
+				opacity : 0.6;
+			}
+			#views{
+				opacity : 1;
+				-o-transition: .5s;
+				-ms-transition: .5s;
+				-moz-transition: .5s;
+				-webkit-transition: .5s;
 				top: 0;
-				width:fit-content;
-				left: 210px;
-				position: absolute;
-				display: inline-block;
-				vertical-align: top;
-				transition-delay: 0.5s;
-				transition-property: position;
-				transition-duration: 1s;
-			}
-			#rightLeft{
-				height : 100%;
-				float:left;
-				width: calc(100vw - 420px);
-			}
-			.rightInc{
-				width: calc(100vw - 210px) !important;
-			}
-			.rightMax{
-				width: 100vw !important;
-			}
-			#rightRight{
-				float:right;
-				width : fit-content;
+				background-color: green;
+				position : fixed;
+				z-index : 9;
+				right: 0;
 				height : 100%;
 			}
-			#left{
-				display:inline-block;
-				vertical-align:top;
-				height : 100%;
-				position: absolute;
-				left: 0px;
-				width: fit-content;
-				transition-delay: 0.5s;
-				transition-property: position;
-				transition-duration: 1s;
+			#views:hover {
+				opacity : 1;
 			}
-			.hideLeft{
-				left : -210px !important;
+			#views:leave {
+				opacity : 0.6;
 			}
-			.addingL{
-				left : 0 !important;
+			
+			#menuBar{
+				border-radius : 0 0 5px 5px;
+				-o-transition: .5s;
+				-ms-transition: .5s;
+				-moz-transition: .5s;
+				-webkit-transition: .5s;
+				top: 0;
+				background-color: green;
+				position : fixed;
+				z-index : 10;
+				left: 3em;
+				opacity : 1;
+				min-height : fit-content;
+				max-height : fit-content;
+				min-width : fit-content;
+				max-width : fit-content;
 			}
-			.hideBtn{
-				width : 150px;
-				opacity : 0;
-				transition-delay: 0.5s;
-				transition-property: opacity;
-				transition-duration: 1s;
+			#menuBar:hover {
+				opacity: 1 !important;
 			}
-			.hideBtn:first-child{
-				position:absolute; 
-				top:5px; 
-				left:-210px;
+			#menuBar:leave {
+				opacity : 0 !important;
 			}
-			.hideBtn:last-child{
-				position:absolute; 
-				top:5px; 
-				right:0;
-			}
-			.hideBtnEX{
-				right:210px !important;
-			}
-			.hideBtnEXL{
-				left : 0 !important;
-			}
-			.hideBtn:hover{
-				opacity : 100;
-			}
-			.hideBtn:leave{
-				opacity : 0;
-			}
+			
+			
 			.element{
 				margin-left : 5px;
 				margin-right : 5px;
 				margin-bottom : 15px;
 				width: 200px;
 				height: 200px;
-				background-color : green;
+				background-color : yellow;
+			}
+			.element:hover {
+				box-sizing: border-box;
+				-moz-box-sizing: border-box;
+				-webkit-box-sizing: border-box;
+				border: 2px solid orange;
+			}
+			.elementUpdate{
+				animation : borderUpdate 0.5s linear 3;
+			}
+			@keyframes borderUpdate {
+				50% {
+					border: 2px solid orange;
+				}
 			}
 			.scrollable{
 				seamless: "seamless";
@@ -188,249 +208,33 @@
 			}
 		</style>
 		<script>
-			
-			function upload(){
-				var uForm = document.querySelector("#prep");
-				var lding = document.querySelector("#loading");
-				uForm.classList.add("hideMe");
-				lding.classList.remove("hideMe");
-				/*const files = document.querySelector('type=[file]').files;
-				const formData = new FormData();
-				for(let i = 0; i < files.length; i++){
-					let file = files[i];
-					formData.append('files[]' file);
-				}
-				fetch(url, {
-					method: 'POST',
-					body:	formData,
-				}).then(response => {
-					console.log("File uploaded.");
-					lding.classList.add("hideMe");
-					produce();
-				});
-				*/
-				alert("Since this is a dummy this would be where the backend does its job.");
-				produce();
-				return true;
-			}
-			function update(){
-				var lding = document.querySelector("#main");
-				lding.classList.remove("hideMe");
-				
-				var b = document.querySelector("#update");
-				b.classList.remove("hideMe");
-				
-				var c = document.querySelector("#prep");
-				c.classList.add("hideMe");
-				
-				var d = document.querySelector("#updateButton");
-				d.classList.add("hideMe");
-				return true;
-			}
-			function start(){
-				var uForm = document.querySelector("#prep");
-				var _main = document.querySelector("#main");
-				var lding = document.querySelector("#update");
-				_main.classList.add("hideMe");
-				uForm.classList.remove("hideMe");
-				lding.classList.add("hideMe");
-			}
-			function edit(){
-				var _main = document.querySelector("#main");
-				var lding = document.querySelector("#update");
-				_main.classList.add("hideMe");
-				lding.classList.remove("hideMe");
-				alert("There is no edit right now.");
-				produce();
-				return true;
-			}
-			function dummyTest(){
-				var choice = document.getElementById("labels");
-				var option = document.createElement("option");
-				var text = document.getElementById("lblName");
-				option.text = text.value;
-				choice.add(option);
-			}
-			function produce(){
-				var bdy = document.body;
-				bdy.classList.add("bgEdit");
-				var _main = document.querySelector("#main");
-				var lding = document.querySelector("#loading");
-				_main.classList.remove("hideMe");
-				lding.classList.add("hideMe");
-				var b = document.querySelector("#update");
-				b.classList.add("hideMe");
-				var b = document.querySelector("#updateButton");
-				b.classList.remove("hideMe");
-			}
-			function changed(e){
-				var obj = e.value;
-				document.getElementById("lblName").value = obj;
-			}
-			function editCh(){
-				var text = document.getElementById("lblName").value;
-				var obj = document.getElementById("labels");
-				obj.options[obj.selectedIndex].text = text;
-				alert("Set labelname!");
-				return true;
-			}
-			
-			var left = true;
-			var right = true;
-			var sizeMain = 2;
-			
-			function hideLeft(){
-				var object = document.getElementById("left");
-				var objectTwo = document.getElementById("rightMain");
-				var objTmp = document.getElementById("rightLeft");
-				var btn = document.getElementById("hideMainMenu");
-				var btn2 = document.getElementById("hideViewsMenu");
-				if(left){
-					object.classList.add("hideLeft");
-					btn2.classList.remove("hideBtnEX");
-					objectTwo.classList.add("addingL");
-					sizeMain -- ;
-					left = false;
-				}else{
-					sizeMain ++ ;
-					object.classList.remove("hideLeft");
-					objectTwo.classList.remove("addingL");
-					left = true;
-				}
-				if(sizeMain == 2){
-					objTmp.classList.remove("rightInc");
-					objTmp.classList.remove("rightMax");
-					btn.classList.remove("hideBtnEXL");
-					btn2.classList.remove("hideBtnEX");
-				}else if(sizeMain == 1){
-					objTmp.classList.add("rightInc");
-					objTmp.classList.remove("rightMax");
-					btn.classList.add("hideBtnEXL");
-					if(left){
-						btn2.classList.add("hideBtnEX");
-						btn.classList.remove("hideBtnEXL");
-					}
-					
-				}else{
-					objTmp.classList.add("rightMax");
-					objTmp.classList.remove("rightInc");
-					btn.classList.add("hideBtnEXL");
-					btn2.classList.remove("hideBtnEX");
-				}
-				return;
-			}
-			
-			function hideRight(){
-				var object = document.getElementById("rightMain");
-				var objTmp = document.getElementById("rightLeft");
-				var btn = document.getElementById("hideViewsMenu");
-				var btn2 = document.getElementById("hideMainMenu");
-				if(right){
-					sizeMain -- ;
-					right = false;
-				}else{
-					sizeMain ++ ;
-					right = true;
-				}
-				if(sizeMain == 2){
-					btn2.classList.remove("hideBtnEXL");
-					objTmp.classList.remove("rightInc");
-					objTmp.classList.remove("rightMax");
-					btn.classList.remove("hideBtnEX");
-				}else if(sizeMain == 1){
-					objTmp.classList.add("rightInc");
-					btn.classList.add("hideBtnEX");
-					if(right){
-						btn2.classList.add("hideBtnEXL");
-						btn.classList.remove("hideBtnEX");
-					}
-					objTmp.classList.remove("rightMax");
-				}else{
-					btn2.classList.add("hideBtnEXL");
-					btn.classList.remove("hideBtnEX");
-					objTmp.classList.add("rightMax");
-					objTmp.classList.remove("rightInc");
-				}
-				return;
-			}
-			
-			var mDown = false;
-			
-			function click(e){
-				e = e || window.event;
-
-				var pageX = e.pageX;
-				var pageY = e.pageY;
-
-				// IE 8
-				if (pageX === undefined) {
-					pageX = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-					pageY = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
-				}
-				if((pageX == pageY) != 0)return;
-				var w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-				if(left && (pageX <= 210)) return;
-				if(right && (pageX > (w-210))) return;
-				console.log(pageX, pageY);
-			}
-			
 			function draw(img){
 				var ctx = document.getElementById("view").getContext("2d");
 				ctx.drawImage(img);
 			}
 			
-			
-			
-			
-			if (document.attachEvent) document.attachEvent('onclick', click);
-			else document.addEventListener('click', click);
-			document.onmousedown = function(e){
-				mDown = true;
-			};
-			document.onmouseup = function(e){
-				mDown = false;
-			};
-			
-			var lastX = 0;
-			var lastY = 0;
-			
-			document.onmousemove = function(e){
-				if(mDown){
-					e = e || window.event;
-
-					var pageX = e.pageX;
-					var pageY = e.pageY;
-
-					// IE 8
-					if (pageX === undefined) {
-						pageX = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-						pageY = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
-					}
-					if((pageX == pageY) != 0)return;
-					var w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-					if(left && (pageX <= 210)) return;
-					if(right && (pageX > (w-210))) return;
-					console.log(pageX, pageY);
-					buildIMG(pageX,pageY);
-				}
-			};
-			
-			var IMG = null;
-			var cutIMG = null;
-			
-			function buildIMG(X,Y){
-				
+			function hideUpload(){
+				var ifm = document.getElementById("add-project");
+				ifm.classList.add("hideME");
 			}
 			
 			function resize(){
 				var cvs = document.getElementById("view");
-				var container = document.getElementById("content");
+				var container = document.getElementById("mainGraph");
 				cvs.width = container.clientWidth;
 				cvs.height = container.clientHeight;
-				if(IMG != null)draw(IMG);
 			}
 			
 			var timer = setInterval(resize, 100);
+			
+			function parentCall(check){
+				if(check == "FILE_OK"){
+					hideUpload();
+					reloadProjects();
+				}else if(check != ""){
+					alert(check);
+				}
+			}
 			
 			function load (e){
 				alert("Dummy");
@@ -441,42 +245,61 @@
 				var rm = document.getElementById('add-project');
 				rm.classList.remove('hideMe');
 			}
-			/*
-			function updateProgress(oEvent){
-				if(oEvent.lengthComputable){
-					var percentComplete = oEvent.loaded / oEvent.total * 100;
-					
-				}else{
-					var ld = document.getElementById('loading');
-					ld.classList.remove('hideMe');
-				}
-			}
-			function transferFailed(evt){}
-			function transferComplete(evt){}
-			function transferCanceled(evt){}
-			function transferEnd(evt){
-				var ld = document.getElementById('loading');
-				ld.classList.add('hideMe');
-			}
 			
-			
-			var oReq = new XMLHttpRequest();
-			oReq.addEventlistner("load", transferComplete);
-			oReq.addEventListener("progress", updateProgress);
-			oReq.addEventListener("error", transferFailed);
-			oReq.addEventListener("abort", transferCanceled);
-			oReq.addEventListener("loadend", transferEnd);
-			
-			function load(uri){
-				oReq.open("GET", uri); 
+			var jsonParser = function(){
 				
-			}*/
+			}
+			
+			var client = function(progressFunc,finishFunc){
+				
+				var req;
+				var percent;
+				var msg;
+				var callOnProgress;
+				var callOnFinish;
+			
+				function updateProgress(e){
+					if(e.lengthComputable){
+						this.percent = e.loaded / e.total * 100;
+						this.callOnProgress(percent);
+					}
+				}
+				function transferFailed(evt){
+					this.percent = 0;
+					this.msg = "FAIL";
+				}
+				function transferComplete(evt){
+					this.percent = 0;
+					this.msg = "OK";
+				}
+				function transferCanceled(evt){
+					this.percent = 0;
+					this.msg = "STOPED";
+				}
+				function transferEnd(evt){
+					this.callOnFinish(msg);
+				}
+				
+				function load(uri){
+					this.req.open("GET", uri); 
+				}
+				
+				this.req = new XMLHttpRequest()
+				this.req.addEventlistner("load", transferComplete);
+				this.req.addEventListener("progress", updateProgress);
+				this.req.addEventListener("error", transferFailed);
+				this.req.addEventListener("abort", transferCanceled);
+				this.req.addEventListener("loadend", transferEnd);
+				this.callOnProgress = progressFunc;
+				this.callOnFinish = finishFunc;
+				console.log('client created.');
+			}
 		</script>
 	</head>
 	<body>
 		<div id="projectDrawer" > 
 			<div id="add-project" class="hideMe">
-				<iframe src="/uploadForm.html">Your Browser does not support the iframe tag.</iframe>
+				<iframe id="myframe" frameborder="0" src="./uploadForm.html" width= "600px" height="800px">Your Browser does not support the iframe tag.</iframe>
 			</div>
 			<h3 style="text-align:center;">Projects</h3>
 			<div class="projectContainer">
@@ -490,6 +313,105 @@
 					Actual backend loading is required.
 				-->
 				</div>
+				<div onclick="return load(this);" class="project1" id="app" style="background-image: url('https://cdn.pixabay.com/photo/2015/11/15/07/47/geometry-1044090_960_720.jpg');">
+				<p class="bottom">Project 1</p>
+				<!--
+					!! Sample !!
+					Actual backend loading is required.
+				-->
+				</div>
+				<div onclick="return load(this);" class="project1" id="app" style="background-image: url('https://cdn.pixabay.com/photo/2015/11/15/07/47/geometry-1044090_960_720.jpg');">
+				<p class="bottom">Project 1</p>
+				<!--
+					!! Sample !!
+					Actual backend loading is required.
+				-->
+				</div>
+				<div onclick="return load(this);" class="project1" id="app" style="background-image: url('https://cdn.pixabay.com/photo/2015/11/15/07/47/geometry-1044090_960_720.jpg');">
+				<p class="bottom">Project 1</p>
+				<!--
+					!! Sample !!
+					Actual backend loading is required.
+				-->
+				</div>
+				<div onclick="return load(this);" class="project1" id="app" style="background-image: url('https://cdn.pixabay.com/photo/2015/11/15/07/47/geometry-1044090_960_720.jpg');">
+				<p class="bottom">Project 1</p>
+				<!--
+					!! Sample !!
+					Actual backend loading is required.
+				-->
+				</div>
+				<div onclick="return load(this);" class="project1" id="app" style="background-image: url('https://cdn.pixabay.com/photo/2015/11/15/07/47/geometry-1044090_960_720.jpg');">
+				<p class="bottom">Project 1</p>
+				<!--
+					!! Sample !!
+					Actual backend loading is required.
+				-->
+				</div>
+				<div onclick="return load(this);" class="project1" id="app" style="background-image: url('https://cdn.pixabay.com/photo/2015/11/15/07/47/geometry-1044090_960_720.jpg');">
+				<p class="bottom">Project 1</p>
+				<!--
+					!! Sample !!
+					Actual backend loading is required.
+				-->
+				</div>
+				<div onclick="return load(this);" class="project1" id="app" style="background-image: url('https://cdn.pixabay.com/photo/2015/11/15/07/47/geometry-1044090_960_720.jpg');">
+				<p class="bottom">Project 1</p>
+				<!--
+					!! Sample !!
+					Actual backend loading is required.
+				-->
+				</div>
+				<div onclick="return load(this);" class="project1" id="app" style="background-image: url('https://cdn.pixabay.com/photo/2015/11/15/07/47/geometry-1044090_960_720.jpg');">
+				<p class="bottom">Project 1</p>
+				<!--
+					!! Sample !!
+					Actual backend loading is required.
+				-->
+				</div>
+				<div onclick="return load(this);" class="project1" id="app" style="background-image: url('https://cdn.pixabay.com/photo/2015/11/15/07/47/geometry-1044090_960_720.jpg');">
+				<p class="bottom">Project 1</p>
+				<!--
+					!! Sample !!
+					Actual backend loading is required.
+				-->
+				</div>
+				<div onclick="return load(this);" class="project1" id="app" style="background-image: url('https://cdn.pixabay.com/photo/2015/11/15/07/47/geometry-1044090_960_720.jpg');">
+				<p class="bottom">Project 1</p>
+				<!--
+					!! Sample !!
+					Actual backend loading is required.
+				-->
+				</div>
+				<div onclick="return load(this);" class="project1" id="app" style="background-image: url('https://cdn.pixabay.com/photo/2015/11/15/07/47/geometry-1044090_960_720.jpg');">
+				<p class="bottom">Project 1</p>
+				<!--
+					!! Sample !!
+					Actual backend loading is required.
+				-->
+				</div>
+				<div onclick="return load(this);" class="project1" id="app" style="background-image: url('https://cdn.pixabay.com/photo/2015/11/15/07/47/geometry-1044090_960_720.jpg');">
+				<p class="bottom">Project 1</p>
+				<!--
+					!! Sample !!
+					Actual backend loading is required.
+				-->
+				</div>
+				<div onclick="return load(this);" class="project1" id="app" style="background-image: url('https://cdn.pixabay.com/photo/2015/11/15/07/47/geometry-1044090_960_720.jpg');">
+				<p class="bottom">Project 1</p>
+				<!--
+					!! Sample !!
+					Actual backend loading is required.
+				-->
+				</div>
+				<div onclick="return load(this);" class="project1" id="app" style="background-image: url('https://cdn.pixabay.com/photo/2015/11/15/07/47/geometry-1044090_960_720.jpg');">
+				<p class="bottom">Project 1</p>
+				<!--
+					!! Sample !!
+					Actual backend loading is required.
+				-->
+				</div>
+				
 				<div onclick="return add();"  id="app">
 				<p class="centered">+</p>
 				<p class="bottom">Add new</p>
@@ -497,38 +419,27 @@
 			</div>
 		</div>
 		<div id="loading" class="hideMe">
-			<center> Loading... </center>
+			<label id="percentage">0 %</label>
 		</div>
 		<div id="mainContainer">
-			<div id="left" class="scrollable">
-				<div id="Project1" class="element">
-					Projekt 1
-				</div>
-				<div id="Project2" class="element">
-					Projekt 2
-				</div>
-				<div id="Project3" class="element">
-					Projekt3
-				</div>
+			<div id="mainGraph">
+				<canvas id="view">
+					BROWSER DOES NOT SUPPORT CANVAS.
+				</canvas>
+			 Such Graph. Much Wow.
 			</div>
-			<div id="rightMain">
-				<div id="rightLeft">
-					<input type="button" id="hideMainMenu" class="hideBtn" text="Hide" value="Hide" onclick="return hideLeft();">
-					<div id="content">
-						<canvas id="view" width="4000" height="4000">
-							<center><p><h3>Sorry. Something went wrong :/</h3></p></center>
-						</canvas>
-					</div>
-					<input type="button" id="hideViewsMenu" class="hideBtn" text="Hide" value="Hide" onclick="return hideRight();">
-				</div>
-				<div id="rightRight" class="scrollable">
-					<div id="View1" class="element">
-						View 1
-					</div>
-					<div id="View2" class="element">
-						View 2
-					</div>
-				</div>
+			<div id="views" class="scrollable">
+				<div id="viewSample" class="element"></div>
+				<div id="viewSample" class="element"></div>
+				<div id="viewSample" class="element"></div>
+				<div id="viewSample" class="element"></div>
+				<div id="viewSample" class="element"></div>
+			</div>
+			<div id="statusBar">
+			 Such status info. Much Wow.
+			</div>
+			<div id="menuBar">
+			 Such menuBar. Much Wow.
 			</div>
 		</div>
 	</body>
