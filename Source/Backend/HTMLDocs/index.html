@@ -188,6 +188,7 @@
 			}
 		</style>
 		<script>
+			
 			function upload(){
 				var uForm = document.querySelector("#prep");
 				var lding = document.querySelector("#loading");
@@ -440,26 +441,48 @@
 				var rm = document.getElementById('add-project');
 				rm.classList.remove('hideMe');
 			}
+			/*
+			function updateProgress(oEvent){
+				if(oEvent.lengthComputable){
+					var percentComplete = oEvent.loaded / oEvent.total * 100;
+					
+				}else{
+					var ld = document.getElementById('loading');
+					ld.classList.remove('hideMe');
+				}
+			}
+			function transferFailed(evt){}
+			function transferComplete(evt){}
+			function transferCanceled(evt){}
+			function transferEnd(evt){
+				var ld = document.getElementById('loading');
+				ld.classList.add('hideMe');
+			}
+			
+			
+			var oReq = new XMLHttpRequest();
+			oReq.addEventlistner("load", transferComplete);
+			oReq.addEventListener("progress", updateProgress);
+			oReq.addEventListener("error", transferFailed);
+			oReq.addEventListener("abort", transferCanceled);
+			oReq.addEventListener("loadend", transferEnd);
+			
+			function load(uri){
+				oReq.open("GET", uri); 
+				
+			}*/
 		</script>
 	</head>
 	<body>
 		<div id="projectDrawer" > 
 			<div id="add-project" class="hideMe">
-				<form method="POST" action="" enctype="multipart/form-data">{% csrf_token %}
-					<label>Choose an event log file to upload.
-						<input type="button" value="Choose .csm" onclick="document.getElementById('upFile').click();">
-						<input id="upFile" name="file" type="file" size="50" accept=".xes" class="hideMe"> 
-					</label>  
-					<input type="submit" />
-				</form>
+				<iframe src="/uploadForm.html">Your Browser does not support the iframe tag.</iframe>
 			</div>
 			<h3 style="text-align:center;">Projects</h3>
 			<div class="projectContainer">
-				{% for p in  projects %}
-					<div onclick="return load(this);" class="{{ p.name }}" id="app" style="background-image: url('{{ p.bgURL }}');">
-						<p class="bottom">{{ p.name }}</p>
-					</div>
-				{% endfor %}
+				<!--
+				TO-DO : #IMPLEMENT DISPLAY VIA LOADING RESOURCES
+				-->
 				<div onclick="return load(this);" class="project1" id="app" style="background-image: url('https://cdn.pixabay.com/photo/2015/11/15/07/47/geometry-1044090_960_720.jpg');">
 				<p class="bottom">Project 1</p>
 				<!--

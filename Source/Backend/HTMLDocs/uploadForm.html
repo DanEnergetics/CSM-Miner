@@ -1,0 +1,7 @@
+<form method="POST" action="" enctype="multipart/form-data" onload="javascript:alert('{% msg %}');">{% csrf_token %}
+	<label>Choose an event log file to upload.
+		<input type="button" value="Choose .xes" onclick="document.getElementById('upFile').click();">
+		<input id="upFile" name="file" type="file" size="50" accept=".xes" class="hideMe"> 
+	</label>  
+	<input type="submit"/>
+</form>

@@ -39,40 +39,53 @@ register = template.Library()
 def file_get_contents(filename):
     with open(filename) as f:
         return f.read()
-"""	
-def set_projects():
-	dirs = []
-	for d in os.walk(os.path.join(BASE_DIR,''))
-		for directory in d
-			dirs.append(d)
-	return dirs
-	
-projects = set_projects()	
-"""
+
+def get_projects():
+	return {'project1','project2'}
+def get_id():
+	return 1
+
 @csrf_protect
 def get(request):
+	context = {
+		'projects': get_projects(),
+		'id' : get_id(),
+	}
+	return render(request, os.path.join(BASE_DIR,'./HTMLDocs/index.html'), context)
+
+
+def request(rq,action):
+	if not rq.method == 'GET':
+		return HttpResponseNotFound("Error.")
+	print(action)
+	"""
+	TO-DO : #IMPLEMENT THE QUEUE ROUTINE
+	"""
+	return HttpResponse('<body>OK</body>')
+	
+@csrf_protect
+def iframe(request,file):
 	if request.method == 'POST':
 		file = request.FILES.get('file',"EMPTY_REQ")
 		if file == "EMPTY_REQ":
-			context = {}
+			context = {
+				'msg' : "No file
+				 detected.",
+			}
 			return render(request, os.path.join(BASE_DIR,'./HTMLDocs/index.html'), context)
 		file = request.FILES['file']
 		filename = file.name
 		if not filename.endswith('.xes'):
-			context = {}
-			return render(request, os.path.join(BASE_DIR,'./HTMLDocs/index.html'), context)
+			context = {
+				'msg' : "Wrong format detected.",
+			}
+			return render(request, os.path.join(BASE_DIR,'./HTMLDocs/',file,'.html'), context)
 		md = File(file)
 		with open(os.path.join(BASE_DIR,'./Storage/',filename),'wb+') as dest:
 			for chunk in md.chunks():
 				dest.write(chunk)
-			
-	context = {}
-	return render(request, os.path.join(BASE_DIR,'./HTMLDocs/index.html'), context)
+	
 
-
-def request(rq):
-	if not rq.method == 'GET':
-		return HttpResponseNotFound("Error.")
 
 def mainHandle(request,string):
 	handleForm(request)
@@ -81,5 +94,6 @@ def mainHandle(request,string):
 urlpatterns = [
     path('admin/', admin.site.urls),
 	path('', get),
-	path('request/', request),
+	path('/<slug:fileName>.html', iframe, name="fileName"),
+	path('request/<slug:action>', request , name='action'),
 ]
