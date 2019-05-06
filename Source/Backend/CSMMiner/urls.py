@@ -69,8 +69,7 @@ def iframe(request,file):
 		file = request.FILES.get('file',"EMPTY_REQ")
 		if file == "EMPTY_REQ":
 			context = {
-				'msg' : "No file
-				 detected.",
+				'msg' : "No file detected.",
 			}
 			return render(request, os.path.join(BASE_DIR,'./HTMLDocs/index.html'), context)
 		file = request.FILES['file']
@@ -94,6 +93,6 @@ def mainHandle(request,string):
 urlpatterns = [
     path('admin/', admin.site.urls),
 	path('', get),
-	path('/<slug:fileName>.html', iframe, name="fileName"),
+	path('<slug:fileName>.html', iframe, name="fileName"),
 	path('request/<slug:action>', request , name='action'),
 ]
