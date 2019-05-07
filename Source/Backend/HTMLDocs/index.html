@@ -15,6 +15,13 @@
 				width : 100%;
 				height : 100%;
 			}
+			#add-project{
+				height:100%;
+				width:100%;
+				position:fixed;
+				background-color:transparent;
+				z-index:9999;
+			}
 			.projectContainer{
 				margin : 10px;
 				display: grid;
@@ -44,6 +51,10 @@
 				z-index : 2;
 			}
 			#app:hover{
+				box-sizing: border-box;
+				-moz-box-sizing: border-box;
+				-webkit-box-sizing: border-box;
+				border: 2px solid orange;
 				cursor :pointer;
 			}
 			iframe{
@@ -88,7 +99,7 @@
 				
 			}
 			#statusBar{
-				opacity : 1;
+				opacity : 0.1;
 				-o-transition: .5s;
 				-ms-transition: .5s;
 				-moz-transition: .5s;
@@ -97,10 +108,11 @@
 				left : 0;
 				bottom : 0;
 				z-index : 9;
-				width: 100%;
 				background-color :  grey;
 				min-height : fit-content;
 				max-height : fit-content;
+				min-width : fit-content;
+				max-width : fit-content;
 			}
 			#statusBar:hover { 
 				opacity : 1;
@@ -109,7 +121,6 @@
 				opacity : 0.6;
 			}
 			#views{
-				opacity : 1;
 				-o-transition: .5s;
 				-ms-transition: .5s;
 				-moz-transition: .5s;
@@ -120,12 +131,6 @@
 				z-index : 9;
 				right: 0;
 				height : 100%;
-			}
-			#views:hover {
-				opacity : 1;
-			}
-			#views:leave {
-				opacity : 0.6;
 			}
 			
 			#menuBar{
@@ -139,7 +144,7 @@
 				position : fixed;
 				z-index : 10;
 				left: 3em;
-				opacity : 1;
+				opacity : 0.1;
 				min-height : fit-content;
 				max-height : fit-content;
 				min-width : fit-content;
@@ -199,12 +204,12 @@
 				width: 100%;
 				height: 100%;
 			}
-			#add-project{
+			#add-project iframe{
 				position : fixed;
 				z-index : 999;
-				left: 50% !important;
-				top: 50% !important;
-				transform: translate(-50%, -50%) !important;
+				left: 45% !important;
+				top: 45% !important;
+				transform: translate(-45%, -45%) !important;
 			}
 		</style>
 		<script>
@@ -215,7 +220,7 @@
 			
 			function hideUpload(){
 				var ifm = document.getElementById("add-project");
-				ifm.classList.add("hideME");
+				ifm.classList.add("hideMe");
 			}
 			
 			function resize(){
@@ -246,8 +251,13 @@
 				rm.classList.remove('hideMe');
 			}
 			
-			var jsonParser = function(){
+			var jsonParser = function(JSON){
 				
+				function resultJSON(JSON_FILE){
+					
+				}
+				
+				return resultJSON(JSON_FILE);
 			}
 			
 			var client = function(progressFunc,finishFunc){
@@ -298,8 +308,8 @@
 	</head>
 	<body>
 		<div id="projectDrawer" > 
-			<div id="add-project" class="hideMe">
-				<iframe id="myframe" frameborder="0" src="./uploadForm.html" width= "600px" height="800px">Your Browser does not support the iframe tag.</iframe>
+			<div id="add-project" class="hideMe" onclick="return hideUpload();">
+				<iframe id="myframe" frameborder="0" src="./uploadForm.html" width="600px" height="800px">Your Browser does not support the iframe tag.</iframe>
 			</div>
 			<h3 style="text-align:center;">Projects</h3>
 			<div class="projectContainer">
