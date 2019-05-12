@@ -54,7 +54,14 @@ def createProject(name):
 	dir = os.path.join(BASE_DIR,'./Storage/',hexed)
 	if not os.path.exists(dir):
 		os.makedirs(dir)
-		jsonContent = '{ "name":"' + name +'", "filename":"' + name + '", "creationTime":"' + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") +'", "lastEdit":"' + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") +'", "backgroundImgPath": "' + BASE_DIR +'/HTMLDocs/images/matrix.png", "preProcessed": "NO",}'
+		jsonContent = { 
+			"name": name.replace('.xes',''),
+			"filename": name,
+			"creationTime": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+			"lastEdit": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+			"backgroundImgPath": "./images/matrix.png",
+			"preProcessed": False
+		}
 		jsonConvert = json.dumps(jsonContent, indent=4, sort_keys=True)
 		print(dir)
 		fileW = open(os.path.join(dir ,"index.json"),"w")
@@ -65,10 +72,23 @@ def createProject(name):
 		return "EXISTS"
 
 def get_projects():
-	return {'project1','project2'}
+	result = []
+	rt = ""
+	workDir = BASE_DIR + "/Storage/"
+	try:
+		for d in os.listdir(workDir):
+			if os.path.isdir(workDir + d) :
+				with open(workDir + d + "/index.json") as json_file:
+					result.append(json.load(json_file))
+		rt = json.dumps(result)
+		return rt
+	except:
+		print("Error.")
+
 def get_id():
 	return 1
 
+@register.filter
 @csrf_protect
 def get(request):
 	context = {
@@ -82,10 +102,6 @@ def request(rq,action):
 	if not rq.method == 'GET':
 		return HttpResponseNotFound("Error.")
 	print(action)
-	"""
-	TO-DO : #IMPLEMENT THE QUEUE ROUTINE
-	"""
-	return HttpResponse('<body>OK</body>')
 	
 @register.filter
 @csrf_protect
@@ -125,6 +141,17 @@ def iframe(request,fileName):
 	return render(request, os.path.join(BASE_DIR,"HTMLDocs/",fileName), context)	
 
 
+def getImg(request,fileName):
+	print(BASE_DIR + "/HTMLDocs/images/" + fileName + ".png")
+	try:
+		with open(BASE_DIR + "/HTMLDocs/images/" + fileName + ".png", "rb") as f:
+			return HttpResponse(f.read(), content_type="image/jpeg")
+	except IOError:
+		red = Image.new('RGBA', (1, 1), (255,0,0,0))
+		response = HttpResponse(content_type="image/jpeg")
+		red.save(response, "JPEG")
+		return response
+
 def mainHandle(request,string):
 	handleForm(request)
 	return main(request)
@@ -132,6 +159,7 @@ def mainHandle(request,string):
 urlpatterns = [
     path('admin/', admin.site.urls),
 	path('', get),
+	path('images/<slug:fileName>.png', getImg, name="fileName"),
 	path('<slug:fileName>.html', iframe, name="fileName"),
-	path('request/<slug:action>', request , name='action'),
+	path('request/<slug:action>.json', request , name='action'),
 ]

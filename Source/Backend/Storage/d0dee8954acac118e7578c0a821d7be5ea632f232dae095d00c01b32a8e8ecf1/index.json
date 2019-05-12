@@ -1,1 +1,8 @@
-"{ \"name\":\"test.xes\", \"filename\":\"test.xes\", \"creationTime\":\"2019-05-07 14:33:31\", \"lastEdit\":\"2019-05-07 14:33:31\", \"backgroundImgPath\": \"/Users/odyk/CSM-Miner/Source/Backend/HTMLDocs/images/matrix.png\" }"
+{
+    "backgroundImgPath": "./images/matrix.png",
+    "creationTime": "2019-05-12 19:06:56",
+    "filename": "test.xes",
+    "lastEdit": "2019-05-12 19:06:56",
+    "name": "test",
+    "preProcessed": false
+}

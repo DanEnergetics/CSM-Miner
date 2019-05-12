@@ -235,7 +235,7 @@
 			function parentCall(check){
 				if(check == "FILE_OK"){
 					hideUpload();
-					reloadProjects();
+					location.reload();
 				}else if(check != ""){
 					alert(check);
 				}
@@ -258,6 +258,43 @@
 				}
 				
 				return resultJSON(JSON_FILE);
+			}
+			
+			const formType = {
+				REQUEST_FORM: 'RQ',
+				YES_NO_FORM: 'YN',
+				INFO_FORM: 'IF'
+			}
+			
+			class Form{
+				constructor(name, parent){
+					this.form = document.createElement('form');
+					parent.appendChild(this.form);
+					this.form.name = name;
+				}
+				
+				add(element) {
+					this.form.appendChild(element);
+				}
+				
+				
+				
+				get(){
+					return this.form;
+				}
+			}
+			
+			function mkForm(name,type,parent){
+				const f = new Form(name,parent);
+				
+				switch(type){
+					case formType.REQUEST_FORM:
+						f.add(document.createElement('label'));
+					case formType.YES_NO_FORM:
+					
+					case formType.INFO_FORM:
+					
+				}
 			}
 			
 			var client = function(progressFunc,finishFunc){
@@ -304,132 +341,44 @@
 				this.callOnFinish = finishFunc;
 				console.log('client created.');
 			}
+			var jString = '{{ projects }}';
+			
+			var dec = jString.replace(/&quot;/g, '"');
+			var jsonObj = JSON.parse(dec);
+			
+			function showProjects(){
+				var el = document.getElementById('projectAdds');
+				var addDiv = document.getElementsByName('addProj')[0];
+				jsonObj.forEach(function(element){
+					var pDiv = document.createElement("div");
+					pDiv.name = element.filename;
+					pDiv.id = "app";
+					pDiv.setAttribute("onClick","return load(this);");
+					pDiv.style = "background-image: url('" + element.backgroundImgPath +"');"
+					// TO-DO : Add Name-Label
+					// TO-DO : IF NOT FINISHED, THEN LOADING SYM OVERLAY
+					el.insertBefore(pDiv,addDiv);
+				});
+				
+			}
+			
+			document.addEventListener('DOMContentLoaded', function() {
+  				showProjects();
+			}, false);
 		</script>
 	</head>
 	<body>
-		<div id="projectDrawer" > 
+		<div id="projectDrawer" class="scrollable" onLoad="showProjects();"> 
 			<div id="add-project" class="hideMe" onclick="return hideUpload();">
 				<iframe id="myframe" frameborder="0" src="./uploadForm.html" width="600px" height="800px">Your Browser does not support the iframe tag.</iframe>
 			</div>
 			<h3 style="text-align:center;">Projects</h3>
-			<div class="projectContainer">
-				<!--
-				TO-DO : #IMPLEMENT DISPLAY VIA LOADING RESOURCES
-				-->
-				<div onclick="return load(this);" class="project1" id="app" style="background-image: url('https://cdn.pixabay.com/photo/2015/11/15/07/47/geometry-1044090_960_720.jpg');">
-				<p class="bottom">Project 1</p>
-				<!--
-					!! Sample !!
-					Actual backend loading is required.
-				-->
-				</div>
-				<div onclick="return load(this);" class="project1" id="app" style="background-image: url('https://cdn.pixabay.com/photo/2015/11/15/07/47/geometry-1044090_960_720.jpg');">
-				<p class="bottom">Project 1</p>
-				<!--
-					!! Sample !!
-					Actual backend loading is required.
-				-->
-				</div>
-				<div onclick="return load(this);" class="project1" id="app" style="background-image: url('https://cdn.pixabay.com/photo/2015/11/15/07/47/geometry-1044090_960_720.jpg');">
-				<p class="bottom">Project 1</p>
-				<!--
-					!! Sample !!
-					Actual backend loading is required.
-				-->
-				</div>
-				<div onclick="return load(this);" class="project1" id="app" style="background-image: url('https://cdn.pixabay.com/photo/2015/11/15/07/47/geometry-1044090_960_720.jpg');">
-				<p class="bottom">Project 1</p>
-				<!--
-					!! Sample !!
-					Actual backend loading is required.
-				-->
-				</div>
-				<div onclick="return load(this);" class="project1" id="app" style="background-image: url('https://cdn.pixabay.com/photo/2015/11/15/07/47/geometry-1044090_960_720.jpg');">
-				<p class="bottom">Project 1</p>
-				<!--
-					!! Sample !!
-					Actual backend loading is required.
-				-->
-				</div>
-				<div onclick="return load(this);" class="project1" id="app" style="background-image: url('https://cdn.pixabay.com/photo/2015/11/15/07/47/geometry-1044090_960_720.jpg');">
-				<p class="bottom">Project 1</p>
-				<!--
-					!! Sample !!
-					Actual backend loading is required.
-				-->
-				</div>
-				<div onclick="return load(this);" class="project1" id="app" style="background-image: url('https://cdn.pixabay.com/photo/2015/11/15/07/47/geometry-1044090_960_720.jpg');">
-				<p class="bottom">Project 1</p>
-				<!--
-					!! Sample !!
-					Actual backend loading is required.
-				-->
-				</div>
-				<div onclick="return load(this);" class="project1" id="app" style="background-image: url('https://cdn.pixabay.com/photo/2015/11/15/07/47/geometry-1044090_960_720.jpg');">
-				<p class="bottom">Project 1</p>
-				<!--
-					!! Sample !!
-					Actual backend loading is required.
-				-->
-				</div>
-				<div onclick="return load(this);" class="project1" id="app" style="background-image: url('https://cdn.pixabay.com/photo/2015/11/15/07/47/geometry-1044090_960_720.jpg');">
-				<p class="bottom">Project 1</p>
-				<!--
-					!! Sample !!
-					Actual backend loading is required.
-				-->
-				</div>
-				<div onclick="return load(this);" class="project1" id="app" style="background-image: url('https://cdn.pixabay.com/photo/2015/11/15/07/47/geometry-1044090_960_720.jpg');">
-				<p class="bottom">Project 1</p>
-				<!--
-					!! Sample !!
-					Actual backend loading is required.
-				-->
-				</div>
-				<div onclick="return load(this);" class="project1" id="app" style="background-image: url('https://cdn.pixabay.com/photo/2015/11/15/07/47/geometry-1044090_960_720.jpg');">
-				<p class="bottom">Project 1</p>
-				<!--
-					!! Sample !!
-					Actual backend loading is required.
-				-->
-				</div>
-				<div onclick="return load(this);" class="project1" id="app" style="background-image: url('https://cdn.pixabay.com/photo/2015/11/15/07/47/geometry-1044090_960_720.jpg');">
-				<p class="bottom">Project 1</p>
-				<!--
-					!! Sample !!
-					Actual backend loading is required.
-				-->
-				</div>
-				<div onclick="return load(this);" class="project1" id="app" style="background-image: url('https://cdn.pixabay.com/photo/2015/11/15/07/47/geometry-1044090_960_720.jpg');">
-				<p class="bottom">Project 1</p>
-				<!--
-					!! Sample !!
-					Actual backend loading is required.
-				-->
-				</div>
-				<div onclick="return load(this);" class="project1" id="app" style="background-image: url('https://cdn.pixabay.com/photo/2015/11/15/07/47/geometry-1044090_960_720.jpg');">
-				<p class="bottom">Project 1</p>
-				<!--
-					!! Sample !!
-					Actual backend loading is required.
-				-->
-				</div>
-				<div onclick="return load(this);" class="project1" id="app" style="background-image: url('https://cdn.pixabay.com/photo/2015/11/15/07/47/geometry-1044090_960_720.jpg');">
-				<p class="bottom">Project 1</p>
-				<!--
-					!! Sample !!
-					Actual backend loading is required.
-				-->
-				</div>
-				
-				<div onclick="return add();"  id="app">
+			<div class="projectContainer" id="projectAdds" class="scrollable">
+				<div onclick="return add();"  id="app" name="addProj">
 				<p class="centered">+</p>
 				<p class="bottom">Add new</p>
 				</div>
 			</div>
-		</div>
-		<div id="loading" class="hideMe">
-			<label id="percentage">0 %</label>
 		</div>
 		<div id="mainContainer">
 			<div id="mainGraph">
@@ -439,11 +388,9 @@
 			 Such Graph. Much Wow.
 			</div>
 			<div id="views" class="scrollable">
-				<div id="viewSample" class="element"></div>
-				<div id="viewSample" class="element"></div>
-				<div id="viewSample" class="element"></div>
-				<div id="viewSample" class="element"></div>
-				<div id="viewSample" class="element"></div>
+				<!--
+					TO-DO : ADD VIEW-LOADING
+				-->
 			</div>
 			<div id="statusBar">
 			 Such status info. Much Wow.
