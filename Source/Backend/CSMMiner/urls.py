@@ -35,13 +35,7 @@ import json
 from shutil import copyfile
 
 register = template.Library()
-
-class UploadFileForm(forms.Form):
-    title = forms.CharField(max_length=50)
-    file = forms.FileField()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-register = template.Library()
 
 def file_get_contents(filename):
     with open(filename) as f:
@@ -85,15 +79,11 @@ def get_projects():
 	except:
 		print("Error.")
 
-def get_id():
-	return 1
-
 @register.filter
 @csrf_protect
 def get(request):
 	context = {
 		'projects': get_projects(),
-		'id' : get_id(),
 	}
 	return render(request, os.path.join(BASE_DIR,'./HTMLDocs/index.html'), context)
 
@@ -151,14 +141,19 @@ def getImg(request,fileName):
 		response = HttpResponse(content_type="image/jpeg")
 		red.save(response, "JPEG")
 		return response
-
-def mainHandle(request,string):
-	handleForm(request)
-	return main(request)
+		
+		
+def getJs(request,fileName):
+	try:
+		with open(BASE_DIR + "/HTMLDocs/ext/" + fileName + ".js") as js:
+			return HttpResponse(js.read(), content_type="application/x-javascript")
+	except IOError:
+		return HttpResponse("<body>ERROR.</body>")
 	
 urlpatterns = [
     path('admin/', admin.site.urls),
 	path('', get),
+	path('<slug:fileName>.js', getJs, name="fileName"),
 	path('images/<slug:fileName>.png', getImg, name="fileName"),
 	path('<slug:fileName>.html', iframe, name="fileName"),
 	path('request/<slug:action>.json', request , name='action'),

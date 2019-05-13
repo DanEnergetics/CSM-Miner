@@ -212,7 +212,10 @@
 				transform: translate(-45%, -45%) !important;
 			}
 		</style>
+		<script src='state-machine.js'></script>
 		<script>
+			
+			
 			function draw(img){
 				var ctx = document.getElementById("view").getContext("2d");
 				ctx.drawImage(img);
@@ -249,15 +252,6 @@
 			function add(){
 				var rm = document.getElementById('add-project');
 				rm.classList.remove('hideMe');
-			}
-			
-			var jsonParser = function(JSON){
-				
-				function resultJSON(JSON_FILE){
-					
-				}
-				
-				return resultJSON(JSON_FILE);
 			}
 			
 			const formType = {
