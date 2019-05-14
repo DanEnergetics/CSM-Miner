@@ -19,20 +19,20 @@ from django.shortcuts import render
 from django.contrib import admin
 from django.urls import path
 from django.http import HttpResponse
-from django import template
+from django import template, forms
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import RequestContext, loader, Template, Context
 from django.views.decorators.csrf import csrf_protect
-from django import forms
 from django.core.files import File
 from django.http import HttpResponseNotFound
 from django.conf.urls import (handler400, handler403, handler404, handler500)
-from django import template
 from xml.dom import minidom
 import hashlib
 import json
 from shutil import copyfile
+from django.conf import settings
+from django.views.generic.base import RedirectView
 
 register = template.Library()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -142,7 +142,6 @@ def getImg(request,fileName):
 		red.save(response, "JPEG")
 		return response
 		
-		
 def getJs(request,fileName):
 	try:
 		with open(BASE_DIR + "/HTMLDocs/ext/" + fileName + ".js") as js:
@@ -153,6 +152,7 @@ def getJs(request,fileName):
 urlpatterns = [
     path('admin/', admin.site.urls),
 	path('', get),
+	path('favicon.ico', RedirectView.as_view(url=settings.STATIC_URL + 'favicon.ico')),
 	path('<slug:fileName>.js', getJs, name="fileName"),
 	path('images/<slug:fileName>.png', getImg, name="fileName"),
 	path('<slug:fileName>.html', iframe, name="fileName"),

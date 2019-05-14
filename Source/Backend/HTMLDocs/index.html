@@ -62,7 +62,6 @@
 				background: white;
 				min-height: fit-content;
 				height: 10em;
-				margin: 100px;
 				padding: 20px;
 				position: relative;
 				text-align : center;
@@ -207,9 +206,10 @@
 			#add-project iframe{
 				position : fixed;
 				z-index : 999;
-				left: 45% !important;
-				top: 45% !important;
-				transform: translate(-45%, -45%) !important;
+                margin: 0 auto !important;
+				left: 50% !important;
+				top: 50% !important;
+				transform: translate(-50%, -50%) !important;
 			}
 		</style>
 		<script src='state-machine.js'></script>
@@ -230,7 +230,7 @@
 				var cvs = document.getElementById("view");
 				var container = document.getElementById("mainGraph");
 				cvs.width = container.clientWidth;
-				cvs.height = container.clientHeight;
+                cvs.height = container.clientHeight;
 			}
 			
 			var timer = setInterval(resize, 100);
@@ -357,7 +357,7 @@
 			}
 			
 			document.addEventListener('DOMContentLoaded', function() {
-  				showProjects();
+                showProjects();
 			}, false);
 		</script>
 	</head>
