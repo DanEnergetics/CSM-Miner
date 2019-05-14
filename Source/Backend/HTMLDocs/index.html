@@ -187,13 +187,13 @@
             max-width: fit-content;
         }
 
-            #menuBar:hover {
-                opacity: 1 !important;
-            }
+        #menuBar:hover {
+            opacity: 1 !important;
+        }
 
-            #menuBar:leave {
-                opacity: 0 !important;
-            }
+        #menuBar:leave {
+			opacity: 0 !important;
+        }
 
 
         .element {
@@ -205,12 +205,12 @@
             background-color: yellow;
         }
 
-            .element:hover {
-                box-sizing: border-box;
-                -moz-box-sizing: border-box;
-                -webkit-box-sizing: border-box;
-                border: 2px solid orange;
-            }
+        .element:hover {
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            border: 2px solid orange;
+        }
 
         .elementUpdate {
             animation: borderUpdate 0.5s linear 3;
@@ -233,12 +233,12 @@
             height: 100%;
         }
 
-            .scrollable::-webkit-scrollbar {
-                display: none;
-            }
+        .scrollable::-webkit-scrollbar {
+	        display: none;
+        }
 
         .bgEdit {
-            background-image: url("./Images/matrix.png");
+            background-image: url("./images/matrix.png");
         }
 
         #content {
@@ -260,6 +260,16 @@
             top: 50% !important;
             transform: translate(-50%, -50%) !important;
         }
+        
+        #unfinished{
+        	background-size: cover;
+        	z-index:99999;
+        	width:96px;
+        	height:96px;
+            transform: translate(30%, 30%) !important;
+            background-image: url('load.svg');
+        }
+        
     </style>
     <!-- Sets the basepath for the library if not in same directory -->
     <script type="text/javascript">
@@ -269,13 +279,6 @@
     <!-- Loads and initializes the library -->
     <script type="text/javascript" src="./mxClient.js"></script>
     <script>
-
-
-			function draw(img){
-				var ctx = document.getElementById("view").getContext("2d");
-				ctx.drawImage(img);
-			}
-
 			function hideUpload(){
 				var ifm = document.getElementById("add-project");
 				ifm.classList.add("hideMe");
@@ -285,7 +288,8 @@
 			function parentCall(check){
 				if(check == "FILE_OK"){
 					hideUpload();
-					location.reload();
+					pReq.open("GET","/request/PROJECTS.json");
+					pReq.send();
 				}else if(check != ""){
 					alert(check);
 				}
@@ -363,50 +367,8 @@
 				}
 			}
 
-			var client = function(progressFunc,finishFunc){
-
-				var req;
-				var percent;
-				var msg;
-				var callOnProgress;
-				var callOnFinish;
-
-				function updateProgress(e){
-					if(e.lengthComputable){
-						this.percent = e.loaded / e.total * 100;
-						this.callOnProgress(percent);
-					}
-				}
-				function transferFailed(evt){
-					this.percent = 0;
-					this.msg = "FAIL";
-				}
-				function transferComplete(evt){
-					this.percent = 0;
-					this.msg = "OK";
-				}
-				function transferCanceled(evt){
-					this.percent = 0;
-					this.msg = "STOPED";
-				}
-				function transferEnd(evt){
-					this.callOnFinish(msg);
-				}
-
-				function load(uri){
-					this.req.open("GET", uri);
-				}
-
-				this.req = new XMLHttpRequest()
-				this.req.addEventlistner("load", transferComplete);
-				this.req.addEventListener("progress", updateProgress);
-				this.req.addEventListener("error", transferFailed);
-				this.req.addEventListener("abort", transferCanceled);
-				this.req.addEventListener("loadend", transferEnd);
-				this.callOnProgress = progressFunc;
-				this.callOnFinish = finishFunc;
-				console.log('client created.');
-			}
+				
+			
 			var jString = '{{ projects }}';
 
 			var dec = jString.replace(/&quot;/g, '"');
@@ -417,12 +379,23 @@
 				var addDiv = document.getElementsByName('addProj')[0];
 				jsonObj.forEach(function(element){
 					var pDiv = document.createElement("div");
-					pDiv.name = element.filename;
+					pDiv.setAttribute("name",element.filename);
 					pDiv.id = "app";
-					pDiv.setAttribute("onClick","return load(this);");
 					pDiv.style = "background-image: url('" + element.backgroundImgPath +"');"
-					// TO-DO : Add Name-Label
-					// TO-DO : IF NOT FINISHED, THEN LOADING SYM OVERLAY
+					var lblName = document.createTextNode(element.name);
+					var pVar = document.createElement('p');
+					pVar.appendChild(lblName);
+					pVar.classList.add('bottom');
+					pDiv.appendChild(pVar);
+					if(!element.preProcessed){
+						var ld = document.createElement('div');
+						ld.id = "unfinished";
+						pDiv.appendChild(ld);
+						pDiv.setAttribute("onClick","alert('Still processing files.');");
+					}else{
+						pDiv.setAttribute("onClick","return load(this);");
+					}
+					// TO-DO : IF HOLDING DOWN, THEN OPTION TO REMOVE
 					el.insertBefore(pDiv,addDiv);
 				});
 
@@ -431,6 +404,41 @@
 			document.addEventListener('DOMContentLoaded', function() {
                 showProjects();
 			}, false);
+			
+			var pReq = new XMLHttpRequest();
+			
+			function removeProjects(){
+				var parent = document.getElementById('projectAdds');
+				jsonObj.forEach(function(el){
+					parent.removeChilds(document.getElementsByName(el.name));
+				});
+			}
+			
+			function updateProjects(){
+				removeProjects();
+				dec = jString.replace(/&quot;/g, '"');
+				jsonObj = JSON.parse(dec);
+				showProjects();
+			}
+			
+			function loadDone(evt){
+				if(pReq.status >= 200 && pReq.status < 300){
+					jString = pReq.responseText;
+					if(dec != jString.replace(/&quot;/g, '"')){
+						console.log("Change noticed.");
+						updateProjects();
+					}
+				}else{
+					console.warn(pReq.statusText,pReq.responseText);
+				}
+			}
+			
+			pReq.addEventListener("load", loadDone);
+			
+			setInterval(function(){
+				pReq.open("GET","/request/PROJECTS.json");
+				pReq.send();
+			},1000);
     </script>
 </head>
 	<body>

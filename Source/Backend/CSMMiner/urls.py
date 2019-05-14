@@ -92,7 +92,13 @@ def get(request):
 def request(rq,action):
 	if not rq.method == 'GET':
 		return HttpResponseNotFound("Error.")
-	print(action)
+	if action == "PROJECTS":
+		return HttpResponse(get_projects(), content_type="application/json")
+	try:
+		jFile = file_get_contents(BASE_DIR + "/Storage/" + action + "/graph.json")
+		return HttpResponse(jFile, content_type="application/json")
+	except IOError:
+		return HttpResponseNotFound("404")
 	
 @register.filter
 @csrf_protect
@@ -143,6 +149,16 @@ def getImg(request,fileName):
 		red.save(response, "JPEG")
 		return response
 		
+def getSVG(request,fileName):
+	try:
+		with open(BASE_DIR + "/HTMLDocs/images/" + fileName + ".svg", "rb") as f:
+			return HttpResponse(f.read(), content_type="image/svg+xml")
+	except IOError:
+		red = Image.new('RGBA', (1, 1), (255,0,0,0))
+		response = HttpResponse(content_type="image/svg+xml")
+		red.save(response, "JPEG")
+		return response
+		
 def getJs(request,fileName):
 	try:
 		with open(BASE_DIR + "/HTMLDocs/ext/" + fileName + ".js") as js:
@@ -164,16 +180,26 @@ def getCSS(request):
 	except IOError:
 		return HttpResponse("<body>ERROR.</body>")
 	
+def getMani(request):
+	try:
+		content = file_get_contents(BASE_DIR + "/HTMLDocs/images/manifest.json")
+		return HttpResponse(content, content_type="application/json")
+	except IOError:
+		return HttpResponse("<body>ERROR.</body>")
+	
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 	path('', get),
-	path('favicon.ico', RedirectView.as_view(url=settings.STATIC_URL + 'favicon.ico')),
 	path('<slug:fileName>.js', getJs, name="fileName"),
 	path('images/<slug:fileName>.png', getImg, name="fileName"),
+	path('<slug:fileName>.svg', getSVG, name="fileName"),
 	path('<slug:fileName>.html', iframe, name="fileName"),
 	path('request/<slug:action>.json', request , name='action'),
 	#The following patterns are exclusively used by mxClient, therefor ONLY mxClient resources should be stored in the corresponding paths.
 	path('resources/<slug:fileName>.txt', getText, name="fileName"),
 	path('css/common.css',getCSS),
+	#Favicon links
+	path('manifest.json',getMani),
+	path('favicon.ico', RedirectView.as_view(url=settings.STATIC_URL + 'favicon.ico')),
 ]
