@@ -1,240 +1,283 @@
 <html>
-	<head>
-		<title>
-			A CSM-Miner dummy 
-		</title>
-		<style>
-			#projectDrawer{
-				position: fixed; 
-				top: 0; 
-				left: 0; 
-				min-width: 100%;
-				min-height: 100%;
-				background-color : white;
-				z-index: 999;
-				width : 100%;
-				height : 100%;
-			}
-			#add-project{
-				height:100%;
-				width:100%;
-				position:fixed;
-				background-color:transparent;
-				z-index:9999;
-			}
-			.projectContainer{
-				margin : 10px;
-				display: grid;
-				grid-gap: 20px;
-				grid-template-columns: repeat(auto-fill, 150px);
-				grid-template-rows: repeat(auto-fill, 150px);
-			}
-			#app{
-				position : relative;
-				border-radius: 25px;
-				border: 2px solid #73AD21; 
-				width: 150px;
-				height: 150px; 
-				text-align : center;
-				margin : 0;
-				background-size: cover;
-			}
-			#app .centered{
-				margin-block-start : 20px;
-				text-align : center;
-				font-size : 70pt;
-			}
-			#app .bottom{
-				position: absolute;
-				top : 110px;
-				left: 45px;
-				z-index : 2;
-			}
-			#app:hover{
-				box-sizing: border-box;
-				-moz-box-sizing: border-box;
-				-webkit-box-sizing: border-box;
-				border: 2px solid orange;
-				cursor :pointer;
-			}
-			iframe{
-				min-width: fit-content;
-				background: white;
-				min-height: fit-content;
-				height: 10em;
-				padding: 20px;
-				position: relative;
-				text-align : center;
-				-webkit-box-shadow: 0px 0px 50px -1px rgba(0,0,0,0.79);
-				-moz-box-shadow: 0px 0px 50px -1px rgba(0,0,0,0.79);
-				box-shadow: 0px 0px 50px -1px rgba(0,0,0,0.79);
-			}
-			.SUBMIT{
-				left : 50%;
-				bottom: 10px;
-				position: absolute;
-			}
-			.hideMe{
-				visibility : hidden;
-			}
-			#loading{
-				position: fixed;
-				left: 50%;
-				top: 50%;
-			}
-			#mainContainer{
-				position : fixed;
-				left : 0%;
-				top : 0%;
-				height : 100%;
-				width : 100%;
-			}
-			#mainGraph{
-				z-index : 5;
-				width: 100%
-				height : 100%;
-				top :0;
-				left : 0;
-				
-			}
-			#statusBar{
-				opacity : 0.1;
-				-o-transition: .5s;
-				-ms-transition: .5s;
-				-moz-transition: .5s;
-				-webkit-transition: .5s;
-				position : fixed;
-				left : 0;
-				bottom : 0;
-				z-index : 9;
-				background-color :  grey;
-				min-height : fit-content;
-				max-height : fit-content;
-				min-width : fit-content;
-				max-width : fit-content;
-			}
-			#statusBar:hover { 
-				opacity : 1;
-			}
-			#statusBar:leave {
-				opacity : 0.6;
-			}
-			#views{
-				-o-transition: .5s;
-				-ms-transition: .5s;
-				-moz-transition: .5s;
-				-webkit-transition: .5s;
-				top: 0;
-				background-color: green;
-				position : fixed;
-				z-index : 9;
-				right: 0;
-				height : 100%;
-			}
-			
-			#menuBar{
-				border-radius : 0 0 5px 5px;
-				-o-transition: .5s;
-				-ms-transition: .5s;
-				-moz-transition: .5s;
-				-webkit-transition: .5s;
-				top: 0;
-				background-color: green;
-				position : fixed;
-				z-index : 10;
-				left: 3em;
-				opacity : 0.1;
-				min-height : fit-content;
-				max-height : fit-content;
-				min-width : fit-content;
-				max-width : fit-content;
-			}
-			#menuBar:hover {
-				opacity: 1 !important;
-			}
-			#menuBar:leave {
-				opacity : 0 !important;
-			}
-			
-			
-			.element{
-				margin-left : 5px;
-				margin-right : 5px;
-				margin-bottom : 15px;
-				width: 200px;
-				height: 200px;
-				background-color : yellow;
-			}
-			.element:hover {
-				box-sizing: border-box;
-				-moz-box-sizing: border-box;
-				-webkit-box-sizing: border-box;
-				border: 2px solid orange;
-			}
-			.elementUpdate{
-				animation : borderUpdate 0.5s linear 3;
-			}
-			@keyframes borderUpdate {
-				50% {
-					border: 2px solid orange;
-				}
-			}
-			.scrollable{
-				seamless: "seamless";
-				overflow: auto;
-				-ms-overflow-style: none;  // IE 10+
-				scrollbar-width: none;  // Firefox
-				min-width: fit-content;
-				max-width: fit-content;
-				background: grey;
-				height: 100%;}
-			.scrollable::-webkit-scrollbar{
-				display: none;
-			}
-			.bgEdit{
-				background-image : url("./Images/matrix.png");
-			}
-			#content{
-				width: 100%;
-				height : 100%;
-				text-align : center;
-			}
-			canvas{
-				width: 100%;
-				height: 100%;
-			}
-			#add-project iframe{
-				position : fixed;
-				z-index : 999;
-                margin: 0 auto !important;
-				left: 50% !important;
-				top: 50% !important;
-				transform: translate(-50%, -50%) !important;
-			}
-		</style>
-		<script src='state-machine.js'></script>
-		<script>
-			
-			
+<head>
+    <title>
+        A CSM-Miner dummy
+    </title>
+    <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <style>
+        #projectDrawer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            min-width: 100%;
+            min-height: 100%;
+            background-color: white;
+            z-index: 999;
+            width: 100%;
+            height: 100%;
+        }
+
+        #add-project {
+            height: 100%;
+            width: 100%;
+            position: fixed;
+            background-color: transparent;
+            z-index: 9999;
+        }
+
+        .projectContainer {
+            margin: 10px;
+            display: grid;
+            grid-gap: 20px;
+            grid-template-columns: repeat(auto-fill, 150px);
+            grid-template-rows: repeat(auto-fill, 150px);
+        }
+
+        #app {
+            position: relative;
+            border-radius: 25px;
+            border: 2px solid #73AD21;
+            width: 150px;
+            height: 150px;
+            text-align: center;
+            margin: 0;
+            background-size: cover;
+        }
+
+            #app .centered {
+                margin-block-start: 20px;
+                text-align: center;
+                font-size: 70pt;
+            }
+
+            #app .bottom {
+                position: absolute;
+                top: 110px;
+                left: 45px;
+                z-index: 2;
+            }
+
+            #app:hover {
+                box-sizing: border-box;
+                -moz-box-sizing: border-box;
+                -webkit-box-sizing: border-box;
+                border: 2px solid orange;
+                cursor: pointer;
+            }
+
+        iframe {
+            min-width: fit-content;
+            background: white;
+            min-height: fit-content;
+            height: 10em;
+            padding: 20px;
+            position: relative;
+            text-align: center;
+            -webkit-box-shadow: 0px 0px 50px -1px rgba(0,0,0,0.79);
+            -moz-box-shadow: 0px 0px 50px -1px rgba(0,0,0,0.79);
+            box-shadow: 0px 0px 50px -1px rgba(0,0,0,0.79);
+        }
+
+        .SUBMIT {
+            left: 50%;
+            bottom: 10px;
+            position: absolute;
+        }
+
+        .hideMe {
+            visibility: hidden;
+        }
+
+        #loading {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+        }
+
+        #mainContainer {
+            position: fixed;
+            left: 0%;
+            top: 0%;
+            height: 100%;
+            width: 100%;
+        }
+
+        #mainGraph {
+            z-index: 5;
+            width: 100% height : 100%;
+            top: 0;
+            left: 0;
+        }
+
+        #statusBar {
+            opacity: 0.1;
+            -o-transition: .5s;
+            -ms-transition: .5s;
+            -moz-transition: .5s;
+            -webkit-transition: .5s;
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            z-index: 9;
+            background-color: grey;
+            min-height: fit-content;
+            max-height: fit-content;
+            min-width: fit-content;
+            max-width: fit-content;
+        }
+
+            #statusBar:hover {
+                opacity: 1;
+            }
+
+            #statusBar:leave {
+                opacity: 0.6;
+            }
+
+        #views {
+            -o-transition: .5s;
+            -ms-transition: .5s;
+            -moz-transition: .5s;
+            -webkit-transition: .5s;
+            top: 0;
+            background-color: green;
+            position: fixed;
+            z-index: 9;
+            right: 0;
+            height: 100%;
+        }
+
+        #menuBar {
+            border-radius: 0 0 5px 5px;
+            -o-transition: .5s;
+            -ms-transition: .5s;
+            -moz-transition: .5s;
+            -webkit-transition: .5s;
+            top: 0;
+            background-color: green;
+            position: fixed;
+            z-index: 10;
+            left: 3em;
+            opacity: 0.1;
+            min-height: fit-content;
+            max-height: fit-content;
+            min-width: fit-content;
+            max-width: fit-content;
+        }
+
+            #menuBar:hover {
+                opacity: 1 !important;
+            }
+
+            #menuBar:leave {
+                opacity: 0 !important;
+            }
+
+
+        .element {
+            margin-left: 5px;
+            margin-right: 5px;
+            margin-bottom: 15px;
+            width: 200px;
+            height: 200px;
+            background-color: yellow;
+        }
+
+            .element:hover {
+                box-sizing: border-box;
+                -moz-box-sizing: border-box;
+                -webkit-box-sizing: border-box;
+                border: 2px solid orange;
+            }
+
+        .elementUpdate {
+            animation: borderUpdate 0.5s linear 3;
+        }
+
+        @keyframes borderUpdate {
+            50% {
+                border: 2px solid orange;
+            }
+        }
+
+        .scrollable {
+            seamless: "seamless";
+            overflow: auto;
+            -ms-overflow-style: none;
+            // IE 10+ scrollbar-width: none;
+            // Firefox min-width: fit-content;
+            max-width: fit-content;
+            background: grey;
+            height: 100%;
+        }
+
+            .scrollable::-webkit-scrollbar {
+                display: none;
+            }
+
+        .bgEdit {
+            background-image: url("./Images/matrix.png");
+        }
+
+        #content {
+            width: 100%;
+            height: 100%;
+            text-align: center;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        #add-project iframe {
+            position: fixed;
+            z-index: 999;
+            margin: 0 auto !important;
+            left: 50% !important;
+            top: 50% !important;
+            transform: translate(-50%, -50%) !important;
+        }
+    </style>
+    <script src='state-machine.js'></script>
+    <script>
+
+
 			function draw(img){
 				var ctx = document.getElementById("view").getContext("2d");
 				ctx.drawImage(img);
 			}
-			
+
 			function hideUpload(){
 				var ifm = document.getElementById("add-project");
 				ifm.classList.add("hideMe");
 			}
-			
+
 			function resize(){
 				var cvs = document.getElementById("view");
 				var container = document.getElementById("mainGraph");
 				cvs.width = container.clientWidth;
                 cvs.height = container.clientHeight;
 			}
-			
+
 			var timer = setInterval(resize, 100);
-			
+
 			function parentCall(check){
 				if(check == "FILE_OK"){
 					hideUpload();
@@ -243,62 +286,62 @@
 					alert(check);
 				}
 			}
-			
+
 			function load (e){
 				alert("Dummy");
 				document.getElementById('projectDrawer').classList.add('hideMe');
 			}
-			
+
 			function add(){
 				var rm = document.getElementById('add-project');
 				rm.classList.remove('hideMe');
 			}
-			
+
 			const formType = {
 				REQUEST_FORM: 'RQ',
 				YES_NO_FORM: 'YN',
 				INFO_FORM: 'IF'
 			}
-			
+
 			class Form{
 				constructor(name, parent){
 					this.form = document.createElement('form');
 					parent.appendChild(this.form);
 					this.form.name = name;
 				}
-				
+
 				add(element) {
 					this.form.appendChild(element);
 				}
-				
-				
-				
+
+
+
 				get(){
 					return this.form;
 				}
 			}
-			
+
 			function mkForm(name,type,parent){
 				const f = new Form(name,parent);
-				
+
 				switch(type){
 					case formType.REQUEST_FORM:
 						f.add(document.createElement('label'));
 					case formType.YES_NO_FORM:
-					
+
 					case formType.INFO_FORM:
-					
+
 				}
 			}
-			
+
 			var client = function(progressFunc,finishFunc){
-				
+
 				var req;
 				var percent;
 				var msg;
 				var callOnProgress;
 				var callOnFinish;
-			
+
 				function updateProgress(e){
 					if(e.lengthComputable){
 						this.percent = e.loaded / e.total * 100;
@@ -320,11 +363,11 @@
 				function transferEnd(evt){
 					this.callOnFinish(msg);
 				}
-				
+
 				function load(uri){
-					this.req.open("GET", uri); 
+					this.req.open("GET", uri);
 				}
-				
+
 				this.req = new XMLHttpRequest()
 				this.req.addEventlistner("load", transferComplete);
 				this.req.addEventListener("progress", updateProgress);
@@ -336,10 +379,10 @@
 				console.log('client created.');
 			}
 			var jString = '{{ projects }}';
-			
+
 			var dec = jString.replace(/&quot;/g, '"');
 			var jsonObj = JSON.parse(dec);
-			
+
 			function showProjects(){
 				var el = document.getElementById('projectAdds');
 				var addDiv = document.getElementsByName('addProj')[0];
@@ -353,14 +396,14 @@
 					// TO-DO : IF NOT FINISHED, THEN LOADING SYM OVERLAY
 					el.insertBefore(pDiv,addDiv);
 				});
-				
+
 			}
-			
+
 			document.addEventListener('DOMContentLoaded', function() {
                 showProjects();
 			}, false);
-		</script>
-	</head>
+    </script>
+</head>
 	<body>
 		<div id="projectDrawer" class="scrollable" onLoad="showProjects();"> 
 			<div id="add-project" class="hideMe" onclick="return hideUpload();">
