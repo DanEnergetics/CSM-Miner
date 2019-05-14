@@ -33,6 +33,7 @@ import json
 from shutil import copyfile
 from django.conf import settings
 from django.views.generic.base import RedirectView
+import backend
 
 register = template.Library()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -120,6 +121,7 @@ def iframe(request,fileName):
 			with open(os.path.join(DEST_DIR,filename),'wb+') as dest:
 				for chunk in md.chunks():
 					dest.write(chunk)
+			backend.BackEnd.call()
 			return render(request, os.path.join(BASE_DIR,"HTMLDocs/",fileName), context)
 		context = {
 			'msg' : "Project already exists."
@@ -132,7 +134,6 @@ def iframe(request,fileName):
 
 
 def getImg(request,fileName):
-	print(BASE_DIR + "/HTMLDocs/images/" + fileName + ".png")
 	try:
 		with open(BASE_DIR + "/HTMLDocs/images/" + fileName + ".png", "rb") as f:
 			return HttpResponse(f.read(), content_type="image/jpeg")
@@ -148,7 +149,22 @@ def getJs(request,fileName):
 			return HttpResponse(js.read(), content_type="application/x-javascript")
 	except IOError:
 		return HttpResponse("<body>ERROR.</body>")
+
+def getText(request,fileName):
+	try:
+		content = file_get_contents(BASE_DIR + "/HTMLDocs/ext/res/" + fileName + ".txt")
+		return HttpResponse(content, content_type="text")
+	except IOError:
+		return HttpResponse("<body>ERROR.</body>")
 	
+def getCSS(request):
+	try:
+		content = file_get_contents(BASE_DIR + "/HTMLDocs/ext/css/common.css")
+		return HttpResponse(content, content_type="text/css")
+	except IOError:
+		return HttpResponse("<body>ERROR.</body>")
+	
+
 urlpatterns = [
     path('admin/', admin.site.urls),
 	path('', get),
@@ -157,4 +173,7 @@ urlpatterns = [
 	path('images/<slug:fileName>.png', getImg, name="fileName"),
 	path('<slug:fileName>.html', iframe, name="fileName"),
 	path('request/<slug:action>.json', request , name='action'),
+	#The following patterns are exclusively used by mxClient, therefor ONLY mxClient resources should be stored in the corresponding paths.
+	path('resources/<slug:fileName>.txt', getText, name="fileName"),
+	path('css/common.css',getCSS),
 ]

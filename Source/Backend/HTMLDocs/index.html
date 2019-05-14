@@ -3,25 +3,30 @@
     <title>
         A CSM-Miner dummy
     </title>
-    <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="/android-icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="57x57" href="/images/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/images/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/images/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/images/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/images/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/images/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/images/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/images/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/images/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/images/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
     <link rel="manifest" href="/manifest.json">
+    <link rel="shortcut icon" href="/favicon.ico">
     <meta name="msapplication-TileColor" content="#ffffff">
-    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <meta name="msapplication-TileImage" content="/images/ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
     <style>
         #projectDrawer {
+            -o-transition: .5s;
+            -ms-transition: .5s;
+            -moz-transition: .5s;
+            -webkit-transition: .5s;
             position: fixed;
             top: 0;
             left: 0;
@@ -101,6 +106,7 @@
         }
 
         .hideMe {
+            opacity: 0;
             visibility: hidden;
         }
 
@@ -255,7 +261,13 @@
             transform: translate(-50%, -50%) !important;
         }
     </style>
-    <script src='state-machine.js'></script>
+    <!-- Sets the basepath for the library if not in same directory -->
+    <script type="text/javascript">
+        mxBasePath = './';
+    </script>
+
+    <!-- Loads and initializes the library -->
+    <script type="text/javascript" src="./mxClient.js"></script>
     <script>
 
 
@@ -269,14 +281,6 @@
 				ifm.classList.add("hideMe");
 			}
 
-			function resize(){
-				var cvs = document.getElementById("view");
-				var container = document.getElementById("mainGraph");
-				cvs.width = container.clientWidth;
-                cvs.height = container.clientHeight;
-			}
-
-			var timer = setInterval(resize, 100);
 
 			function parentCall(check){
 				if(check == "FILE_OK"){
@@ -288,8 +292,33 @@
 			}
 
 			function load (e){
-				alert("Dummy");
-				document.getElementById('projectDrawer').classList.add('hideMe');
+                alert("Dummy");
+                var container = document.getElementById("mainGraph");
+                if (!mxClient.isBrowserSupported()){
+                    mxUtils.error('Browser is not supported!', 200, false);
+                }else{
+                    // Creates the graph inside the given container
+                    var graph = new mxGraph(container);
+
+                    // Enables rubberband selection
+                    new mxRubberband(graph);
+
+                    // Gets the default parent for inserting new cells. This
+                    // is normally the first child of the root (ie. layer 0).
+                    var parent = graph.getDefaultParent();
+
+                    // Adds cells to the model in a single step
+                    graph.getModel().beginUpdate();
+                    try{
+                        var v1 = graph.insertVertex(parent, null,'Hello,', 20, 20, 80, 30);
+                        var v2 = graph.insertVertex(parent, null,'World!', 200, 150, 80, 30);
+                        var e1 = graph.insertEdge(parent, null, '', v1, v2);
+                    }finally{
+                        // Updates the display
+                        graph.getModel().endUpdate();
+                    }
+                }
+                document.getElementById('projectDrawer').classList.add('hideMe');
 			}
 
 			function add(){
@@ -418,12 +447,7 @@
 			</div>
 		</div>
 		<div id="mainContainer">
-			<div id="mainGraph">
-				<canvas id="view">
-					BROWSER DOES NOT SUPPORT CANVAS.
-				</canvas>
-			 Such Graph. Much Wow.
-			</div>
+			<div id="mainGraph"></div>
 			<div id="views" class="scrollable">
 				<!--
 					TO-DO : ADD VIEW-LOADING
