@@ -65,26 +65,27 @@
             background-size: cover;
         }
 
-            #app .centered {
-                margin-block-start: 20px;
-                text-align: center;
-                font-size: 70pt;
-            }
+        #app .centered {
+            margin-block-start: 20px;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 70pt;
+        }
 
-            #app .bottom {
-                position: absolute;
-                top: 110px;
-                left: 45px;
-                z-index: 2;
-            }
+        #app .bottom {
+            position: absolute;
+            top: 110px;
+            left: 45px;
+            z-index: 2;
+        }
 
-            #app:hover {
-                box-sizing: border-box;
-                -moz-box-sizing: border-box;
-                -webkit-box-sizing: border-box;
-                border: 2px solid orange;
-                cursor: pointer;
-            }
+        #app:hover {
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            border: 2px solid orange;
+            cursor: pointer;
+        }
 
         iframe {
             min-width: fit-content;
@@ -148,13 +149,13 @@
             max-width: fit-content;
         }
 
-            #statusBar:hover {
-                opacity: 1;
-            }
+        #statusBar:hover {
+            opacity: 1;
+        }
 
-            #statusBar:leave {
-                opacity: 0.6;
-            }
+        #statusBar:leave {
+            opacity: 0.6;
+        }
 
         #views {
             -o-transition: .5s;
@@ -213,13 +214,20 @@
         }
 
         .elementUpdate {
-            animation: borderUpdate 0.5s linear 3;
+            animation: borderUpdate 1s linear 1;
         }
 
         @keyframes borderUpdate {
             50% {
-                border: 2px solid orange;
+                border: 3px solid orange;
             }
+        }
+
+        .notDone {
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            border: 2px solid red !important;
         }
 
         .scrollable {
@@ -279,166 +287,190 @@
     <!-- Loads and initializes the library -->
     <script type="text/javascript" src="./mxClient.js"></script>
     <script>
-			function hideUpload(){
-				var ifm = document.getElementById("add-project");
-				ifm.classList.add("hideMe");
+		function hideUpload(){
+			var ifm = document.getElementById("add-project");
+			ifm.classList.add("hideMe");
+		}
+
+
+		function parentCall(check){
+			if(check == "FILE_OK"){
+				hideUpload();
+				pReq.open("GET","/request/PROJECTS.json");
+				pReq.send();
+			}else if(check != ""){
+				alert(check);
 			}
+		}
 
+		function load (e){
+            alert("Dummy");
+            var container = document.getElementById("mainGraph");
+            if (!mxClient.isBrowserSupported()){
+                mxUtils.error('Browser is not supported!', 200, false);
+            }else{
+                // Creates the graph inside the given container
+                var graph = new mxGraph(container);
 
-			function parentCall(check){
-				if(check == "FILE_OK"){
-					hideUpload();
-					pReq.open("GET","/request/PROJECTS.json");
-					pReq.send();
-				}else if(check != ""){
-					alert(check);
-				}
-			}
+                // Enables rubberband selection
+                new mxRubberband(graph);
 
-			function load (e){
-                alert("Dummy");
-                var container = document.getElementById("mainGraph");
-                if (!mxClient.isBrowserSupported()){
-                    mxUtils.error('Browser is not supported!', 200, false);
-                }else{
-                    // Creates the graph inside the given container
-                    var graph = new mxGraph(container);
+                // Gets the default parent for inserting new cells. This
+                // is normally the first child of the root (ie. layer 0).
+                var parent = graph.getDefaultParent();
 
-                    // Enables rubberband selection
-                    new mxRubberband(graph);
-
-                    // Gets the default parent for inserting new cells. This
-                    // is normally the first child of the root (ie. layer 0).
-                    var parent = graph.getDefaultParent();
-
-                    // Adds cells to the model in a single step
-                    graph.getModel().beginUpdate();
-                    try{
-                        var v1 = graph.insertVertex(parent, null,'Hello,', 20, 20, 80, 30);
-                        var v2 = graph.insertVertex(parent, null,'World!', 200, 150, 80, 30);
-                        var e1 = graph.insertEdge(parent, null, '', v1, v2);
-                    }finally{
-                        // Updates the display
-                        graph.getModel().endUpdate();
-                    }
+                // Adds cells to the model in a single step
+                graph.getModel().beginUpdate();
+                try{
+                    var v1 = graph.insertVertex(parent, null,'Hello,', 20, 20, 80, 30);
+                    var v2 = graph.insertVertex(parent, null,'World!', 200, 150, 80, 30);
+                    var e1 = graph.insertEdge(parent, null, '', v1, v2);
+                }finally{
+                    // Updates the display
+                    graph.getModel().endUpdate();
                 }
-                document.getElementById('projectDrawer').classList.add('hideMe');
+            }
+            document.getElementById('projectDrawer').classList.add('hideMe');
+		}
+
+		function add(){
+			var rm = document.getElementById('add-project');
+			rm.classList.remove('hideMe');
+		}
+
+		const formType = {
+			REQUEST_FORM: 'RQ',
+			YES_NO_FORM: 'YN',
+			INFO_FORM: 'IF'
+		}
+
+		class Form{
+			constructor(name, parent){
+				this.form = document.createElement('form');
+				parent.appendChild(this.form);
+				this.form.name = name;
 			}
 
-			function add(){
-				var rm = document.getElementById('add-project');
-				rm.classList.remove('hideMe');
+			add(element) {
+				this.form.appendChild(element);
 			}
 
-			const formType = {
-				REQUEST_FORM: 'RQ',
-				YES_NO_FORM: 'YN',
-				INFO_FORM: 'IF'
+
+
+			get(){
+				return this.form;
 			}
+		}
 
-			class Form{
-				constructor(name, parent){
-					this.form = document.createElement('form');
-					parent.appendChild(this.form);
-					this.form.name = name;
-				}
+		function mkForm(name,type,parent){
+			const f = new Form(name,parent);
 
-				add(element) {
-					this.form.appendChild(element);
-				}
+			switch(type){
+				case formType.REQUEST_FORM:
+					f.add(document.createElement('label'));
+				case formType.YES_NO_FORM:
 
+				case formType.INFO_FORM:
 
-
-				get(){
-					return this.form;
-				}
 			}
-
-			function mkForm(name,type,parent){
-				const f = new Form(name,parent);
-
-				switch(type){
-					case formType.REQUEST_FORM:
-						f.add(document.createElement('label'));
-					case formType.YES_NO_FORM:
-
-					case formType.INFO_FORM:
-
-				}
-			}
+		}
 
 				
 			
-			var jString = '{{ projects }}';
+		var jString = '{{ projects }}';
 
-			var dec = jString.replace(/&quot;/g, '"');
-			var jsonObj = JSON.parse(dec);
+		var dec = jString.replace(/&quot;/g, '"');
+		var jsonObj = JSON.parse(dec);
 
-			function showProjects(){
-				var el = document.getElementById('projectAdds');
-				var addDiv = document.getElementsByName('addProj')[0];
-				jsonObj.forEach(function(element){
-					var pDiv = document.createElement("div");
-					pDiv.setAttribute("name",element.filename);
-					pDiv.id = "app";
-					pDiv.style = "background-image: url('" + element.backgroundImgPath +"');"
-					var lblName = document.createTextNode(element.name);
-					var pVar = document.createElement('p');
-					pVar.appendChild(lblName);
-					pVar.classList.add('bottom');
-					pDiv.appendChild(pVar);
-					if(!element.preProcessed){
-						var ld = document.createElement('div');
-						ld.id = "unfinished";
-						pDiv.appendChild(ld);
-						pDiv.setAttribute("onClick","alert('Still processing files.');");
-					}else{
-						pDiv.setAttribute("onClick","return load(this);");
-					}
-					// TO-DO : IF HOLDING DOWN, THEN OPTION TO REMOVE
-					el.insertBefore(pDiv,addDiv);
-				});
+		function showProjects(){
+			var el = document.getElementById('projectAdds');
+			var addDiv = document.getElementsByName('addProj')[0];
+			jsonObj.forEach(function(element){
+                makeElement(element,el,true);
+			});
 
-			}
+		}
 
-			document.addEventListener('DOMContentLoaded', function() {
-                showProjects();
-			}, false);
+		document.addEventListener('DOMContentLoaded', function() {
+            showProjects();
+		}, false);
 			
-			var pReq = new XMLHttpRequest();
+		var pReq = new XMLHttpRequest();
+
+        function jsonContains(element, json) {
+            json.forEach(function (el) {
+                if (element === el) {
+                    return true;
+                }
+            });
+            return false;
+        }
+
+        function makeElement(el, par, onStart = false) {
+            var addDiv = document.getElementsByName('addProj')[0];
+            var pDiv = document.createElement("div");
+			pDiv.setAttribute("name",el.filename);
+			pDiv.id = "app";
+			pDiv.style = "background-image: url('" + el.backgroundImgPath +"');"
+			var lblName = document.createTextNode(el.name);
+			var pVar = document.createElement('p');
+			pVar.appendChild(lblName);
+			pVar.classList.add('bottom');
+			pDiv.appendChild(pVar);
+			if(!el.preProcessed){
+				var ld = document.createElement('div');
+				ld.id = "unfinished";
+				pDiv.appendChild(ld);
+                pDiv.setAttribute("onClick", "alert('Still processing files.');");
+                pDiv.classList.add("notDone");
+			}else{
+				pDiv.setAttribute("onClick","return load(this);");
+            }
+            if (!onStart) {
+                pDiv.classList.add("elementUpdate");
+            }
+            // TO-DO : IF HOLDING DOWN, THEN OPTION TO REMOVE
+			par.insertBefore(pDiv,addDiv);
+        }
+
+        function updateElement(element) {
+            element.classList.add("elementUpdate");
+        }
+
+		function updateProjects(){
+			var parent = document.getElementById('projectAdds');
+            jsonObj.forEach(function (el) {
+                if (!jsonContains(el, JSON.parse(jString.replace(/&quot;/g, '"')))) {
+                    parent.removeChild(document.getElementsByName(el.filename)[0]);
+                }
+            });
+            JSON.parse(jString.replace(/&quot;/g, '"')).forEach(function (element) {
+                if (!jsonContains(element, jsonObj)) {
+                    makeElement(element, parent);
+                }
+            });
+            dec = jString.replace(/&quot;/g, '"');
+			jsonObj = JSON.parse(dec);
+        }
 			
-			function removeProjects(){
-				var parent = document.getElementById('projectAdds');
-				jsonObj.forEach(function(el){
-					parent.removeChilds(document.getElementsByName(el.name));
-				});
-			}
-			
-			function updateProjects(){
-				removeProjects();
-				dec = jString.replace(/&quot;/g, '"');
-				jsonObj = JSON.parse(dec);
-				showProjects();
-			}
-			
-			function loadDone(evt){
-				if(pReq.status >= 200 && pReq.status < 300){
-					jString = pReq.responseText;
-					if(dec != jString.replace(/&quot;/g, '"')){
-						console.log("Change noticed.");
-						updateProjects();
-					}
-				}else{
-					console.warn(pReq.statusText,pReq.responseText);
+		function loadDone(evt){
+			if(pReq.status >= 200 && pReq.status < 300){
+				jString = pReq.responseText;
+				if(dec != jString.replace(/&quot;/g, '"')){
+					console.log("Change noticed.");
+					updateProjects();
 				}
+			}else{
+				console.warn(pReq.statusText,pReq.responseText);
 			}
+		}
 			
-			pReq.addEventListener("load", loadDone);
+		pReq.addEventListener("load", loadDone);
 			
-			setInterval(function(){
-				pReq.open("GET","/request/PROJECTS.json");
-				pReq.send();
-			},1000);
+		setInterval(function(){
+			pReq.open("GET","/request/PROJECTS.json");
+			pReq.send();
+		},1000);
     </script>
 </head>
 	<body>

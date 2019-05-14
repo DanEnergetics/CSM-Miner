@@ -4,7 +4,9 @@
     "\\CSMMiner",
     "\\HTMLDocs",
     "\\HTMLDocs\\ext",
-    "\\Storage"
+    "\\Storage",
+    "\\Storage\\d0dee8954acac118e7578c0a821d7be5ea632f232dae095d00c01b32a8e8ecf1",
+    "\\Storage\\DUMMY"
   ],
   "SelectedNode": "\\CSMMiner\\urls.py",
   "PreviewInSolutionExplorer": false
