@@ -53,6 +53,11 @@
             grid-template-columns: repeat(auto-fill, 150px);
             grid-template-rows: repeat(auto-fill, 150px);
         }
+        
+        .dummyView {
+        	 background-image: url("./images/apple-icon.png");
+        	 background-size: cover;
+        }
 
         #app {
             position: relative;
@@ -302,9 +307,27 @@
 				alert(check);
 			}
 		}
-
+		
+		var current;
+		
+		function getJson(name){
+			var rt = null;
+			jsonObj.forEach(function(element,index){
+                if(element.filename == name){
+                	rt = jsonObj[index];
+                }
+			});
+			if ( rt == null )
+				return "Error";
+			else
+				return rt;
+		}
+		
 		function load (e){
             alert("Dummy");
+            console.log(e.getAttribute("name"));
+            inProject = true;
+            current = getJson(e.getAttribute("name"));
             var container = document.getElementById("mainGraph");
             if (!mxClient.isBrowserSupported()){
                 mxUtils.error('Browser is not supported!', 200, false);
@@ -436,6 +459,8 @@
         function updateElement(element) {
             element.classList.add("elementUpdate");
         }
+        
+        var inProject = false;
 
 		function updateProjects(){
 			var parent = document.getElementById('projectAdds');
@@ -452,13 +477,27 @@
             dec = jString.replace(/&quot;/g, '"');
 			jsonObj = JSON.parse(dec);
         }
+		
+		var myViews = 0;
 			
 		function loadDone(evt){
 			if(pReq.status >= 200 && pReq.status < 300){
-				jString = pReq.responseText;
-				if(dec != jString.replace(/&quot;/g, '"')){
-					console.log("Change noticed.");
-					updateProjects();
+				if(inProject){
+					var i = JSON.parse(pReq.responseText).viewCount;
+					while(i > myViews){
+						var v = document.createElement('div');
+						v.classList.add("element");
+						v.classList.add("dummyView");
+						var par = document.getElementById('views');
+						par.append(v);
+						myViews++;
+					}
+				}else{
+					jString = pReq.responseText;
+					if(dec != jString.replace(/&quot;/g, '"')){
+						console.log("Change noticed.");
+						updateProjects();
+					}
 				}
 			}else{
 				console.warn(pReq.statusText,pReq.responseText);
@@ -468,8 +507,13 @@
 		pReq.addEventListener("load", loadDone);
 			
 		setInterval(function(){
-			pReq.open("GET","/request/PROJECTS.json");
-			pReq.send();
+			if(inProject){
+				pReq.open("GET","/request/" + current.name + ".json");
+				pReq.send();
+			}else{
+				pReq.open("GET","/request/PROJECTS.json");
+				pReq.send();
+			}
 		},1000);
     </script>
 </head>

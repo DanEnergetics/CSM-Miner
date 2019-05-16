@@ -94,6 +94,8 @@ def request(rq,action):
 		return HttpResponseNotFound("Error.")
 	if action == "PROJECTS":
 		return HttpResponse(get_projects(), content_type="application/json")
+	elif action == "Dummy":
+		return HttpResponse('{"viewCount" : 2}', content_type="application/json")
 	try:
 		jFile = file_get_contents(BASE_DIR + "/Storage/" + action + "/graph.json")
 		return HttpResponse(jFile, content_type="application/json")
