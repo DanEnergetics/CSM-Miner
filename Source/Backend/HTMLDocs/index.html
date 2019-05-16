@@ -152,6 +152,7 @@
             left: 0;
             bottom: 0;
             z-index: 9;
+            font-size: 2em;
             background-color: grey;
             min-height: fit-content;
             max-height: fit-content;
@@ -347,9 +348,24 @@
             	alert("Still processing...");
             }
 		}
+		function mouseDownInGraph(sender,evt){
+			console.log(sender);
+			console.log(evt);
+			if(evt.sourceState == undefined){
+				return;
+			}
+			var state_changed = document.getElementById('statusBar');
+			state_changed.style.opacity = 1;
+			if(evt.sourceState.cell.value == "" && evt.sourceState.cell.edge){
+				state_changed.innerText = "Edgy! ;)";
+			}else{
+				state_changed.innerText = evt.sourceState.cell.value;
+			}
+		}
+		
+		var graph;
 		
 		function load (e){
-			console.log(e);
 			if(e.classList.contains("rmApp")){
             	var rmReq = new XMLHttpRequest();
             	rmReq.open("GET","/requests/rm/" + e.getAttribute("name"));
@@ -365,7 +381,7 @@
                 mxUtils.error('Browser is not supported!', 200, false);
             }else{
                 // Creates the graph inside the given container
-                var graph = new mxGraph(container);
+                graph = new mxGraph(container);
 
                 // Enables rubberband selection
                 new mxRubberband(graph);
@@ -384,6 +400,15 @@
                     // Updates the display
                     graph.getModel().endUpdate();
                 }
+                graph.addMouseListener({
+					mouseDown: function(sender, evt){
+						mouseDownInGraph(sender,evt);
+					},mouseMove: function(sender, evt){
+						
+  					},mouseUp: function(sender, evt){
+    					
+  					}
+				});
             }
             document.getElementById('projectDrawer').classList.add('hideMe');
 		}
@@ -598,7 +623,7 @@
 				Such menuBar. Much Wow.
 			</div>
 			<div id="menuBar">
-			 	<button onClick="return showMenu();" >Menu</button>
+			 	<button style="height:50px; width:89px; font-size:12pt;" onClick="return showMenu();" >Menu</button>
 			</div>
 		</div>
 	</body>

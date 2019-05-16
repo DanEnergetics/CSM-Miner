@@ -96,7 +96,7 @@ def request(rq,action):
 	if action == "PROJECTS":
 		return HttpResponse(get_projects(), content_type="application/json")
 	elif action == "Dummy":
-		return HttpResponse('{"viewCount" : 2}', content_type="application/json")
+		return HttpResponse('{"viewCount" : 4}', content_type="application/json")
 	try:
 		jFile = file_get_contents(BASE_DIR + "/Storage/" + action + "/graph.json")
 		return HttpResponse(jFile, content_type="application/json")
@@ -197,6 +197,7 @@ def rm(r,project):
 		print(hexed)
 		dir = os.path.join(BASE_DIR,'./Storage/',hexed)	
 		shutil.rmtree(dir,True)
+		return HttpResponse("OK")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
