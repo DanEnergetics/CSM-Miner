@@ -34,6 +34,7 @@ from shutil import copyfile
 from django.conf import settings
 from django.views.generic.base import RedirectView
 import backend
+import shutil
 
 register = template.Library()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -188,7 +189,14 @@ def getMani(request):
 		return HttpResponse(content, content_type="application/json")
 	except IOError:
 		return HttpResponse("<body>ERROR.</body>")
-	
+def rm(r,project):
+	if project != "Dummy":
+		name = project + ".xes"
+		hashedName = hashlib.sha256(name.encode())
+		hexed = hashedName.hexdigest()
+		print(hexed)
+		dir = os.path.join(BASE_DIR,'./Storage/',hexed)	
+		shutil.rmtree(dir,True)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -197,6 +205,7 @@ urlpatterns = [
 	path('images/<slug:fileName>.png', getImg, name="fileName"),
 	path('<slug:fileName>.svg', getSVG, name="fileName"),
 	path('<slug:fileName>.html', iframe, name="fileName"),
+	path('request/rm/<slug:project>.xes', rm, name="project"),
 	path('request/<slug:action>.json', request , name='action'),
 	#The following patterns are exclusively used by mxClient, therefor ONLY mxClient resources should be stored in the corresponding paths.
 	path('resources/<slug:fileName>.txt', getText, name="fileName"),

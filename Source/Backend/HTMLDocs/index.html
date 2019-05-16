@@ -115,6 +115,11 @@
             opacity: 0;
             visibility: hidden;
         }
+        .rmApp {
+        	-webkit-box-shadow: 0px 0px 50px -1px rgba(0,0,0,0.79);
+            -moz-box-shadow: 0px 0px 50px -1px rgba(0,0,0,0.79);
+            box-shadow: 0px 0px 50px -1px rgba(0,0,0,0.79);
+        }
 
         #loading {
             position: fixed;
@@ -296,6 +301,15 @@
 			var ifm = document.getElementById("add-project");
 			ifm.classList.add("hideMe");
 		}
+		
+		function stopRM(){
+			var container = document.getElementById("projectAdds");
+			for(var i = 0;i < container.childElementCount-2;i++){
+				if(container.children[i].getAttribute('name') != "Dummy.xes"){
+					container.children[i].classList.remove("rmApp");
+				}
+			}
+		}
 
 
 		function parentCall(check){
@@ -323,8 +337,26 @@
 				return rt;
 		}
 		
+		function notDoneOrRM(e){
+			if(e.classList.contains("rmApp")){
+            	var rmReq = new XMLHttpRequest();
+            	rmReq.open("GET","/request/rm/" + e.getAttribute("name"));
+            	rmReq.send();
+            	alert("Attempting to remove...");
+            }else{
+            	alert("Still processing...");
+            }
+		}
+		
 		function load (e){
-            alert("Dummy");
+			console.log(e);
+			if(e.classList.contains("rmApp")){
+            	var rmReq = new XMLHttpRequest();
+            	rmReq.open("GET","/requests/rm/" + e.getAttribute("name"));
+            	rmReq.send();
+            	alert("Attempting to remove...");
+            	return;
+            }
             console.log(e.getAttribute("name"));
             inProject = true;
             current = getJson(e.getAttribute("name"));
@@ -356,6 +388,11 @@
             document.getElementById('projectDrawer').classList.add('hideMe');
 		}
 
+		function showMenu(){
+			inProject = false;
+			document.getElementById('projectDrawer').classList.remove('hideMe');
+		}	
+		
 		function add(){
 			var rm = document.getElementById('add-project');
 			rm.classList.remove('hideMe');
@@ -444,7 +481,7 @@
 				var ld = document.createElement('div');
 				ld.id = "unfinished";
 				pDiv.appendChild(ld);
-                pDiv.setAttribute("onClick", "alert('Still processing files.');");
+                pDiv.setAttribute("onClick", "return notDoneOrRM(this);");
                 pDiv.classList.add("notDone");
 			}else{
 				pDiv.setAttribute("onClick","return load(this);");
@@ -515,18 +552,38 @@
 				pReq.send();
 			}
 		},1000);
+		var rmv = false;
+		function remove(){
+			if(rmv){
+				stopRM();
+				rmv = false;
+				return;
+			}
+			rmv = true;
+			var container = document.getElementById('projectAdds');
+			for(var i = 0;i < container.childElementCount-2;i++){
+				if(container.children[i].getAttribute('name') != "Dummy.xes"){
+					container.children[i].classList.add("rmApp");
+				}
+			}
+			alert("Click Project to delete");
+		}
     </script>
 </head>
 	<body>
-		<div id="projectDrawer" class="scrollable" onLoad="showProjects();"> 
+		<div id="projectDrawer" class="scrollable" onLoad="showProjects();" onClick=""> 
 			<div id="add-project" class="hideMe" onclick="return hideUpload();">
 				<iframe id="myframe" frameborder="0" src="./uploadForm.html" width="600px" height="800px">Your Browser does not support the iframe tag.</iframe>
 			</div>
 			<h3 style="text-align:center;">Projects</h3>
 			<div class="projectContainer" id="projectAdds" class="scrollable">
 				<div onclick="return add();"  id="app" name="addProj">
-				<p class="centered">+</p>
-				<p class="bottom">Add new</p>
+					<p class="centered">+</p>
+					<p class="bottom">Add new</p>
+				</div>
+				<div onclick="return remove();"  id="app" name="rmProj">
+					<p class="centered">-</p>
+					<p class="bottom">Remove</p>
 				</div>
 			</div>
 		</div>
@@ -538,10 +595,10 @@
 				-->
 			</div>
 			<div id="statusBar">
-			 Such status info. Much Wow.
+				Such menuBar. Much Wow.
 			</div>
 			<div id="menuBar">
-			 Such menuBar. Much Wow.
+			 	<button onClick="return showMenu();" >Menu</button>
 			</div>
 		</div>
 	</body>
