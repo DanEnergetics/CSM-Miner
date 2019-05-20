@@ -13,28 +13,26 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-import datetime
-import os
-from django.shortcuts import render
-from django.contrib import admin
-from django.urls import path
-from django.http import HttpResponse
-from django import template, forms
-from django.shortcuts import render
-from django.http import HttpResponse
-from django.template import RequestContext, loader, Template, Context
-from django.views.decorators.csrf import csrf_protect
-from django.core.files import File
-from django.http import HttpResponseNotFound
-from django.conf.urls import (handler400, handler403, handler404, handler500)
-from xml.dom import minidom
-import hashlib
-import json
-from shutil import copyfile
-from django.conf import settings
-from django.views.generic.base import RedirectView
-import backend
 import shutil
+import os
+import json
+import hashlib
+import datetime
+import backend
+from xml.dom import minidom
+from shutil import copyfile
+from django.views.generic.base import RedirectView
+from django.views.decorators.csrf import csrf_protect
+from django.urls import path
+from django.template import RequestContext, loader, Template, Context
+from django.shortcuts import render
+from django.http import HttpResponse, HttpResponseNotFound
+from django.core.files import File
+from django.contrib import admin
+from django.conf.urls import (handler400, handler403, handler404, handler500)
+from django.conf import settings
+from django import template, forms
+
 
 register = template.Library()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -147,20 +145,15 @@ def getImg(request,fileName):
 		with open(BASE_DIR + "/HTMLDocs/images/" + fileName + ".png", "rb") as f:
 			return HttpResponse(f.read(), content_type="image/jpeg")
 	except IOError:
-		red = Image.new('RGBA', (1, 1), (255,0,0,0))
-		response = HttpResponse(content_type="image/jpeg")
-		red.save(response, "JPEG")
-		return response
+		return HttpResponse("<body>Mr Moony presents his compliments to Professor Snape and begs him to keep his abnormally large nose out of other people's business. Mr Prongs agrees with Mr Moony and would like to add that Professor Snape is an ugly git. Mr Padfoot would like to register his astonishment that an idiot like that ever became a Professor. Mr Wormtail bids Professor Snape good day, and advises him to wash his hair, the slime-ball.</body>",content_type="text/html")
 		
 def getSVG(request,fileName):
 	try:
 		with open(BASE_DIR + "/HTMLDocs/images/" + fileName + ".svg", "rb") as f:
 			return HttpResponse(f.read(), content_type="image/svg+xml")
 	except IOError:
-		red = Image.new('RGBA', (1, 1), (255,0,0,0))
-		response = HttpResponse(content_type="image/svg+xml")
-		red.save(response, "JPEG")
-		return response
+			return HttpResponse("<body>Mr Moony presents his compliments to Professor Snape and begs him to keep his abnormally large nose out of other people's business. Mr Prongs agrees with Mr Moony and would like to add that Professor Snape is an ugly git. Mr Padfoot would like to register his astonishment that an idiot like that ever became a Professor. Mr Wormtail bids Professor Snape good day, and advises him to wash his hair, the slime-ball.</body>",content_type="text/html")
+
 		
 def getJs(request,fileName):
 	try:
