@@ -199,6 +199,10 @@ def rm(r,project):
 		shutil.rmtree(dir,True)
 		return HttpResponse("OK")
 
+def getSampleJson(r):
+	jsonF = file_get_contents(BASE_DIR + "/HTMLDocs/sample.json")
+	return HttpResponse(jsonF,content_type="application/json")
+
 urlpatterns = [
     path('admin/', admin.site.urls),
 	path('', get),
@@ -214,4 +218,6 @@ urlpatterns = [
 	#Favicon links
 	path('manifest.json',getMani),
 	path('favicon.ico', RedirectView.as_view(url=settings.STATIC_URL + 'favicon.ico')),
+	#sample json
+	path('sample.json',getSampleJson),
 ]
