@@ -19,6 +19,7 @@ import json
 import hashlib
 import datetime
 import backend
+import CSMSocket
 from xml.dom import minidom
 from shutil import copyfile
 from django.views.generic.base import RedirectView
@@ -30,12 +31,14 @@ from django.http import HttpResponse, HttpResponseNotFound
 from django.core.files import File
 from django.contrib import admin
 from django.conf.urls import (handler400, handler403, handler404, handler500)
+from django.conf.urls import include, url
 from django.conf import settings
 from django import template, forms
 
 
 register = template.Library()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+snooping = HttpResponse("<body>Mr Moony presents his compliments to Professor Snape and begs him to keep his abnormally large nose out of other people's business. Mr Prongs agrees with Mr Moony and would like to add that Professor Snape is an ugly git. Mr Padfoot would like to register his astonishment that an idiot like that ever became a Professor. Mr Wormtail bids Professor Snape good day, and advises him to wash his hair, the slime-ball.</body>",content_type="text/html")
 
 def file_get_contents(filename):
     with open(filename) as f:
@@ -99,7 +102,7 @@ def request(rq,action):
 		jFile = file_get_contents(BASE_DIR + "/Storage/" + action + "/graph.json")
 		return HttpResponse(jFile, content_type="application/json")
 	except IOError:
-		return HttpResponseNotFound("404")
+		return snooping
 	
 @register.filter
 @csrf_protect
@@ -145,14 +148,14 @@ def getImg(request,fileName):
 		with open(BASE_DIR + "/HTMLDocs/images/" + fileName + ".png", "rb") as f:
 			return HttpResponse(f.read(), content_type="image/jpeg")
 	except IOError:
-		return HttpResponse("<body>Mr Moony presents his compliments to Professor Snape and begs him to keep his abnormally large nose out of other people's business. Mr Prongs agrees with Mr Moony and would like to add that Professor Snape is an ugly git. Mr Padfoot would like to register his astonishment that an idiot like that ever became a Professor. Mr Wormtail bids Professor Snape good day, and advises him to wash his hair, the slime-ball.</body>",content_type="text/html")
-		
+		return snooping
+
 def getSVG(request,fileName):
 	try:
 		with open(BASE_DIR + "/HTMLDocs/images/" + fileName + ".svg", "rb") as f:
 			return HttpResponse(f.read(), content_type="image/svg+xml")
 	except IOError:
-			return HttpResponse("<body>Mr Moony presents his compliments to Professor Snape and begs him to keep his abnormally large nose out of other people's business. Mr Prongs agrees with Mr Moony and would like to add that Professor Snape is an ugly git. Mr Padfoot would like to register his astonishment that an idiot like that ever became a Professor. Mr Wormtail bids Professor Snape good day, and advises him to wash his hair, the slime-ball.</body>",content_type="text/html")
+			return snooping
 
 		
 def getJs(request,fileName):
@@ -160,28 +163,28 @@ def getJs(request,fileName):
 		with open(BASE_DIR + "/HTMLDocs/ext/" + fileName + ".js") as js:
 			return HttpResponse(js.read(), content_type="application/x-javascript")
 	except IOError:
-		return HttpResponse("<body>ERROR.</body>")
+		return snooping
 
 def getText(request,fileName):
 	try:
 		content = file_get_contents(BASE_DIR + "/HTMLDocs/ext/res/" + fileName + ".txt")
 		return HttpResponse(content, content_type="text")
 	except IOError:
-		return HttpResponse("<body>ERROR.</body>")
+		return snooping
 	
 def getCSS(request):
 	try:
 		content = file_get_contents(BASE_DIR + "/HTMLDocs/ext/css/common.css")
 		return HttpResponse(content, content_type="text/css")
 	except IOError:
-		return HttpResponse("<body>ERROR.</body>")
+		return snooping
 	
 def getMani(request):
 	try:
 		content = file_get_contents(BASE_DIR + "/HTMLDocs/images/manifest.json")
 		return HttpResponse(content, content_type="application/json")
 	except IOError:
-		return HttpResponse("<body>ERROR.</body>")
+		return snooping
 def rm(r,project):
 	if project != "Dummy":
 		name = project + ".xes"
@@ -195,6 +198,21 @@ def rm(r,project):
 def getSampleJson(r):
 	jsonF = file_get_contents(BASE_DIR + "/HTMLDocs/sample.json")
 	return HttpResponse(jsonF,content_type="application/json")
+
+CU = {
+	'UID' : '99adc231b045331e514a516b4b7680f588e3823213abe901738bc3ad67b2f6fcb3c64efb93d18002588d3ccc1a49efbae1ce20cb43df36b38651f11fa75678e8',
+}
+
+def createUID(r):
+	ip = r.META.get('REMOTE_ADDR')
+	time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+	UID = hashlib.sha512((ip+time).encode('utf-8'))
+	CU.update({ip : UID})
+	print(CU)
+	return HttpResponse("OK")
+
+def removeUID(UID):
+	print("Not implemented.")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -213,4 +231,7 @@ urlpatterns = [
 	path('favicon.ico', RedirectView.as_view(url=settings.STATIC_URL + 'favicon.ico')),
 	#sample json
 	path('sample.json',getSampleJson),
+	#Socket communication
+	path('Socket/open.connection', createUID),
+	path('Socket/', include('CSMSocket.urls')),
 ]
