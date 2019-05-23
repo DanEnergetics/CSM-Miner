@@ -35,3 +35,5 @@ class viewItem:
     def addChild(self,Node):
         self.children.append(Node)
     
+    def removeChild(self,Node):
+        self.children.remove(Node)
