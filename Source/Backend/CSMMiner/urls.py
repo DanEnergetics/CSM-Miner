@@ -34,6 +34,7 @@ from django.conf.urls import (handler400, handler403, handler404, handler500)
 from django.conf.urls import include, url
 from django.conf import settings
 from django import template, forms
+from View.ViewSet import ViewSet
 
 
 register = template.Library()

@@ -3,19 +3,22 @@ from View.viewItem import viewItem
 
 class ViewSet:
     head = viewItem()
+    
+    def setHead(self,node):
+        self.head = node
 
     def get(self, req, limit = "none"):
         action = req.split('.')
         if limit == "none":
             maxNode = 0
         else :
-            maxNode = action.len()-1-limit if action.len()-limit > 0 else 0
+            maxNode = len(action)-1-limit if len(action)-limit > 0 else 0
         curNode = self.head
         if curNode.getName() != action[0]:
             print("Wrong head selected.")
             return "WHError"
         tempNode = viewItem()
-        for i in range(1,action.len() - limit):
+        for i in range(1,len(action) - limit):
             tempNode = curNode.getChild(action[i])
             if curNode.isChild(tempNode):
                 print("Going into : " + action[i])
@@ -42,12 +45,12 @@ class ViewSet:
             return 
         node.setValue(value)
 
+    def toJSON(self):
+        return "{\n"+self.head.toString(1)+"\n}"
+
 
     def clear(self):
-        head = viewItem
+        self.head = viewItem
 
     def fromJSON(json):
         return ViewSet()
-
-    def toJSON(self):
-        return json.dump(self)
