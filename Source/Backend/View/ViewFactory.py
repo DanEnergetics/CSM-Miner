@@ -58,7 +58,8 @@ def buildViewSetFromJSON(pathToViewJSON, pathToPartitionJSON):
     # return view set
     complete = ViewSet()
     for view in view_list:
-        complete.addView(complete, view)
+        complete.addView(view)
+        
     return complete
 
     
