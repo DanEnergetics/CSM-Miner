@@ -7,6 +7,9 @@ from pm4py.objects.conversion.log import factory as log_conversion
 from pm4py.objects.log.util import xes as xes_util
 from pm4py.objects.log.util import general as log_util
 
+import json
+import urls
+
 import os
 
 
@@ -43,7 +46,19 @@ def buildViewFromXES(pathToXES):
                 directSuccessors[source][target] = 1
 
 
+def buildViewSetFromJSON(pathToViewJSON, pathToPartitionJSON):
+    # read File
+    ViewContent = file_get_contents(pathToViewJSON)
+    # to dict
     
-
+    view_list = []
+    for view in ViewContent :
+        view_list.append(view.fromJson(view)) 
+        
+    # return view set
+    complete = ViewSet()
+    for view in view_list:
+        complete.addView(complete, view)
+    return complete
 
     
