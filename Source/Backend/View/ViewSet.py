@@ -1,56 +1,64 @@
 import json
-from View.viewItem import viewItem
 
 class ViewSet:
-    head = viewItem()
+    views = []
+    def __init__(self):
+        self.views = []
     
-    def setHead(self,node):
-        self.head = node
+    def addView(self,_View):
+        self.views.append(_View)
+    
+    def rmView(self,_View):
+        if _View in self.views:
+            self.views.remove(_View)
 
-    def get(self, req, limit = "none"):
-        action = req.split('.')
-        if limit == "none":
-            maxNode = 0
-        else :
-            maxNode = len(action)-1-limit if len(action)-limit > 0 else 0
-        curNode = self.head
-        if curNode.getName() != action[0]:
-            print("Wrong head selected.")
-            return "WHError"
-        tempNode = viewItem()
-        for i in range(1,len(action) - limit):
-            tempNode = curNode.getChild(action[i])
-            if curNode.isChild(tempNode):
-                print("Going into : " + action[i])
-                curNode = tempNode
-            else :
-                print(action[i] + " is not a child from " + action[i-1] + " complete request was : " + req)
-                return "NCError"
-        return curNode
+    def getViews(self):
+        return self.views
+    
+    def getView(self,Pos):
+        if len(self.views) > Pos:
+            return self.views[Pos]
 
-    def add(self,_NodeName,_NodeValue,_ParentNode = ""):
-        parent = self.get(_ParentNode) if isinstance(_ParentNode,str) else _ParentNode
-        n = viewItem(_NodeName,_NodeValue)
-        parent.addChild(n)
+class View:
+    nodes = []
+    directSucc = {{}}
+    indirectSucc = {{}}
 
-    def remove(self,req):
-        parent = self.get(req,1)
-        parent.removeChild(parent.getChild(req.split('.')[req.split('.').len()-1]))
-        
+    def __init__(self,_nodes = [],_directSucc= {{}},_indirectSucc = {{}}):
+        self.nodes = _nodes
+        self.directSucc = _directSucc
+        self.indirectSucc = _indirectSucc
+    
+    def addNode(self,_Node):
+        nodes.append(_Node)
 
-    def set(self,name,value):
-        node = self.get(name)
-        if not isinstance(node,str):
-            print("Error while setting, see above")
-            return 
-        node.setValue(value)
+    def addDirectSucc(self,sourceNode, targetNode,frequency):
+        self.directSucc[sourceNode][targetNode] = frequency
+    
+    def addIndirectSucc(self,sourceNode, targetNode,frequency):
+        self.indirectSucc[sourceNode][targetNode] = frequency
+    
 
-    def toJSON(self):
-        return "{\n"+self.head.toString(1)+"\n}"
+    def getNodes(self):
+        return self.nodes
+    
+    def getIndir(self):
+        return self.indirectSucc
 
+    def getDirect(self):
+        return self.directSucc
 
-    def clear(self):
-        self.head = viewItem
+    def toJson(self):
+        main = []
+        main.append(self.nodes)
+        main.append(self.directSucc)
+        main.append(self.indirectSucc)
+        return json.dumps(main,indent=4,sort_keys=True)
 
-    def fromJSON(json):
-        return ViewSet()
+    def fromJson(jsonString):
+        main = json.loads(jsonString)
+        try:
+            rt = View(main[0],main[1],main[2])
+            return rt
+        except:    
+            return "Error"
