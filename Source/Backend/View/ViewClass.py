@@ -14,11 +14,13 @@ class View:
         nodes.append(_Node)
 
     def addDirectSucc(self,sourceNode, targetNode,frequency):
-        sel.directSucc[sourceNode] = {}
+        if not isinstance(self.directSucc[sourceNode],dict):
+            self.directSucc[sourceNode] = {}
         self.directSucc[sourceNode][targetNode] = frequency
     
     def addIndirectSucc(self,sourceNode, targetNode,frequency):
-        self.indirectSucc[sourceNode] = {}
+        if not isinstance(self.indirectSucc[sourceNode],dict):
+            self.indirectSucc[sourceNode] = {}
         self.indirectSucc[sourceNode][targetNode] = frequency
     
 
