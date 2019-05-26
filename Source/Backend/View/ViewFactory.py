@@ -48,7 +48,7 @@ def buildViewFromXES(pathToXES):
 
 def buildViewSetFromJSON(pathToViewJSON, pathToPartitionJSON):
     # read File
-    ViewContent = file_get_contents(pathToViewJSON)
+    ViewContent = json.loads(file_get_contents(pathToViewJSON))
     # to dict
     
     view_list = []
