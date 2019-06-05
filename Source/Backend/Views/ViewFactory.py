@@ -1,4 +1,5 @@
-from csm.graphs import View, ViewSet
+from ViewClass import View
+import ViewSet
 from pm4py import util as pmutil
 from pm4py.objects.log.importer.xes import factory as xes_importer
 from pm4py.algo.discovery.dfg import factory as dfg_factory
