@@ -1,4 +1,4 @@
-from View.ViewSet import ViewSet
+from Views import ViewFactory
 
 class BackEnd:
 	def call():

@@ -1,3 +1,6 @@
+from ViewClass import View
+import ViewSet
+
 from pm4py import util as pmutil
 from pm4py.objects.log.importer.xes import factory as xes_importer
 from pm4py.algo.discovery.dfg import factory as dfg_factory
@@ -5,7 +8,9 @@ from pm4py.objects.log.adapters.pandas import csv_import_adapter
 from pm4py.objects.conversion.log import factory as log_conversion
 from pm4py.objects.log.util import xes as xes_util
 from pm4py.objects.log.util import general as log_util
-from ViewClass import View
+
+import json
+import urls
 
 import os
 from itertools import product
@@ -105,7 +110,6 @@ def getIndirectSuccessors(log, nodes):
     Keyword arguments:
     log -- pm4py log object to extract information from
     nodes -- the set of nodes
-
     returns:
     dict -- dictionary where the keys are source states
         and the values are again dictionaries where the
@@ -138,3 +142,21 @@ def getIndirectSuccessors(log, nodes):
     """  
     # return normalized frequencies
     return indirectSuccessors
+
+
+def buildViewSetFromJSON(pathToViewJSON, pathToPartitionJSON):
+    # read File
+    ViewContent = json.loads(file_get_contents(pathToViewJSON))
+    # to dict
+    
+    view_list = []
+    for view in ViewContent :
+        view_list.append(view.fromJson(view)) 
+        
+    # return view set
+    complete = ViewSet()
+    for view in view_list:
+        complete.addView(view)
+        
+    return complete
+

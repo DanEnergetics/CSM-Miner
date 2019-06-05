@@ -1,4 +1,5 @@
 import json
+import ViewClass
 from ViewClass import View
 
 class ViewSet:

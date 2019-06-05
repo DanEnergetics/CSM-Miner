@@ -19,7 +19,6 @@ import json
 import hashlib
 import datetime
 import backend
-import CSMSocket
 from xml.dom import minidom
 from shutil import copyfile
 from django.views.generic.base import RedirectView
@@ -34,7 +33,6 @@ from django.conf.urls import (handler400, handler403, handler404, handler500)
 from django.conf.urls import include, url
 from django.conf import settings
 from django import template, forms
-from View.ViewSet import ViewSet
 
 
 register = template.Library()
@@ -208,12 +206,27 @@ def createUID(r):
 	ip = r.META.get('REMOTE_ADDR')
 	time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 	UID = hashlib.sha512((ip+time).encode('utf-8'))
-	CU.update({ip : UID})
-	print(CU)
-	return HttpResponse("OK")
+	CU.update({UID})
+	return HttpResponse(UID)
 
 def removeUID(UID):
 	print("Not implemented.")
+
+def sock(req,UID):
+	if not UID in CU:
+		return HttpResponse("Error. No open connection.")
+	if not req.method == 'POST':
+		return HttpResponse("Error. No request fonud.")
+	json_req = json.loads(req.body)
+	try:
+		req_data = json_req['data']
+	except KeyError:
+		HttpResponse("Error. Malformed data.")
+	parsed_req = req_data['sock']
+	response = {}
+	for entry in parsed_req:
+		print(entry)
+	return HttpResponse(json.dumps(response))
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -234,5 +247,5 @@ urlpatterns = [
 	path('sample.json',getSampleJson),
 	#Socket communication
 	path('Socket/open.connection', createUID),
-	path('Socket/', include('CSMSocket.urls')),
+	path('Socket/<slug:UID>', sock, name="UID"),
 ]
