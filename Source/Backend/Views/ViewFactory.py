@@ -10,7 +10,6 @@ from pm4py.objects.log.util import xes as xes_util
 from pm4py.objects.log.util import general as log_util
 
 import json
-import urls
 
 import os
 from itertools import product
@@ -23,10 +22,13 @@ def buildViewFromXES(pathToXES):
 
     Keyword arguments:
     pathToXES -- the location of the XES file
+
+    returns:
+    View -- an appropriately populated View object
     """
 
     # load log file into log object
-    log_path = os.path.join(".", "running-example.xes")
+    log_path = pathToXES #
     log = xes_importer.apply(log_path, {"timestamp_sort" : True})
 
     # get occurring activities
@@ -39,7 +41,13 @@ def buildViewFromXES(pathToXES):
     indirSucc = getIndirectSuccessors(log, nodes)
 
     # initialize view object
-    return View(nodes, dirSucc, indirSucc)
+    return View(list(nodes), dirSucc, indirSucc)
+
+
+def loadSampleLog():
+    """ Returns a sample log object for debuggin purposes. """
+    log_path = os.path.join(".", "running-example.xes")
+    return xes_importer.apply(log_path, {"timestamp_sort" : True})
 
 
 def getNodes(log):
@@ -92,16 +100,19 @@ def getDirectSuccessors(log, nodes):
 
             # increment count of source state
             sourceFreq[source] += 1.0
+    # """
     """
     # normalize frequencies on source state frequency
     for source, target in product(nodes, repeat=2):
+        print('before: ', directSuccessors[source][target])
         if sourceFreq[source] != 0:
-            directSuccessors[source][target] = 39 #directSuccessors[source][target] / sourceFreq[source]
+            print('after: ', directSuccessors[source][target])
+            directSuccessors[source][target] = directSuccessors[source][target] / sourceFreq[source]
         else:
             directSuccessors[source][target] = 0
     """
     # return normalized frequencies
-    return directSuccessors, sourceFreq
+    return directSuccessors #, sourceFreq
                
 
 def getIndirectSuccessors(log, nodes):
@@ -159,4 +170,19 @@ def buildViewSetFromJSON(pathToViewJSON, pathToPartitionJSON):
         complete.addView(view)
         
     return complete
+
+
+if __name__ == "__main__":
+    log = loadSampleLog()
+    nodes = getNodes(log)
+    print("Nodes: ", nodes)
+    d = getDirectSuccessors(log, nodes)
+    print("Direct successors: ", d)
+    i = getIndirectSuccessors(log, nodes)
+    print("Indirect Successors: ", i)
+
+    view = buildViewFromXES(os.path.join(".", "running-example.xes"))
+
+    with open("view_dump.json", 'w') as out:
+        json.dump(view.toJson(), out)
 
