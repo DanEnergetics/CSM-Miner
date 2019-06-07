@@ -300,6 +300,20 @@
             transform: translate(30%, 30%) !important;
             background-image: url('load.svg');
         }
+
+        #editing{
+            position:absolute;
+            background-color:white;
+            z-index:9999999;
+            width: 1000px;
+            top: 200px;
+            min-height: fit-content;
+            max-height: fit-content;
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            border: 2px solid black !important;
+        }
         
     </style>
     <!-- Sets the basepath for the library if not in same directory -->
@@ -323,6 +337,8 @@
 				}
 			}
 		}
+
+
 
 
 		function parentCall(check){
@@ -360,6 +376,33 @@
             	alert("Still processing...");
             }
 		}
+
+        function highLightAllFollowing(obj){
+            obj.sourceState.cell.value += "_CLICK";
+            edges = obj.sourceState.cell.edges;
+            
+            vert = [];
+            for(var edg in edges){
+                console.log(edg);
+                edges[edg].value += "_CLICK";
+                vert.push(edges[edg].target);
+            }
+            graph.refresh();
+            console.log(vert);
+            for(vertice in vert){
+                highLightAllFollowing(vertice);
+            }
+        }
+
+        function getDirect(node){
+            var text = "";
+            for(edge in node.edges){
+                text += node.edges[edge].target.id + " " + node.edges[edge].id;
+                text += "\t";
+            }
+            return text;
+        }
+
 		function mouseDownInGraph(sender,evt){
 			console.log(sender);
 			console.log(evt);
@@ -371,8 +414,9 @@
 			if(evt.sourceState.cell.value == "" && evt.sourceState.cell.edge){
 				state_changed.innerText = "Edgy! ;)";
 			}else{
-				state_changed.innerText = evt.sourceState.cell.value;
+				state_changed.innerText = evt.sourceState.cell.id + " Connections : " + getDirect(evt.sourceState.cell);
 			}
+            highLightAllFollowing(evt);
 		}
 		
 		var graph;
@@ -562,7 +606,7 @@
                         // Adds cells to the model in a single step
                         graph.getModel().beginUpdate();
                         try{
-                            var v1 = graph.insertVertex(parent, el,el, 20+x, 120+((x%200)/100)*(x/4), 80, 30);
+                            var v1 = graph.insertVertex(parent, el,el, 20+x, 120+((x%200)/100)*(x/2), 80, 30);
                             x+= 100;
                         }finally{
                             graph.getModel().endUpdate();
@@ -633,6 +677,50 @@
 			}
 			alert("Click Project to delete");
 		}
+        var textNodes = [];
+        var rmNodes = [];
+        function showEdit(){
+            var elm = document.getElementById("editing");
+            elm.classList.remove("hideMe");
+            var l = JSON.parse(pReq.responseText.replace(/\s+/g,''))[0];
+            l.forEach(function(ctnEl){
+                var tr = document.createElement("tr");
+                var txt = document.createTextNode(ctnEl);
+                var th1 = document.createElement("th");
+                var th2 = document.createElement("th");
+                var input = document.createElement("input");
+                input.type = "text";
+                input.id = ctnEl + "_LBL";
+                textNodes.push(input);
+                rmNodes.push(tr);
+                tr.appendChild(th1);
+                tr.appendChild(th2);
+                th1.appendChild(txt);
+                th2.appendChild(input);
+                elm.appendChild(tr);
+            });
+        }
+        function doEditing(){
+            completeRequest = [];
+            var c;
+            textNodes.forEach(function(m){
+                c = "\"" + m.id.replace("_LBL","") + "\"" + ": \"" + m.value + "\"";
+                
+                completeRequest.push(c);
+            });
+            textNodes = [];
+            var jsonRQ = JSON.stringify(completeRequest);
+            var lblReq = new XMLHttpRequest();
+            lblReq.open("GET","/request/LABEL/" + current.name + ".json");
+            lblReq.send();
+            document.getElementById("editing").classList.add("hideMe");
+            var elm = document.getElementById("editing");
+            rmNodes.forEach(function(a){
+                elm.removeChild(a);
+            });
+            rmNodes = [];
+            showMenu();
+        }
     </script>
 </head>
 	<body>
@@ -657,6 +745,15 @@
 			</div>
 		</div>
 		<div id="mainContainer">
+            <div id="editing" class="hideMe scrollable">
+                <table>
+                    <tr>
+                        <th>Vertex</th>
+                        <th>Label</th>
+                    </tr>
+                </table>
+                <button style="height:24px; width:60px; font-size:8pt;" onClick="return doEditing()"> Upload</button>
+            </div>
 			<div id="mainGraph"></div>
 			<div id="views" class="scrollable">
 				<!--
@@ -668,6 +765,7 @@
 			</div>
 			<div id="menuBar">
 			 	<button style="height:50px; width:89px; font-size:12pt;" onClick="return showMenu();" >Menu</button>
+                <button style="height:50px; width:89px; font-size:12pt;" onClick="return showEdit();" >Labeling</button>
 			</div>
 		</div>
 	</body>

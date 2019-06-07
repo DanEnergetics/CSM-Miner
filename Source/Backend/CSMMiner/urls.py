@@ -201,6 +201,22 @@ def getSampleJson(r):
 	jsonF = file_get_contents(BASE_DIR + "/HTMLDocs/sample.json")
 	return HttpResponse(jsonF,content_type="application/json")
 
+def labeling(r,project):
+	name = project + ".xes"
+	hashedName = hashlib.sha256(name.encode())
+	hexed = hashedName.hexdigest()
+	print(hexed)
+	dir = os.path.join(BASE_DIR,'./Storage/',hexed)	
+	dir += "/index.json"
+	old_string = "true"
+	new_string = "false"
+	with open(dir) as f:
+		s = f.read()
+	with open(dir, 'w') as f:
+		s = s.replace(old_string, new_string)
+		f.write(s)
+	return HttpResponse("OK")
+
 urlpatterns = [
     path('admin/', admin.site.urls),
 	path('', get),
@@ -208,6 +224,7 @@ urlpatterns = [
 	path('images/<slug:fileName>.png', getImg, name="fileName"),
 	path('<slug:fileName>.svg', getSVG, name="fileName"),
 	path('<slug:fileName>.html', iframe, name="fileName"),
+	path('request/LABEL/<slug:project>.json', labeling, name="project"),
 	path('request/rm/<slug:project>.xes', rm, name="project"),
 	path('request/<slug:action>.json', request , name='action'),
 	#The following patterns are exclusively used by mxClient, therefor ONLY mxClient resources should be stored in the corresponding paths.
