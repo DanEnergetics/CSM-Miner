@@ -1,6 +1,5 @@
 import json
-import ViewClass
-from ViewClass import View
+import View
 
 class ViewSet:
     views = []
@@ -21,7 +20,11 @@ class ViewSet:
         if len(self.views) > Pos:
             return self.views[Pos]
     
-    def createViewsForLabelsWithLabels(_View = View(),_Map = None):
+    def createViewsForLabelsWithLabels(_View = None,_Map = None):
+        if _View == None:
+            __View = View()
+        else:
+            __View = _View
         if _Map == None :
            Map = {}
         else :
@@ -32,7 +35,7 @@ class ViewSet:
             if not a in labels:
                 labels.append(a)
         for i in range(len(labels)):
-            _ViewSet.addView(_View)
+            _ViewSet.addView(__View)
         return [_ViewSet,labels]
 
 

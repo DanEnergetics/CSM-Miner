@@ -1,5 +1,4 @@
-from ViewClass import View
-import ViewSet
+import View, ViewSet
 from pm4py import util as pmutil
 from pm4py.objects.log.importer.xes import factory as xes_importer
 from pm4py.algo.discovery.dfg import factory as dfg_factory
@@ -9,10 +8,12 @@ from pm4py.objects.log.util import xes as xes_util
 from pm4py.objects.log.util import general as log_util
 
 import json
-import urls
 
 import os
 
+def file_get_contents(filename):
+    with open(filename) as f:
+        return f.read()
 
 def buildViewFromXES(pathToXES):
     """ Populate a new View Object by a given XES.
@@ -24,7 +25,7 @@ def buildViewFromXES(pathToXES):
     """
 
     # load log file into log object
-    log_path = os.path.join(".", "running-example.xes")
+    log_path = pathToXES
     log = xes_importer.apply(log_path, {"timestamp_sort" : True})
 
     # list and dictionaries to represent the view class

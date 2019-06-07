@@ -19,6 +19,7 @@ import json
 import hashlib
 import datetime
 import backend
+from threading import Thread
 from xml.dom import minidom
 from shutil import copyfile
 from django.views.generic.base import RedirectView
@@ -130,7 +131,8 @@ def iframe(request,fileName):
 			with open(os.path.join(DEST_DIR,filename),'wb+') as dest:
 				for chunk in md.chunks():
 					dest.write(chunk)
-			backend.BackEnd.call()
+			t = Thread(target=backend.call, args=(os.path.join(DEST_DIR,filename),))
+			t.start()
 			return render(request, os.path.join(BASE_DIR,"HTMLDocs/",fileName), context)
 		context = {
 			'msg' : "Project already exists."
