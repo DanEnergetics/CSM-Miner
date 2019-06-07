@@ -1,5 +1,5 @@
 import json
-from . import View
+from View import View
 
 class ViewSet:
     views = []

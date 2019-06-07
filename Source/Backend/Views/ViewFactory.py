@@ -1,6 +1,5 @@
-from . import View
-from .View import View
-from . import ViewSet
+from View import View
+import ViewSet
 
 from pm4py import util as pmutil
 from pm4py.objects.log.importer.xes import factory as xes_importer
@@ -11,12 +10,12 @@ from pm4py.objects.log.util import xes as xes_util
 from pm4py.objects.log.util import general as log_util
 
 import json
-
+from collections import Counter
 import os
 from itertools import product
 
 
-def buildViewFromXES(pathToXES):
+def buildViewFromXES(pathToXES, counts=True):
     """ Populate a new View Object by a given XES.
     All direct and indirect successors are extracted with their respective
     conditional, relative frequency.
@@ -33,7 +32,7 @@ def buildViewFromXES(pathToXES):
     log = xes_importer.apply(log_path, {"timestamp_sort" : True})
 
     # get occurring activities
-    nodes = getNodes(log)
+    nodes = getNodes(log, counts)
 
     # get direct successors
     dirSucc = getDirectSuccessors(log, nodes)
@@ -51,7 +50,7 @@ def loadSampleLog():
     return xes_importer.apply(log_path, {"timestamp_sort" : True})
 
 
-def getNodes(log):
+def getNodes(log, counts):
     """ Helper function that extracts all occuring activities from
     passed log file. 
     
@@ -67,7 +66,13 @@ def getNodes(log):
                 for trace in log
                 for event in trace]
 
-    return set(nodes)
+    res = {node: {} for node in nodes}
+    
+    if counts:
+        for node in res:
+            res[node]["count"] = nodes.count(node)
+
+    return res
 
 
 def getDirectSuccessors(log, nodes):
@@ -102,7 +107,6 @@ def getDirectSuccessors(log, nodes):
             # increment count of source state
             sourceFreq[source] += 1.0
     # """
-    """
     # normalize frequencies on source state frequency
     for source, target in product(nodes, repeat=2):
         print('before: ', directSuccessors[source][target])
@@ -111,8 +115,7 @@ def getDirectSuccessors(log, nodes):
             directSuccessors[source][target] = directSuccessors[source][target] / sourceFreq[source]
         else:
             directSuccessors[source][target] = 0
-    """
-    # return normalized frequencies
+    # return normalized frequencies 
     return directSuccessors #, sourceFreq
                
 
@@ -175,8 +178,10 @@ def buildViewSetFromJSON(pathToViewJSON, pathToPartitionJSON):
 
 if __name__ == "__main__":
     log = loadSampleLog()
-    nodes = getNodes(log)
+    nodes = getNodes(log, True)
     print("Nodes: ", nodes)
+    quit()
+
     d = getDirectSuccessors(log, nodes)
     print("Direct successors: ", d)
     i = getIndirectSuccessors(log, nodes)

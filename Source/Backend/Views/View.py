@@ -1,11 +1,11 @@
 import json
 
 class View:
-    nodes = []
+    nodes = {}
     directSucc = None
     indirectSucc = None
 
-    def __init__(self,_nodes = [],_directSucc= None,_indirectSucc = None):
+    def __init__(self,_nodes = {},_directSucc= None,_indirectSucc = None):
         self.directSucc = {} if _directSucc == None else _directSucc
         self.nodes = _nodes
         self.indirectSucc = {} if _indirectSucc == None else _indirectSucc
