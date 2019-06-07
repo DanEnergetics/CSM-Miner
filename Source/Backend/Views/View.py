@@ -33,6 +33,13 @@ class View:
     def getDirect(self):
         return self.directSucc
 
+    def toDict(self):
+        res = {}
+        res["nodes"] = self.nodes
+        res["directSuccessors"] = self.directSucc
+        res["indirectSuccessors"] = self.indirectSucc
+        return res
+
     def toJson(self):
         main = []
         main.append(self.nodes)

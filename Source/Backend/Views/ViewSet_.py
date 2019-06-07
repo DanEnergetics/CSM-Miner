@@ -43,8 +43,8 @@ class ViewSet_:
         return [_ViewSet,labels]
 
 
-    def partition(_View,_Map):
-        main = createViewsForLabelsWithLabels(_View,_Map)
+    def partition(_View, _Map):
+        main = createViewsForLabelsWithLabels(_View, _Map)
         for i in range(len(main[1])):
             for element in main[0].getView(i):
                 for a,b in element.getDirect():
@@ -52,3 +52,20 @@ class ViewSet_:
                         del element.directSucc[a]
                         if _Map[a] != main[1][i]:
                             element.nodes.remove(a)
+
+    def toDict(self):
+        res = {}
+        # populate dictionary
+        for key, view in self.views.iteritems():
+            res[key] = view.toDict
+        return res
+
+    
+    def toJson(self):
+        return json.dump(self.toDict(), indent=4)
+
+    def toJsonFile(self, pathToJson):
+        with open(pathToJson, 'w') as out:
+            json.dumps(self.toDict(), out)
+
+
