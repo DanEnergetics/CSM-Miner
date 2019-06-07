@@ -1,5 +1,6 @@
-from ViewClass import View
-import ViewSet
+from . import View
+from .View import View
+from . import ViewSet
 
 from pm4py import util as pmutil
 from pm4py.objects.log.importer.xes import factory as xes_importer

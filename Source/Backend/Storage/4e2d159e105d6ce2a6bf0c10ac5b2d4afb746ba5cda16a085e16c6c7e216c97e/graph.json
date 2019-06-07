@@ -1,0 +1,176 @@
+[
+    [
+        "pay compensation",
+        "examine thoroughly",
+        "reinitiate request",
+        "register request",
+        "reject request",
+        "check ticket",
+        "decide",
+        "examine casually"
+    ],
+    {
+        "pay compensation": {
+            "pay compensation": 3.0,
+            "examine thoroughly": 3.0,
+            "reinitiate request": 3.0,
+            "register request": 0,
+            "reject request": 3.0,
+            "check ticket": 9.0,
+            "decide": 9.0,
+            "examine casually": 6.0
+        },
+        "examine thoroughly": {
+            "pay compensation": 3.0,
+            "examine thoroughly": 3.0,
+            "reinitiate request": 3.0,
+            "register request": 0,
+            "reject request": 3.0,
+            "check ticket": 9.0,
+            "decide": 9.0,
+            "examine casually": 6.0
+        },
+        "reinitiate request": {
+            "pay compensation": 3.0,
+            "examine thoroughly": 3.0,
+            "reinitiate request": 3.0,
+            "register request": 0,
+            "reject request": 3.0,
+            "check ticket": 9.0,
+            "decide": 9.0,
+            "examine casually": 6.0
+        },
+        "register request": {
+            "pay compensation": 3.0,
+            "examine thoroughly": 3.0,
+            "reinitiate request": 3.0,
+            "register request": 0,
+            "reject request": 3.0,
+            "check ticket": 9.0,
+            "decide": 9.0,
+            "examine casually": 6.0
+        },
+        "reject request": {
+            "pay compensation": 3.0,
+            "examine thoroughly": 3.0,
+            "reinitiate request": 3.0,
+            "register request": 0,
+            "reject request": 3.0,
+            "check ticket": 9.0,
+            "decide": 9.0,
+            "examine casually": 6.0
+        },
+        "check ticket": {
+            "pay compensation": 3.0,
+            "examine thoroughly": 3.0,
+            "reinitiate request": 3.0,
+            "register request": 0,
+            "reject request": 3.0,
+            "check ticket": 9.0,
+            "decide": 9.0,
+            "examine casually": 6.0
+        },
+        "decide": {
+            "pay compensation": 3.0,
+            "examine thoroughly": 3.0,
+            "reinitiate request": 3.0,
+            "register request": 0,
+            "reject request": 3.0,
+            "check ticket": 9.0,
+            "decide": 9.0,
+            "examine casually": 6.0
+        },
+        "examine casually": {
+            "pay compensation": 3.0,
+            "examine thoroughly": 3.0,
+            "reinitiate request": 3.0,
+            "register request": 0,
+            "reject request": 3.0,
+            "check ticket": 9.0,
+            "decide": 9.0,
+            "examine casually": 6.0
+        }
+    },
+    {
+        "pay compensation": {
+            "pay compensation": 13,
+            "examine thoroughly": 5,
+            "reinitiate request": 13,
+            "register request": 0,
+            "reject request": 17,
+            "check ticket": 22,
+            "decide": 34,
+            "examine casually": 14
+        },
+        "examine thoroughly": {
+            "pay compensation": 13,
+            "examine thoroughly": 5,
+            "reinitiate request": 13,
+            "register request": 0,
+            "reject request": 17,
+            "check ticket": 22,
+            "decide": 34,
+            "examine casually": 14
+        },
+        "reinitiate request": {
+            "pay compensation": 13,
+            "examine thoroughly": 5,
+            "reinitiate request": 13,
+            "register request": 0,
+            "reject request": 17,
+            "check ticket": 22,
+            "decide": 34,
+            "examine casually": 14
+        },
+        "register request": {
+            "pay compensation": 13,
+            "examine thoroughly": 5,
+            "reinitiate request": 13,
+            "register request": 0,
+            "reject request": 17,
+            "check ticket": 22,
+            "decide": 34,
+            "examine casually": 14
+        },
+        "reject request": {
+            "pay compensation": 13,
+            "examine thoroughly": 5,
+            "reinitiate request": 13,
+            "register request": 0,
+            "reject request": 17,
+            "check ticket": 22,
+            "decide": 34,
+            "examine casually": 14
+        },
+        "check ticket": {
+            "pay compensation": 13,
+            "examine thoroughly": 5,
+            "reinitiate request": 13,
+            "register request": 0,
+            "reject request": 17,
+            "check ticket": 22,
+            "decide": 34,
+            "examine casually": 14
+        },
+        "decide": {
+            "pay compensation": 13,
+            "examine thoroughly": 5,
+            "reinitiate request": 13,
+            "register request": 0,
+            "reject request": 17,
+            "check ticket": 22,
+            "decide": 34,
+            "examine casually": 14
+        },
+        "examine casually": {
+            "pay compensation": 13,
+            "examine thoroughly": 5,
+            "reinitiate request": 13,
+            "register request": 0,
+            "reject request": 17,
+            "check ticket": 22,
+            "decide": 34,
+            "examine casually": 14
+        }
+    }
+]

@@ -99,7 +99,8 @@ def request(rq,action):
 	elif action == "Dummy":
 		return HttpResponse('{"viewCount" : 4}', content_type="application/json")
 	try:
-		jFile = file_get_contents(BASE_DIR + "/Storage/" + action + "/graph.json")
+		print(action)
+		jFile = file_get_contents(BASE_DIR + "/Storage/" + hashlib.sha256((action + ".xes").encode()).hexdigest() + "/graph.json")
 		return HttpResponse(jFile, content_type="application/json")
 	except IOError:
 		return snooping
@@ -131,7 +132,7 @@ def iframe(request,fileName):
 			with open(os.path.join(DEST_DIR,filename),'wb+') as dest:
 				for chunk in md.chunks():
 					dest.write(chunk)
-			t = Thread(target=backend.call, args=(os.path.join(DEST_DIR,filename),))
+			t = Thread(target=backend.BackEnd.call, args=(os.path.join(DEST_DIR,filename),filename))
 			t.start()
 			return render(request, os.path.join(BASE_DIR,"HTMLDocs/",fileName), context)
 		context = {
@@ -200,36 +201,6 @@ def getSampleJson(r):
 	jsonF = file_get_contents(BASE_DIR + "/HTMLDocs/sample.json")
 	return HttpResponse(jsonF,content_type="application/json")
 
-CU = {
-	'UID' : '99adc231b045331e514a516b4b7680f588e3823213abe901738bc3ad67b2f6fcb3c64efb93d18002588d3ccc1a49efbae1ce20cb43df36b38651f11fa75678e8',
-}
-
-def createUID(r):
-	ip = r.META.get('REMOTE_ADDR')
-	time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-	UID = hashlib.sha512((ip+time).encode('utf-8'))
-	CU.update({UID})
-	return HttpResponse(UID)
-
-def removeUID(UID):
-	print("Not implemented.")
-
-def sock(req,UID):
-	if not UID in CU:
-		return HttpResponse("Error. No open connection.")
-	if not req.method == 'POST':
-		return HttpResponse("Error. No request fonud.")
-	json_req = json.loads(req.body)
-	try:
-		req_data = json_req['data']
-	except KeyError:
-		HttpResponse("Error. Malformed data.")
-	parsed_req = req_data['sock']
-	response = {}
-	for entry in parsed_req:
-		print(entry)
-	return HttpResponse(json.dumps(response))
-
 urlpatterns = [
     path('admin/', admin.site.urls),
 	path('', get),
@@ -247,7 +218,4 @@ urlpatterns = [
 	path('favicon.ico', RedirectView.as_view(url=settings.STATIC_URL + 'favicon.ico')),
 	#sample json
 	path('sample.json',getSampleJson),
-	#Socket communication
-	path('Socket/open.connection', createUID),
-	path('Socket/<slug:UID>', sock, name="UID"),
 ]
