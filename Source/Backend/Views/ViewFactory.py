@@ -1,4 +1,4 @@
-from View import View
+from View import View, initdoubleDict
 
 from pm4py import util as pmutil
 from pm4py.objects.log.importer.xes import factory as xes_importer
@@ -27,7 +27,7 @@ def buildViewFromXES(pathToXES, counts=True):
     """
 
     # load log file into log object
-    log_path = pathToXES #
+    log_path = pathToXES
     log = xes_importer.apply(log_path, {"timestamp_sort" : True})
 
     # get occurring activities
@@ -88,7 +88,7 @@ def getDirectSuccessors(log, nodes):
         and the values are the relative frequency
     """
     # make initialization from set of nodes
-    directSuccessors = dict.fromkeys(nodes, dict.fromkeys(nodes, 0))
+    directSuccessors = initdoubleDict(nodes)
 
     # absolute source state frequency for later normalization
     sourceFreq = dict.fromkeys(nodes, 0)
@@ -105,17 +105,15 @@ def getDirectSuccessors(log, nodes):
 
             # increment count of source state
             sourceFreq[source] += 1.0
-    # """
+
     # normalize frequencies on source state frequency
     for source, target in product(nodes, repeat=2):
-        print('before: ', directSuccessors[source][target])
         if sourceFreq[source] != 0:
-            print('after: ', directSuccessors[source][target])
             directSuccessors[source][target] = directSuccessors[source][target] / sourceFreq[source]
         else:
             directSuccessors[source][target] = 0
     # return normalized frequencies 
-    return directSuccessors #, sourceFreq
+    return directSuccessors
                
 
 def getIndirectSuccessors(log, nodes):
@@ -131,7 +129,7 @@ def getIndirectSuccessors(log, nodes):
         and the values are the relative frequency
     """
     # make initialization from set of nodes
-    indirectSuccessors = dict.fromkeys(nodes, dict.fromkeys(nodes, 0))
+    indirectSuccessors = initdoubleDict(nodes)
 
     # absolute source state frequency for later normalization
     sourceFreq = dict.fromkeys(nodes, 0)
@@ -149,11 +147,14 @@ def getIndirectSuccessors(log, nodes):
 
                 # increment count of source state
                 sourceFreq[source] += 1
-    """
+
     # normalize frequencies on source state frequency
     for source, target in product(nodes, repeat=2):
-        indirectSuccessors[source][target] /= sourceFreq[source]
-    """  
+        if sourceFreq[source] != 0:
+            indirectSuccessors[source][target] = indirectSuccessors[source][target] / sourceFreq[source]
+        else:
+            indirectSuccessors[source][target] = 0
+
     # return normalized frequencies
     return indirectSuccessors
 

@@ -1,4 +1,5 @@
 import json
+from collections import defaultdict
 
 class View:
     nodes = {}
@@ -6,9 +7,13 @@ class View:
     indirectSucc = None
 
     def __init__(self,_nodes = {},_directSucc= None,_indirectSucc = None):
-        self.directSucc = {} if _directSucc == None else _directSucc
+        # initiate nodes
         self.nodes = _nodes
-        self.indirectSucc = {} if _indirectSucc == None else _indirectSucc
+
+        # initiate direct and indirect successors as double dictionaries 
+        self.directSucc = initdoubleDict(self.nodes) if _directSucc == None else _directSucc
+        self.indirectSucc = initdoubleDict(self.nodes) if _indirectSucc == None else _indirectSucc
+
     
     def addNode(self,_Node):
         nodes.append(_Node)
@@ -54,3 +59,13 @@ class View:
             return rt
         except:    
             return "Error"
+    
+
+
+def initdoubleDict(keys):
+    """ Helper function to initialize double dict. """
+    # initialize first layer
+    res = dict.fromkeys(keys)
+    for key in res:
+        res[key] = defaultdict(int)
+    return res
