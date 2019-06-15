@@ -177,18 +177,8 @@ def buildViewSetFromJSON(pathToViewJSON, pathToPartitionJSON):
 
 
 if __name__ == "__main__":
-    log = loadSampleLog()
-    nodes = getNodes(log, True)
-    print("Nodes: ", nodes)
-    quit()
+    # build View
+    view = buildViewFromXES("running-example.xes", counts=True)
+    print(view.toDict())
 
-    d = getDirectSuccessors(log, nodes)
-    print("Direct successors: ", d)
-    i = getIndirectSuccessors(log, nodes)
-    print("Indirect Successors: ", i)
-
-    view = buildViewFromXES(os.path.join(".", "running-example.xes"))
-
-    with open("view_dump.json", 'w') as out:
-        json.dump(view.toJson(), out)
-
+    

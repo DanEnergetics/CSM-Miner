@@ -6,7 +6,7 @@ class View:
     directSucc = None
     indirectSucc = None
 
-    def __init__(self,_nodes = {},_directSucc= None,_indirectSucc = None):
+    def __init__(self, nodes = {},_directSucc= None,_indirectSucc = None):
         # initiate nodes
         self.nodes = _nodes
 
@@ -15,8 +15,8 @@ class View:
         self.indirectSucc = initdoubleDict(self.nodes) if _indirectSucc == None else _indirectSucc
 
     
-    def addNode(self,_Node):
-        nodes.append(_Node)
+    def addNode(self,node, params):
+        self.nodes[node] = params
 
     def addDirectSucc(self,sourceNode, targetNode,frequency):
         if not isinstance(self.directSucc[sourceNode],dict):
@@ -68,4 +68,5 @@ def initdoubleDict(keys):
     res = dict.fromkeys(keys)
     for key in res:
         res[key] = defaultdict(int)
+
     return res
