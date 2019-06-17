@@ -8,7 +8,7 @@ class View:
 
     def __init__(self, nodes = {},_directSucc= None,_indirectSucc = None):
         # initiate nodes
-        self.nodes = _nodes
+        self.nodes = nodes
 
         # initiate direct and indirect successors as double dictionaries 
         self.directSucc = initdoubleDict(self.nodes) if _directSucc == None else _directSucc

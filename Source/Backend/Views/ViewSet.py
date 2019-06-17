@@ -1,50 +1,150 @@
 import json
-from Views.View import View
+from itertools import permutations
 
-class ViewSet:
-    views = []
+from View import View, initdoubleDict
+
+class ViewSet(dict):
+
     def __init__(self):
-        self.views = []
-    
-    def addView(self,_View):
-        self.views.append(_View)
-    
+        super() 
+
+
+    def addView(self, _View, label):
+        self.views.append(_View, label)
+   
+
     def rmView(self,_View):
         if _View in self.views:
-            self.views.remove(_View)
+            for label, view in self.views.iteritems():
+                if view == _View:
+                    del self.views[label]
+
+
+    def rmLabel(self, label):
+        del self.views[label]
+
 
     def getViews(self):
         return self.views
     
-    def getView(self,Pos):
-        if len(self.views) > Pos:
-            return self.views[Pos]
+
+    def getView(self, label):
+        return self.views[label]
+
+
+    def checkLabels(self, view, labelMap):
+        """ 
+        Function that checks validity of
+        label assignments and assigns a
+        collective label to unassigned states.
+
+        parameters:
+        view -- the View object to take the nodes from
+        labelMap -- dictionary of labels and their assigned
+            original states
+
+        returns:
+        valid labelMap
+        """
+
+        # transform subnode lists into sets
+        tmp = {key : set(subnodes) for key, subnodes in labelMap.items()}
+
+        # check if given nodes are subset of existent nodes
+        original_nodes = set(view.getNodes().keys())
+        given_nodes = set.union(*tmp.values())
+        print(given_nodes)
+        if not given_nodes.issubset(original_nodes):
+            raise ValueError("""Label assignment incorrect:"""
+                """it contains nodes that are not in the original view!""")
+
+        # go through permutations of labels and check if sets of nodes are disjoint 
+        for a, b in permutations(labelMap, 2):
+            if not tmp[a].isdisjoint(tmp[b]):
+                # if non vanishing intersection exist, give warning
+                intersection = tmp[a].intersection(tmp[b])
+                raise Warning("""Label assignment faulty:"""
+                    """node(s) {} are assigned distinct labels {} and {} at once""".format(intersection, a, b))
+
+        # collect unassigned nodes as difference set
+        diff = original_nodes.difference(given_nodes)
+        if diff:
+            labelMap["unassigned"] = list(diff)
+
+        # finally return label map again
+        return labelMap
+
     
-    def createViewsForLabelsWithLabels(_View = None,_Map = None):
-        if _View == None:
-            __View = View()
-        else:
-            __View = _View
-        if _Map == None :
-           Map = {}
-        else :
-            Map = _Map
-        labels = []
-        _ViewSet = ViewSet()
-        for a,b in Map:
-            if not a in labels:
-                labels.append(a)
-        for i in range(len(labels)):
-            _ViewSet.addView(__View)
-        return [_ViewSet,labels]
+    def partition(self, view, labelMap):
+        """ 
+        Constructor equivalent function that
+        partitions a given View into a ViewSet
+        object containing the same nodes in total.
+
+        parameter:
+        view -- View to be partitioned
+        labelMap -- a dictionary containing labels
+            as keys and their values are disjoint
+            lists of nodes of the View
+        """
+        # examine labelMap
+        labelMap = self.checkLabels(view, labelMap)
+        print(labelMap)
+        # initialize resulting dict
+        res = dict.fromkeys(labelMap)
+
+        for label, subnodes in labelMap.items():
+            # initialize dictionaries
+            nodes = dict.fromkeys(subnodes)
+            dirSucc = initdoubleDict(subnodes)
+
+            # preserve indirect successors
+            indSucc = initdoubleDict(subnodes)
+
+            for source in subnodes:
+                # append nodes under the same label
+                nodes[source] = view.getNodes()[source]
+                indSucc[source] = view.getIndir()[source].copy()
+                # inner loop to copy double dicts
+                for target in subnodes:
+                    # append direct and indirect successors
+                    dirSucc[source][target] = view.getDirect()[source][target]
+                    # (leave in indirect successors)
+                    # indSucc[source][target] = view.getIndir()[source][target]
+
+            # initialize node with nodes and successors
+            res[label] = View(nodes, dirSucc, indSucc)
+
+        print(res)
+
+        # construct self
+        self.update(res)
+        #self = res
 
 
-    def partition(_View,_Map):
-        main = createViewsForLabelsWithLabels(_View,_Map)
-        for i in range(len(main[1])):
-            for element in main[0].getView(i):
-                for a,b in element.getDirect():
-                    if _Map[a] != main[1][i] or _Map[b] != main[1][i] :
-                        del element.directSucc[a]
-                        if _Map[a] != main[1][i]:
-                            element.nodes.remove(a)
+    def toDict(self):
+        res = {}
+        # populate dictionary
+        for key, view in self.items():
+            res[key] = view.toDict()
+        return res
+
+    
+    def toJson(self):
+        return json.dump(self.toDict(), indent=4)
+
+    def toJsonFile(self, pathToJson):
+        with open(pathToJson, 'w') as out:
+            json.dumps(self.toDict(), out)
+
+
+# unnecessary
+def ddictIntersect(ddict, list):
+    """ 
+    Helper function that returns
+    a dictionary like double dict but with
+    only those keys that are in the list.
+    """
+    initia
+    res = initdoubleDict(ddict)
+

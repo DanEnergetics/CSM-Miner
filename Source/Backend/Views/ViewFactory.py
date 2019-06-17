@@ -1,4 +1,5 @@
 from View import View, initdoubleDict
+from ViewSet import ViewSet
 
 from pm4py import util as pmutil
 from pm4py.objects.log.importer.xes import factory as xes_importer
@@ -40,7 +41,7 @@ def buildViewFromXES(pathToXES, counts=True):
     indirSucc = getIndirectSuccessors(log, nodes)
 
     # initialize view object
-    return View(list(nodes), dirSucc, indirSucc)
+    return View(nodes, dirSucc, indirSucc)
 
 
 def loadSampleLog():
@@ -162,8 +163,8 @@ def getIndirectSuccessors(log, nodes):
 def buildViewSetFromJSON(pathToViewJSON, pathToPartitionJSON):
     # read File
     ViewContent = json.loads(file_get_contents(pathToViewJSON))
-    # to dict
     
+
     view_list = []
     for view in ViewContent :
         view_list.append(view.fromJson(view)) 
@@ -179,6 +180,16 @@ def buildViewSetFromJSON(pathToViewJSON, pathToPartitionJSON):
 if __name__ == "__main__":
     # build View
     view = buildViewFromXES("running-example.xes", counts=True)
-    print(view.toDict())
+    # print(view.toDict())
+    # quit()
 
+    labelMap = {"examine": ["examine thoroughly", "examine casually"]}
+
+    print("Examine casually (node):", view.getIndir()["examine casually"])
+
+    # partition view
+    vs = ViewSet()
+    vs.partition(view, labelMap)
+
+    print(vs.toDict())
     
