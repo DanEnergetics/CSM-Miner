@@ -1,7 +1,8 @@
 import json
 from itertools import permutations
 
-from View import View, initdoubleDict
+from . import View
+from Views.View import initdoubleDict
 
 class ViewSet(dict):
 

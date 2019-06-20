@@ -9,7 +9,7 @@ from Views.ViewSet import ViewSet
 
 class BackEnd:
 
-    self.viewsetJsonPath = "viewset.json"
+    viewsetJsonPath = "viewset.json"
 
     def call(xes,name):
         print("\033[1;32;40m Back-end call received. \n")
@@ -40,5 +40,5 @@ class BackEnd:
             viewset.partition(view, json.load(map))
 
         # write viewset to JSON file 
-        viewset.toJsonFile(self.viewsetJsonPath) 
+        viewset.toJsonFile(viewsetJsonPath) 
 
