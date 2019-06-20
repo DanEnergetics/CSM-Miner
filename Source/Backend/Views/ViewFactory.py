@@ -15,7 +15,7 @@ import os
 from itertools import product
 
 
-def buildViewFromXES(pathToXES, counts=True):
+def buildViewFromXES(pathToXES, counts=True, costs=True):
     """ Populate a new View Object by a given XES.
     All direct and indirect successors are extracted with their respective
     conditional, relative frequency.
@@ -32,7 +32,7 @@ def buildViewFromXES(pathToXES, counts=True):
     log = xes_importer.apply(log_path, {"timestamp_sort" : True})
 
     # get occurring activities
-    nodes = getNodes(log, counts)
+    nodes = getNodes(log, counts, costs)
 
     # get direct successors
     dirSucc = getDirectSuccessors(log, nodes)
@@ -50,7 +50,7 @@ def loadSampleLog():
     return xes_importer.apply(log_path, {"timestamp_sort" : True})
 
 
-def getNodes(log, counts):
+def getNodes(log, counts, costs):
     """ Helper function that extracts all occuring activities from
     passed log file. 
     
@@ -68,9 +68,34 @@ def getNodes(log, counts):
 
     res = {node: {} for node in nodes}
     
+    # count occurences of node
     if counts:
         for node in res:
             res[node]["count"] = nodes.count(node)
+
+    # compute average cost of node
+    unavail_keyword = "unavailable"
+    if costs:
+        # calculate cumulated costs
+        for trace in log:
+            for event in trace:
+                # get node identifier
+                node = event[xes_util.DEFAULT_NAME_KEY]
+                
+                # decide wether costs are available and increment value
+                if "Costs" in event:
+                    if not "costs" in res[node]:
+                        res[node]["costs"] = int(event["Costs"])
+                    elif res[node]["costs"] != unavail_keyword:
+                        res[node]["costs"] += int(event["Costs"])
+                else:
+                    res[node]["costs"] = unavail_keyword
+
+        # average costs per node if available
+        for node in res:
+            if res[node]["costs"] != unavail_keyword:
+                res[node]["costs"] /= nodes.count(node)
+
 
     return res
 
@@ -110,7 +135,7 @@ def getDirectSuccessors(log, nodes):
     # normalize frequencies on source state frequency
     for source, target in product(nodes, repeat=2):
         if sourceFreq[source] != 0:
-            directSuccessors[source][target] = directSuccessors[source][target] / sourceFreq[source]
+            directSuccessors[source][target] = round(directSuccessors[source][target] / sourceFreq[source], 2)
         else:
             directSuccessors[source][target] = 0
     # return normalized frequencies 
@@ -152,7 +177,7 @@ def getIndirectSuccessors(log, nodes):
     # normalize frequencies on source state frequency
     for source, target in product(nodes, repeat=2):
         if sourceFreq[source] != 0:
-            indirectSuccessors[source][target] = indirectSuccessors[source][target] / sourceFreq[source]
+            indirectSuccessors[source][target] = round(indirectSuccessors[source][target] / sourceFreq[source], 2)
         else:
             indirectSuccessors[source][target] = 0
 
@@ -180,8 +205,8 @@ def buildViewSetFromJSON(pathToViewJSON, pathToPartitionJSON):
 if __name__ == "__main__":
     # build View
     view = buildViewFromXES("running-example.xes", counts=True)
-    # print(view.toDict())
-    # quit()
+    print(view.getNodes())
+    quit()
 
     labelMap = {"examine": ["examine thoroughly", "examine casually"]}
 
