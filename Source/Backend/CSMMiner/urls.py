@@ -115,6 +115,8 @@ def iframe(request,fileName):
 			jsonstr = request.POST.get('hiddenJ')
 			print(json.loads(jsonstr))
 			#Backend call
+			#t = Thread(target=backend.BackEnd.call, args=(os.path.join(DEST_DIR,filename),filename))
+			#t.start()
 			return HttpResponse("OK")
 		file = request.FILES.get('file',"EMPTY_REQ")
 		if file == "EMPTY_REQ":
