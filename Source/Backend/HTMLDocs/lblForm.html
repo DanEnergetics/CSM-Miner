@@ -71,20 +71,21 @@
             }
 
             function doEditing(obj){
-                completeRequest = [];
-                var c;
+                completeRequest = "{";
+                var c = "first";
                 list.forEach(function(m){
-                    c = m.id.replace("_LBL","") + ": \"" + m.value + "\"";
-                    completeRequest.push(c);
+                    if(c == "first")
+                        c = "\"" + m.id.replace("_LBL","") + "\""+  ": \"" + m.value + "\"";
+                    else 
+                        c = "," + "\"" + m.id.replace("_LBL","") + "\"" + ": \"" + m.value + "\"";
+                    completeRequest += c;
                 });
-                list = [];
-                var jsonRQ = JSON.stringify(completeRequest);
+                completeRequest += "}";
                 var hd = document.getElementById("hiddenJ");
-                console.log(hd);
-                hd.value = jsonRQ;
+                hd.value = completeRequest;
                 console.log(hd.value);
                 parent.resetFirst();
-                parent.showEdit();
+                parent.showEdit(true);
                 obj.parentElement.submit();
             }
 		</script>

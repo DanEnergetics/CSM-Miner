@@ -137,7 +137,7 @@
             width: 100%;
         }
 
-        #mainGraph {
+        #viewHub {
             z-index: 5;
             width: 100% height : 100%;
             top: 0;
@@ -222,6 +222,7 @@
         #viewhub{
             height:100%;
             width:100%;
+            overflow-x: scroll;
         }
 
         .element:hover {
@@ -264,6 +265,11 @@
             border: none;
             min-width: fit-content;
             min height: fit-content;
+        }
+
+        .view{
+            height:100%;
+            width: 600px;
         }
 
         .scrollable::-webkit-scrollbar {
@@ -397,52 +403,77 @@
         var oldClick = 0;
         var newClick = 0;
 
-        function highLightAllFollowing(obj){
-            if(obj.sourceState == undefined)
-                return;
-            obj.sourceState.cell.value += "_CLICK";
-            getBBfN(obj.sourceState.cell.id).selected = true;
-            edges = obj.sourceState.cell.edges;
-            
-            vert = [];
-            for(var edg in edges){
-                if(edges[edg].target == obj.sourceState.cell.id)continue;
-                edges[edg].value += "_CLICK";
-                vert.push(edges[edg].target);
-            }
-            graph.refresh();
-            for(vertice in vert){
-                highLightAllFollowing(vertice);
+        function click(c,g){
+            g.getModel().setStyle(c,'clicked');
+            g.refresh();
+        }
+        function unClick(c,g){
+            g.getModel().setStyle(c,'unclicked');
+            g.refresh();
+        }
+        function clearGraphClicks(g){
+            console.log("Clearing" + g);
+            for(c in g.getModel().cells){
+                unClick(g.getModel().getCell(c),g);
             }
         }
 
-        function getDirect(node){
-            var text = "";
-            for(edge in node.edges){
-                if(node.edges[edge].target.id == node.id)
-                    continue;
-                text += node.edges[edge].target.id + " " + node.edges[edge].value;
-                text += "\t";
-                console.log(node.edges[edge]);
+        function removeAllClicks(){
+            if(isInit){
+                clearGraphClicks(graph);
+            }else{
+                for(g in graphs){
+                    clearGraphClicks(g);
+                }
             }
-            return text;
+        }
+
+        function inGraphHighlight(actualCell,g){
+            if(actualCell.edge)
+                return;
+            click(actualCell,g);
+            for(edge in actualCell.edges){
+                if(edge.target == undefined)
+                    continue;
+                if(edge.target.id != actualCell.id){
+                    console.log(edge);
+                    click(edge,g);
+                    inGraphHighlight(edge.target);
+                }
+            }
+        }
+
+        function highLightCellInGraph(g,cV){
+            var actualCell = g.getModel().getCell(cV);
+            inGraphHighlight(actualCell,g);
+        }
+
+        function highLight(send){
+            if(isInit){
+                highLightCellInGraph(graph,send);
+            }else{
+                for(g in graphs){
+                    highLightCellInGraph(g,send);
+                }
+            }
         }
 
 		function mouseDownInGraph(sender,evt){
-            for(cell in graph.model.cells){
-                
-            }
-			if(evt.sourceState == undefined){
-				return;
-			}
+            console.log(sender);
+            console.log(evt);
+            if(evt.sourceState == undefined)
+                return;
+            removeAllClicks();
+            var n = evt.sourceState.cell.value;
+            highLight(n);
 			var state_changed = document.getElementById('statusBar');
 			state_changed.style.opacity = 1;
-			if(evt.sourceState.cell.value == "" && evt.sourceState.cell.edge){
-				state_changed.innerText = "Edgy! ;)";
-			}else{
-				state_changed.innerText = evt.sourceState.cell.id + "(Count : "+ getBBfN(evt.sourceState.cell.id).count +")" + " Connections : " + getDirect(evt.sourceState.cell);
-			}
-            highLightAllFollowing(evt);
+			state_changed.innerText = "";
+			for(setting in getBBfN(n)){
+                if(setting != "obj"){
+                    state_changed.innerText += setting + " : " + getBBfN(n)[setting] + ", ";
+                }
+            }
 		}
 		
 		var graph;
@@ -455,33 +486,10 @@
             	alert("Attempting to remove...");
             	return;
             }
-            console.log(e.getAttribute("name"));
             inProject = true;
             current = getJson(e.getAttribute("name"));
-            var container = document.getElementById("mainGraph");
             if (!mxClient.isBrowserSupported()){
                 mxUtils.error('Browser is not supported!', 200, false);
-            }else{
-                mxEvent.disableContextMenu(container);
-                // Creates the graph inside the given container
-                graph = new mxGraph(container);
-
-                // Enables rubberband selection
-                //new mxRubberband(graph);
-
-                // Gets the default parent for inserting new cells. This
-                // is normally the first child of the root (ie. layer 0).
-                var parent = graph.getDefaultParent();
-
-                graph.addMouseListener({
-					mouseDown: function(sender, evt){
-						mouseDownInGraph(sender,evt);
-					},mouseMove: function(sender, evt){
-						
-  					},mouseUp: function(sender, evt){
-    					
-  					}
-				});
             }
             document.getElementById('projectDrawer').classList.add('hideMe');
 		}
@@ -557,6 +565,176 @@
         function updateElement(element) {
             element.classList.add("elementUpdate");
         }
+        var graphs= [];
+        var pGraph = [];
+        var isInit = false;
+
+        function isSET(json){
+            var container = document.getElementById("viewHub");
+            var parsed = JSON.parse(json);
+            var isS = true;
+            for(e in parsed){
+                if(parsed[e].nodes === undefined){
+                    isS = false;
+                }
+            }
+            if(!isS){
+                if(isInit){
+                    return false;
+                }else{
+                    isInit = true;
+                }
+                mxEvent.disableContextMenu(container);
+                // Creates the graph inside the given container
+                graph = new mxGraph(container);
+
+                // Enables rubberband selection
+                //new mxRubberband(graph);
+
+                // Gets the default parent for inserting new cells. This
+                // is normally the first child of the root (ie. layer 0).
+                var parent = graph.getDefaultParent();
+
+                graph.addMouseListener({
+					mouseDown: function(sender, evt){
+						mouseDownInGraph(sender,evt);
+					},mouseMove: function(sender, evt){
+						
+  					},mouseUp: function(sender, evt){
+    					
+  					}
+				});
+                var style = new Object();
+                style[mxConstants.STYLE_FILLCOLOR] = "red";
+                style[mxConstants.STYLE_STROKECOLOR] = "red";
+                graph.getStylesheet().putCellStyle('clicked', style);
+                var style2 = new Object();
+                style2[mxConstants.STYLE_FILLCOLOR] = "blue";
+                style2[mxConstants.STYLE_STROKECOLOR] = "blue";
+                graph.getStylesheet().putCellStyle('unclicked', style2);
+                return false;
+            }else{
+                var mElement
+                for(e in parsed){
+                    pGraph.push(parsed[e]);
+                    var gContainer = document.create('div');
+                    gContainer.classList.add('view');
+                    container.appendChild(gContainer);
+                    mxEvent.disableContextMenu(gContainer);
+                    var tmpGraph = new mxGraph(gContainer);
+                    var parent = tmpGraph.getDefaultParent();
+
+                    tmpGraph.addMouseListener({
+                        mouseDown: function(sender, evt){
+                            mouseDownInGraph(sender,evt);
+                        },mouseMove: function(sender, evt){
+                            
+                        },mouseUp: function(sender, evt){
+                            
+                        }
+                    });
+                    var style = new Object();
+                    style[mxConstants.STYLE_FILLCOLOR] = "red";
+                    style[mxConstants.STYLE_STROKECOLOR] = "red";
+                    tmpgraph.getStylesheet().putCellStyle('clicked', style);
+                    var style2 = new Object();
+                    style2[mxConstants.STYLE_FILLCOLOR] = "blue";
+                    style2[mxConstants.STYLE_STROKECOLOR] = "blue";
+                    tmpgraph.getStylesheet().putCellStyle('unclicked', style2);
+                    graphs.push(tmpGraph);
+                }
+                return true;
+            }
+        }
+
+
+        function displayView(b){
+            i = JSON.parse(b);
+            graph.getModel().clear();
+            TEST = i;
+            for(var edg in i[0]){
+                var parent = graph.getDefaultParent();
+                graph.getModel().beginUpdate();
+                try{
+                    var v1 = graph.insertVertex(parent,edg,edg, 20+x, 120+((x%200)/100)*(x/2), 80, 30);
+                    x+= 100;
+                    var addN = {
+                        "NAME" : edg,
+                        "obj" : v1,
+                    };
+                    for(var itm in i[0][edg]){
+                        addN[itm] = i[0][edg][itm];
+                    }
+                    graph_backbone.push(addN);
+                }finally{
+                    graph.getModel().endUpdate();
+                }    
+            }
+            var testing = 0;
+            for(var from in i[1]){
+                for(var to in i[1][from]){
+                    var parent = graph.getDefaultParent();
+                    graph.getModel().beginUpdate();
+                    try{
+                        var edgeFrom = graph.getModel().getCell(from);
+                        var edgeTo = graph.getModel().getCell(to);
+                        if(graph.getModel().getEdgesBetween(edgeFrom,edgeTo).length == 0 && i[1][from][to] != "0"){
+                            var e1 = graph.insertEdge(parent, null,i[1][from][to], edgeFrom,edgeTo);
+                        }
+                    }finally{
+                        graph.getModel().endUpdate();
+                    }    
+                }
+            }
+            var Aparent = graph.getDefaultParent();
+            var testings = new mxHierarchicalLayout(graph).execute(Aparent);
+            
+            graph.refresh();
+            removeAllClicks();
+        }
+
+        function displaySet(){
+            for(var m = 0;m < graphs.length;m++){
+                graphs[m].getModel().clear();
+                for(node in pGraph[m].nodes){
+                    var parent = graphs[m].getDefaultParent();
+                    graphs[m].getModel().beginUpdate();
+                    try{
+                        var v1 = graphs[m].insertVertex(parent,node,node, 20+x, 120+((x%200)/100)*(x/2), 80, 30);
+                        x+= 100;
+                        var addN = {
+                            "obj" : v1,
+                            "NAME" : node,
+                        };
+                        for(var itm in pGraph[m].nodes){
+                            addN[itm] = pGraph[m].nodes[itm];
+                        }
+                        if(m == 0)graph_backbone.push(addN);
+                    }finally{
+                        graphs[m].getModel().endUpdate();
+                    }    
+                }
+                for(var from in pGraph[m].directSuccessors){
+                    for(var to in pGraph[m].directSuccessors[from]){
+                        var parent = graphs[m].getDefaultParent();
+                        graphs[m].getModel().beginUpdate();
+                        try{
+                            var edgeFrom = graphs[m].getModel().getCell(from);
+                            var edgeTo = graphs[m].getModel().getCell(to);
+                            if(graphs[m].getModel().getEdgesBetween(edgeFrom,edgeTo).length == 0 && pGraph[m].directSuccessors[from][to] != "0"){
+                                var e1 = graphs[m].insertEdge(parent, null,pGraph[m].directSuccessors[from][to], edgeFrom,edgeTo);
+                            }
+                        }finally{
+                            graphs[m].getModel().endUpdate();
+                        }    
+                    }
+                }
+                var Aparent = graphs[m].getDefaultParent();
+                var testings = new mxHierarchicalLayout(graphs[m]).execute(Aparent);
+                graphs[m].refresh();
+            }
+            removeAllClicks();
+        }
         
         var inProject = false;
 
@@ -578,71 +756,26 @@
 		var x = 0;
 		var myViews = 0;
         var oldtext = "";
+        var displayed = "";
 		var firsttime = true;
         var TEST = null;
         var graph_backbone = [];
 		function loadDone(evt){
 			if(pReq.status >= 200 && pReq.status < 300){
 				if(inProject){
-                    if (oldtext == pReq.responseText){
+                    if (oldtext == pReq.responseText && displayed == current.name){
                         return;
                     }
+                    displayed = current.name;
                     oldtext = pReq.responseText;
-                    graph.getModel().clear();
-                    var i = JSON.parse(pReq.responseText);
-                    TEST = i;
-                    for(var edg in i[0]){
-                            var parent = graph.getDefaultParent();
-                            graph.getModel().beginUpdate();
-                            try{
-                                var v1 = graph.insertVertex(parent,edg,edg, 20+x, 120+((x%200)/100)*(x/2), 80, 30);
-                                x+= 100;
-                                var addN = {
-                                    "NAME" : edg,
-                                    "IS_VERTEX" : true,
-                                    "selected" : false,
-                                    "obj" : v1,
-                                };
-                                for(var itm in i[0][edg]){
-                                    addN[itm] = i[0][edg][itm];
-                                }
-                                graph_backbone.push(addN);
-                            }finally{
-                                graph.getModel().endUpdate();
-                            }    
+                    if(isSET(pReq.responseText)){
+                        displaySet();
+                    }else{
+                        displayView(pReq.responseText);
                     }
-                    var testing = 0;
-                    for(var from in i[1]){
-                        for(var to in i[1][from]){
-                            var parent = graph.getDefaultParent();
-                            graph.getModel().beginUpdate();
-                            try{
-                                var edgeFrom = graph.getModel().getCell(from);
-                                var edgeTo = graph.getModel().getCell(to);
-                                if(graph.getModel().getEdgesBetween(edgeFrom,edgeTo).length == 0 && i[1][from][to] != "0"){
-                                    var e1 = graph.insertEdge(parent, null,i[1][from][to], edgeFrom,edgeTo);
-                                }
-                            }finally{
-                                graph.getModel().endUpdate();
-                            }    
-                        }
-                    }
-                    var Aparent = graph.getDefaultParent();
-                    var testings = new mxHierarchicalLayout(graph).execute(Aparent);
-
-                    graph.refresh();
-					/*while(i > myViews){
-						var v = document.createElement('div');
-						v.classList.add("element");
-						v.classList.add("dummyView");
-						var par = document.getElementById('views');
-						par.append(v);
-						myViews++;
-					}*/
 				}else{
 					jString = pReq.responseText;
 					if(dec != jString.replace(/&quot;/g, '"')){
-						console.log("Change noticed.");
 						updateProjects();
 					}
 				}
@@ -688,7 +821,7 @@
         function resetFirst(){
             firstTimeShow = "";
         }
-        function showEdit(){
+        function showEdit(upload){
             var elm = document.getElementById("editing");
             var frm = document.getElementById("lblUpload");
             if(firstTimeShow == "" || firstTimeShow != current.name){
@@ -697,6 +830,9 @@
             }
             if(!elm.classList.contains("hideMe")){
                 elm.classList.add("hideMe");
+                if(upload){
+                    showMenu();
+                }
                 return;
             }
             elm.classList.remove("hideMe");
@@ -728,12 +864,8 @@
             <div id="editing" class="hideMe scrollable">
                 <iframe id="lblUpload" frameborder="0" src="./lblForm.html" width="600px" height="800px">Not supported.</iframe>
             </div>
-			<div id="mainGraph"></div>
-			<div id="views" class="scrollable">
-				<!--
-					TO-DO : ADD VIEW-LOADING
-				-->
-			</div>
+			<div id="viewHub">
+            </div>
 			<div id="statusBar">
 				Such menuBar. Much Wow.
 			</div>
