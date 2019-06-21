@@ -1,8 +1,8 @@
 import json
 from itertools import permutations
+from collections import defaultdict
 
-from . import View
-from Views.View import initdoubleDict
+from .View import View, initdoubleDict
 
 class ViewSet(dict):
 
@@ -88,9 +88,9 @@ class ViewSet(dict):
             as keys and their values are disjoint
             lists of nodes of the View
         """
-        # examine labelMap
-        labelMap = self.checkLabels(view, labelMap)
-        print(labelMap)
+        # examine labelMap (unnecessary since parseLabelString() ensures correct format)
+        # labelMap = self.checkLabels(view, labelMap)
+
         # initialize resulting dict
         res = dict.fromkeys(labelMap)
 
@@ -105,6 +105,7 @@ class ViewSet(dict):
             for source in subnodes:
                 # append nodes under the same label
                 nodes[source] = view.getNodes()[source]
+                # copy all indirect successors fully
                 indSucc[source] = view.getIndir()[source].copy()
                 # inner loop to copy double dicts
                 for target in subnodes:
@@ -120,7 +121,6 @@ class ViewSet(dict):
 
         # construct self
         self.update(res)
-        #self = res
 
 
     def toDict(self):
@@ -136,16 +136,46 @@ class ViewSet(dict):
 
     def toJsonFile(self, pathToJson):
         with open(pathToJson, 'w') as out:
-            json.dumps(self.toDict(), out)
+            json.dump(self.toDict(), out)
 
 
-# unnecessary
-def ddictIntersect(ddict, list):
+
+# parsing label JSON helper
+def parseLabelString(labelJSONString):
     """ 
-    Helper function that returns
-    a dictionary like double dict but with
-    only those keys that are in the list.
+    Helper method that brings JSON strings
+    containing a label map in the right format.
+    The received JSON string will be in the format:
+        { node1 : label1,
+          node2 : label2,
+          ...
+        }
+
+    The required format however is:
+        { label1 : [nodes belonging to label1],
+          label2 : [nodes belonging to label2],
+          ...
+        }
+    This reformatting is part of this function.
+
+    parameters:
+    labelJSONString -- string in JSON format
+
+    returns:
+    dict -- dictionary as required by checkLabels
     """
-    initia
-    res = initdoubleDict(ddict)
+    # load JSON as dictionary
+    labels = json.loads(labelJSONString)
+
+    # reformat the dictionary
+    labelMap = defaultdict(list)
+    for node, label in labels.items():
+        # mark empty label seperately
+        if label == '':
+            label = 'unassigned'
+
+        # add node to label map
+        labelMap[label] += [node]
+
+    return labelMap
 
