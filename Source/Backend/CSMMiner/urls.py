@@ -111,8 +111,11 @@ def iframe(request,fileName):
 	isLBL = (fileName == "lblForm")
 	fileName += ".html"
 	if request.method == 'POST':
-		DEST_DIR = createProject(filename)
 		if isLBL:
+			pName = request.POST.get('hiddenN') + ".xes"
+			hashedName = hashlib.sha256(pName.encode())
+			hexed = hashedName.hexdigest()
+			dest_directory = os.path.join(BASE_DIR,'./Storage/',hexed)
 			jsonstr = request.POST.get('hiddenJ')
 			print(json.loads(jsonstr))
 			#Backend call
@@ -133,7 +136,7 @@ def iframe(request,fileName):
 			}
 			return render(request, os.path.join(BASE_DIR,"HTMLDocs/",fileName), context)
 		md = File(file)
-		# DEST_DIR = createProject(filename)
+		DEST_DIR = createProject(filename)
 		if not DEST_DIR == "EXISTS":
 			context = {
 				'msg' : "FILE_OK",
