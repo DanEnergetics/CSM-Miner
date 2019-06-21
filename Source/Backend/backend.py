@@ -39,8 +39,8 @@ class BackEnd:
         viewset = ViewSet()
         viewset.partition(view, labelMap)
 
-        # write viewset to JSON file 
-        viewset.toJsonFile(viewsetJsonPath) 
+        # write viewset to JSON file (overwrites view json)
+        viewset.toJsonFile(pathToViewJSON) 
 
 
 # unit tests

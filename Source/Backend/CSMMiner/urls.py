@@ -111,12 +111,13 @@ def iframe(request,fileName):
 	isLBL = (fileName == "lblForm")
 	fileName += ".html"
 	if request.method == 'POST':
+		DEST_DIR = createProject(filename)
 		if isLBL:
 			jsonstr = request.POST.get('hiddenJ')
 			print(json.loads(jsonstr))
 			#Backend call
-			#t = Thread(target=backend.BackEnd.call, args=(os.path.join(DEST_DIR,filename),filename))
-			#t.start()
+			t = Thread(target=backend.BackEnd.call, args=(os.path.join(DEST_DIR,'graph.json'),jsonstr))
+			t.start()
 			return HttpResponse("OK")
 		file = request.FILES.get('file',"EMPTY_REQ")
 		if file == "EMPTY_REQ":
@@ -132,7 +133,7 @@ def iframe(request,fileName):
 			}
 			return render(request, os.path.join(BASE_DIR,"HTMLDocs/",fileName), context)
 		md = File(file)
-		DEST_DIR = createProject(filename)
+		# DEST_DIR = createProject(filename)
 		if not DEST_DIR == "EXISTS":
 			context = {
 				'msg' : "FILE_OK",
