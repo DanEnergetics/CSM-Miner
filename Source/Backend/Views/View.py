@@ -59,7 +59,15 @@ class View:
             return rt
         except:    
             return "Error"
+
+    def fromJsonFile(jsonFilePath):
+        with open(jsonFilePath, 'r') as f:
+            # load dictionary representation
+            rawView = json.load(f)
+            # construct View object
+            view = View(*rawView)
     
+        return view
 
 
 def initdoubleDict(keys):
@@ -70,3 +78,5 @@ def initdoubleDict(keys):
         res[key] = defaultdict(int)
 
     return res
+
+

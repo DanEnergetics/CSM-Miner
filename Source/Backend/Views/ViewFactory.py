@@ -1,4 +1,4 @@
-#from .View import View, initdoubleDict
+from .View import View, initdoubleDict
 #from .ViewSet import ViewSet
 
 from pm4py import util as pmutil
@@ -203,6 +203,9 @@ def buildViewSetFromJSON(pathToViewJSON, pathToPartitionJSON):
 
 
 if __name__ == "__main__":
+    # additional import for debug
+    from View import View, initdoubleDict
+
     # build View
     view = buildViewFromXES("running-example.xes", counts=True)
     print(view.getNodes())

@@ -1,15 +1,15 @@
 import json
 
-from Views.ViewFactory import buildViewFromXES
+from Views import buildViewFromXES
 from Views.View import View
-from Views.ViewSet import ViewSet
+from Views.ViewSet import ViewSet, parseLabelString
 
 
+viewsetJsonPath = "viewset.json"
 
 
 class BackEnd:
 
-    self.viewsetJsonPath = "viewset.json"
 
     def call(xes,name):
         print("\033[1;32;40m Back-end call received. \n")
@@ -19,6 +19,7 @@ class BackEnd:
         FileW = open(_path,"w")
         FileW.write(file_content)
         FileW.close()
+        return
         filename = str.replace(xes,name,'') + "index.json"
         old_string = "false"
         new_string = "true"
@@ -29,16 +30,35 @@ class BackEnd:
                 f.write(s)
 
 
-    def partition_call(pathToViewJSON, pathToPartitionJSON):
+    def partition_call(pathToViewJSON, labelJSONString):
         # read view from file
-        with open(pathToViewJSON, 'r') as input:
-            view = View.fromJSON(input)
+        # with open(pathToViewJSON, 'r') as input:
+        view = View.fromJsonFile(pathToViewJSON)
 
-        # read state map from file and partition the the views
-        with open(pathToPartitionJSON, 'r') as map:
-            viewset = ViewSet()
-            viewset.partition(view, json.load(map))
+        # read label map from string and partition the the views
+        labelMap = parseLabelString(labelJSONString)
+        viewset = ViewSet()
+        viewset.partition(view, labelMap)
 
         # write viewset to JSON file 
-        viewset.toJsonFile(self.viewsetJsonPath) 
+        viewset.toJsonFile(viewsetJsonPath) 
+
+
+# unit tests
+if __name__ == "__main__":
+
+    labelString = '["\"register request\": \"a\"","\"examine thoroughly\": \"a\"","\"check ticket\": \"a\"","\"decide\": \"b\"","\"reject request\": \"b\"","\"examine casually\": \"b\"","\"pay compensation\": \"\"","\"reinitiate request\": \"\""]'
+
+    labelString = labelString.replace('\\', '').replace('""', '"').replace('[', '{').replace(']', '}')
+
+    xes = "./Views/running-example.xes"
+    name = "running-example.xes"
+
+    BackEnd.call(xes, name)
+
+    viewJSON = "./Views/graph.json" 
+
+    BackEnd.partition_call(viewJSON, labelString)
+
+
 
