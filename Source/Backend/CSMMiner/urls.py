@@ -112,10 +112,14 @@ def iframe(request,fileName):
 	fileName += ".html"
 	if request.method == 'POST':
 		if isLBL:
+			pName = request.POST.get('hiddenN') + ".xes"
+			hashedName = hashlib.sha256(pName.encode())
+			hexed = hashedName.hexdigest()
+			dest_directory = os.path.join(BASE_DIR,'./Storage/',hexed)
 			jsonstr = request.POST.get('hiddenJ')
 			print(json.loads(jsonstr))
 			#Backend call
-			#t = Thread(target=backend.BackEnd.call, args=(os.path.join(DEST_DIR,filename),filename))
+			#t = Thread(target=backend.BackEnd.call, args=(os.path.join(dest_directory,filename),filename))
 			#t.start()
 			return HttpResponse("OK")
 		file = request.FILES.get('file',"EMPTY_REQ")
