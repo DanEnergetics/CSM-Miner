@@ -1,8 +1,8 @@
 {
     "backgroundImgPath": "./images/matrix.png",
-    "creationTime": "2019-06-07 13:34:49",
+    "creationTime": "2019-06-20 07:06:43",
     "filename": "running-example.xes",
-    "lastEdit": "2019-06-07 13:34:49",
+    "lastEdit": "2019-06-20 07:06:43",
     "name": "running-example",
-    "preProcessed": false
+    "preProcessed": true
 }

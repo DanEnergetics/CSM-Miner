@@ -377,13 +377,30 @@
             }
 		}
 
+        function getBBfN(name){
+            var rt = null;
+            graph_backbone.forEach(function(el){
+                if(el.NAME == name){
+                    rt = el;
+                }
+            });
+            return rt;
+        }
+
+        var oldClick = 0;
+        var newClick = 0;
+
         function highLightAllFollowing(obj){
+            if(obj.sourceState == undefined)
+                return;
             obj.sourceState.cell.value += "_CLICK";
+            getBBfN(obj.sourceState.cell.id).selected = true;
             edges = obj.sourceState.cell.edges;
             
             vert = [];
             for(var edg in edges){
-                console.log(edg);
+                if(edges[edg].target == obj.id)
+                    continue;
                 edges[edg].value += "_CLICK";
                 vert.push(edges[edg].target);
             }
@@ -397,15 +414,19 @@
         function getDirect(node){
             var text = "";
             for(edge in node.edges){
-                text += node.edges[edge].target.id + " " + node.edges[edge].id;
+                if(node.edges[edge].target.id == node.id)
+                    continue;
+                text += node.edges[edge].target.id + " " + node.edges[edge].value;
                 text += "\t";
+                console.log(node.edges[edge]);
             }
             return text;
         }
 
 		function mouseDownInGraph(sender,evt){
-			console.log(sender);
-			console.log(evt);
+            for(cell in graph.model.cells){
+                
+            }
 			if(evt.sourceState == undefined){
 				return;
 			}
@@ -414,7 +435,7 @@
 			if(evt.sourceState.cell.value == "" && evt.sourceState.cell.edge){
 				state_changed.innerText = "Edgy! ;)";
 			}else{
-				state_changed.innerText = evt.sourceState.cell.id + " Connections : " + getDirect(evt.sourceState.cell);
+				state_changed.innerText = evt.sourceState.cell.id + "(Count : "+ getBBfN(evt.sourceState.cell.id).count +")" + " Connections : " + getDirect(evt.sourceState.cell);
 			}
             highLightAllFollowing(evt);
 		}
@@ -468,43 +489,6 @@
 		function add(){
 			var rm = document.getElementById('add-project');
 			rm.classList.remove('hideMe');
-		}
-
-		const formType = {
-			REQUEST_FORM: 'RQ',
-			YES_NO_FORM: 'YN',
-			INFO_FORM: 'IF'
-		}
-
-		class Form{
-			constructor(name, parent){
-				this.form = document.createElement('form');
-				parent.appendChild(this.form);
-				this.form.name = name;
-			}
-
-			add(element) {
-				this.form.appendChild(element);
-			}
-
-
-
-			get(){
-				return this.form;
-			}
-		}
-
-		function mkForm(name,type,parent){
-			const f = new Form(name,parent);
-
-			switch(type){
-				case formType.REQUEST_FORM:
-					f.add(document.createElement('label'));
-				case formType.YES_NO_FORM:
-
-				case formType.INFO_FORM:
-
-			}
 		}
 
 				
@@ -591,6 +575,7 @@
         var oldtext = "";
 		var firsttime = true;
         var TEST = null;
+        var graph_backbone = [];
 		function loadDone(evt){
 			if(pReq.status >= 200 && pReq.status < 300){
 				if(inProject){
@@ -601,17 +586,26 @@
                     graph.getModel().clear();
 					var i = JSON.parse(pReq.responseText.replace(/\s+/g,''));
                     TEST = i;
-                    i[0].forEach(function(el){
-                        var parent = graph.getDefaultParent();
-                        // Adds cells to the model in a single step
-                        graph.getModel().beginUpdate();
-                        try{
-                            var v1 = graph.insertVertex(parent, el,el, 20+x, 120+((x%200)/100)*(x/2), 80, 30);
-                            x+= 100;
-                        }finally{
-                            graph.getModel().endUpdate();
-                        }
-                    });
+                    for(var edg in i[0]){
+                            var parent = graph.getDefaultParent();
+                            graph.getModel().beginUpdate();
+                            try{
+                                var v1 = graph.insertVertex(parent,edg,edg, 20+x, 120+((x%200)/100)*(x/2), 80, 30);
+                                x+= 100;
+                                var addN = {
+                                    "NAME" : edg,
+                                    "IS_VERTEX" : true,
+                                    "selected" : false,
+                                    "obj" : v1,
+                                };
+                                for(var itm in i[0][edg]){
+                                    addN[itm] = i[0][edg][itm];
+                                }
+                                graph_backbone.push(addN);
+                            }finally{
+                                graph.getModel().endUpdate();
+                            }    
+                    }
                     var testing = 0;
                     for(var from in i[1]){
                         for(var to in i[1][from]){
@@ -620,7 +614,7 @@
                             try{
                                 var edgeFrom = graph.getModel().getCell(from);
                                 var edgeTo = graph.getModel().getCell(to);
-                                if(graph.getModel().getEdgesBetween(edgeFrom,edgeTo).length == 0){
+                                if(graph.getModel().getEdgesBetween(edgeFrom,edgeTo).length == 0 && i[1][from][to] != "0"){
                                     var e1 = graph.insertEdge(parent, null,i[1][from][to], edgeFrom,edgeTo);
                                 }
                             }finally{
@@ -628,8 +622,10 @@
                             }    
                         }
                     }
-                    
-                    
+                    var Aparent = graph.getDefaultParent();
+                    var testings = new mxHierarchicalLayout(graph).execute(Aparent);
+
+                    graph.refresh();
 					/*while(i > myViews){
 						var v = document.createElement('div');
 						v.classList.add("element");
@@ -682,15 +678,16 @@
         function showEdit(){
             var elm = document.getElementById("editing");
             elm.classList.remove("hideMe");
-            var l = JSON.parse(pReq.responseText.replace(/\s+/g,''))[0];
+            var l = graph_backbone;
             l.forEach(function(ctnEl){
+                console.log(ctnEl);
                 var tr = document.createElement("tr");
-                var txt = document.createTextNode(ctnEl);
+                var txt = document.createTextNode(ctnEl.NAME);
                 var th1 = document.createElement("th");
                 var th2 = document.createElement("th");
                 var input = document.createElement("input");
                 input.type = "text";
-                input.id = ctnEl + "_LBL";
+                input.id = ctnEl.NAME + "_LBL";
                 textNodes.push(input);
                 rmNodes.push(tr);
                 tr.appendChild(th1);

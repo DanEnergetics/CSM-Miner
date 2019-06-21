@@ -203,9 +203,6 @@ def buildViewSetFromJSON(pathToViewJSON, pathToPartitionJSON):
 
 
 if __name__ == "__main__":
-    # additional import for debug
-    from View import View, initdoubleDict
-
     # build View
     view = buildViewFromXES("running-example.xes", counts=True)
     print(view.getNodes())

@@ -19,7 +19,6 @@ class BackEnd:
         FileW = open(_path,"w")
         FileW.write(file_content)
         FileW.close()
-        return
         filename = str.replace(xes,name,'') + "index.json"
         old_string = "false"
         new_string = "true"
