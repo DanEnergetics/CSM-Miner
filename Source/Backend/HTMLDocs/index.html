@@ -412,7 +412,6 @@
             g.refresh();
         }
         function clearGraphClicks(g){
-            console.log("Clearing" + g);
             for(c in g.getModel().cells){
                 unClick(g.getModel().getCell(c),g);
             }
@@ -429,17 +428,17 @@
         }
 
         function inGraphHighlight(actualCell,g){
+            if(actualCell == undefined || g == undefined)
+                return;
             if(actualCell.edge)
                 return;
+            if(g.getModel().getStyle(actualCell) == "clicked")
+                return;
             click(actualCell,g);
-            console.log(actualCell);
-            for(edge in actualCell.edges){
-                if(edge.target == undefined)
-                    continue;
-                if(edge.target.id != actualCell.id){
-                    console.log(edge);
-                    click(edge,g);
-                    inGraphHighlight(edge.target);
+            for(edg in actualCell.edges){
+                if(actualCell.edges[edg].target.id != actualCell.id){
+                    click(actualCell.edges[edg],g);
+                    inGraphHighlight(actualCell.edges[edg].target,g);
                 }
             }
         }
@@ -449,9 +448,9 @@
             inGraphHighlight(actualCell,g);
         }
 
-        function highLight(send){
+        function highLight(send,sender){
             if(isInit){
-                highLightCellInGraph(graph,send);
+                highLightCellInGraph(sender,send);
             }else{
                 for(g in graphs){
                     highLightCellInGraph(g,send);
@@ -464,7 +463,7 @@
                 return;
             removeAllClicks();
             var n = evt.sourceState.cell.value;
-            highLight(n);
+            highLight(n,sender);
 			var state_changed = document.getElementById('statusBar');
 			state_changed.style.opacity = 1;
 			state_changed.innerText = "";
