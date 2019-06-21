@@ -1,0 +1,102 @@
+<html>
+	<head>
+		<title>Label form</title>
+        <style>
+            form{
+                text-align: center;
+                display: table;
+                height: 100%;
+                width: 100%;
+                font-family: "Times New Roman", Times, sans-serif;
+            }
+            
+            .bottom{
+                position: absolute;
+                margin-left: -12%;
+                font-size: 10pt;
+                bottom: 0px;
+            }
+            input:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+            }
+            .textCl{
+                font-size: 18pt;      
+            }
+            #chooseBtn{
+                width: 150px;
+                height: 55px;
+                border-radius: 3px;
+                background-color: white;
+                color: black;
+                border: 2px solid #008CBA;
+                -o-transition: .5s;
+				-ms-transition: .5s;
+				-moz-transition: .5s;
+				-webkit-transition: .5s;
+            }
+            #chooseBtn:hover{
+                background-color:#008CBA;
+            }
+            #chooseBtn:leave{
+                background-color: white;
+            }
+            #chooseBtn:focus{
+                outline:none;
+            }
+        </style>
+	</head>
+	<body>
+		<script>
+            var list = [];
+
+            function call(){
+                var elm = document.getElementById("lblUpdate");
+                var l = parent.getBackBone();
+                l.forEach(function(ctnEl){
+                    var tr = document.createElement("tr");
+                    var txt = document.createTextNode(ctnEl.NAME);
+                    var th1 = document.createElement("th");
+                    var th2 = document.createElement("th");
+                    var input = document.createElement("input");
+                    input.type = "text";
+                    input.id = ctnEl.NAME + "_LBL";
+                    list.push(input);
+                    tr.appendChild(th1);
+                    tr.appendChild(th2);
+                    th1.appendChild(txt);
+                    th2.appendChild(input);
+                    elm.appendChild(tr);
+                });
+            }
+
+            function doEditing(obj){
+                completeRequest = [];
+                var c;
+                list.forEach(function(m){
+                    c = m.id.replace("_LBL","") + ": \"" + m.value + "\"";
+                    completeRequest.push(c);
+                });
+                list = [];
+                var jsonRQ = JSON.stringify(completeRequest);
+                var hd = document.getElementById("hiddenJ");
+                console.log(hd);
+                hd.value = jsonRQ;
+                console.log(hd.value);
+                parent.resetFirst();
+                parent.showEdit();
+                obj.parentElement.submit();
+            }
+		</script>
+		<form method="POST" action="" enctype="multipart/form-data">{% csrf_token %}
+            <input type="hidden" id="hiddenJ" value="" name="hiddenJ">
+            <table id="lblUpdate">
+                <tr>
+                    <th>Vertex</th>
+                    <th>Label</th>
+                </tr>
+            </table>
+            <button style="height:24px; width:60px; font-size:8pt;" onClick="return doEditing(this)"> Upload</button> 
+		</form>
+		</body>
+</html>

@@ -219,6 +219,11 @@
             background-color: yellow;
         }
 
+        #viewhub{
+            height:100%;
+            width:100%;
+        }
+
         .element:hover {
             box-sizing: border-box;
             -moz-box-sizing: border-box;
@@ -254,6 +259,13 @@
             height: 100%;
         }
 
+        #editing {
+            left: 50px;
+            border: none;
+            min-width: fit-content;
+            min height: fit-content;
+        }
+
         .scrollable::-webkit-scrollbar {
 	        display: none;
         }
@@ -282,7 +294,7 @@
             color : black;
             z-index : 99999999;
         }
-
+        #editing iframe,
         #add-project iframe {
             position: fixed;
             z-index: 999;
@@ -305,14 +317,9 @@
             position:absolute;
             background-color:white;
             z-index:9999999;
-            width: 1000px;
+            width: 100%;
+            height:100%;
             top: 200px;
-            min-height: fit-content;
-            max-height: fit-content;
-            box-sizing: border-box;
-            -moz-box-sizing: border-box;
-            -webkit-box-sizing: border-box;
-            border: 2px solid black !important;
         }
         
     </style>
@@ -399,13 +406,11 @@
             
             vert = [];
             for(var edg in edges){
-                if(edges[edg].target == obj.id)
-                    continue;
+                if(edges[edg].target == obj.sourceState.cell.id)continue;
                 edges[edg].value += "_CLICK";
                 vert.push(edges[edg].target);
             }
             graph.refresh();
-            console.log(vert);
             for(vertice in vert){
                 highLightAllFollowing(vertice);
             }
@@ -584,7 +589,7 @@
                     }
                     oldtext = pReq.responseText;
                     graph.getModel().clear();
-					var i = JSON.parse(pReq.responseText.replace(/\s+/g,''));
+                    var i = JSON.parse(pReq.responseText);
                     TEST = i;
                     for(var edg in i[0]){
                             var parent = graph.getDefaultParent();
@@ -675,48 +680,26 @@
 		}
         var textNodes = [];
         var rmNodes = [];
+        
+        function getBackBone(){
+            return graph_backbone;
+        }
+        var firstTimeShow = "";
+        function resetFirst(){
+            firstTimeShow = "";
+        }
         function showEdit(){
             var elm = document.getElementById("editing");
+            var frm = document.getElementById("lblUpload");
+            if(firstTimeShow == "" || firstTimeShow != current.name){
+                firstTimeShow = current.name;
+                frm.contentWindow.call();
+            }
+            if(!elm.classList.contains("hideMe")){
+                elm.classList.add("hideMe");
+                return;
+            }
             elm.classList.remove("hideMe");
-            var l = graph_backbone;
-            l.forEach(function(ctnEl){
-                console.log(ctnEl);
-                var tr = document.createElement("tr");
-                var txt = document.createTextNode(ctnEl.NAME);
-                var th1 = document.createElement("th");
-                var th2 = document.createElement("th");
-                var input = document.createElement("input");
-                input.type = "text";
-                input.id = ctnEl.NAME + "_LBL";
-                textNodes.push(input);
-                rmNodes.push(tr);
-                tr.appendChild(th1);
-                tr.appendChild(th2);
-                th1.appendChild(txt);
-                th2.appendChild(input);
-                elm.appendChild(tr);
-            });
-        }
-        function doEditing(){
-            completeRequest = [];
-            var c;
-            textNodes.forEach(function(m){
-                c = "\"" + m.id.replace("_LBL","") + "\"" + ": \"" + m.value + "\"";
-                
-                completeRequest.push(c);
-            });
-            textNodes = [];
-            var jsonRQ = JSON.stringify(completeRequest);
-            var lblReq = new XMLHttpRequest();
-            lblReq.open("GET","/request/LABEL/" + current.name + ".json");
-            lblReq.send();
-            document.getElementById("editing").classList.add("hideMe");
-            var elm = document.getElementById("editing");
-            rmNodes.forEach(function(a){
-                elm.removeChild(a);
-            });
-            rmNodes = [];
-            showMenu();
         }
     </script>
 </head>
@@ -743,13 +726,7 @@
 		</div>
 		<div id="mainContainer">
             <div id="editing" class="hideMe scrollable">
-                <table>
-                    <tr>
-                        <th>Vertex</th>
-                        <th>Label</th>
-                    </tr>
-                </table>
-                <button style="height:24px; width:60px; font-size:8pt;" onClick="return doEditing()"> Upload</button>
+                <iframe id="lblUpload" frameborder="0" src="./lblForm.html" width="600px" height="800px">Not supported.</iframe>
             </div>
 			<div id="mainGraph"></div>
 			<div id="views" class="scrollable">

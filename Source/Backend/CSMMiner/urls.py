@@ -108,8 +108,14 @@ def request(rq,action):
 @register.filter
 @csrf_protect
 def iframe(request,fileName):
+	isLBL = (fileName == "lblForm")
 	fileName += ".html"
 	if request.method == 'POST':
+		if isLBL:
+			jsonstr = request.POST.get('hiddenJ')
+			print(json.loads(jsonstr))
+			#Backend call
+			return HttpResponse("OK")
 		file = request.FILES.get('file',"EMPTY_REQ")
 		if file == "EMPTY_REQ":
 			context = {

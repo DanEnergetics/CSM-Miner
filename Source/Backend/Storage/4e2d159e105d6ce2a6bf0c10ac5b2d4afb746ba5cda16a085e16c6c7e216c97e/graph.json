@@ -1,34 +1,42 @@
 [
     {
         "register request": {
-            "count": 6
+            "count": 6,
+            "costs": 50.0
         },
         "examine thoroughly": {
-            "count": 3
+            "count": 3,
+            "costs": 400.0
         },
         "check ticket": {
-            "count": 9
+            "count": 9,
+            "costs": 100.0
         },
         "decide": {
-            "count": 9
+            "count": 9,
+            "costs": 200.0
         },
         "reject request": {
-            "count": 3
+            "count": 3,
+            "costs": 200.0
         },
         "examine casually": {
-            "count": 6
+            "count": 6,
+            "costs": 400.0
         },
         "pay compensation": {
-            "count": 3
+            "count": 3,
+            "costs": 200.0
         },
         "reinitiate request": {
-            "count": 3
+            "count": 3,
+            "costs": 200.0
         }
     },
     {
         "register request": {
-            "examine thoroughly": 0.16666666666666666,
-            "check ticket": 0.3333333333333333,
+            "examine thoroughly": 0.17,
+            "check ticket": 0.33,
             "examine casually": 0.5,
             "register request": 0.0,
             "decide": 0.0,
@@ -37,8 +45,8 @@
             "reinitiate request": 0.0
         },
         "examine thoroughly": {
-            "check ticket": 0.6666666666666666,
-            "decide": 0.3333333333333333,
+            "check ticket": 0.67,
+            "decide": 0.33,
             "register request": 0.0,
             "examine thoroughly": 0.0,
             "reject request": 0.0,
@@ -47,9 +55,9 @@
             "reinitiate request": 0.0
         },
         "check ticket": {
-            "decide": 0.6666666666666666,
-            "examine casually": 0.2222222222222222,
-            "examine thoroughly": 0.1111111111111111,
+            "decide": 0.67,
+            "examine casually": 0.22,
+            "examine thoroughly": 0.11,
             "register request": 0.0,
             "check ticket": 0.0,
             "reject request": 0.0,
@@ -57,9 +65,9 @@
             "reinitiate request": 0.0
         },
         "decide": {
-            "reject request": 0.3333333333333333,
-            "pay compensation": 0.3333333333333333,
-            "reinitiate request": 0.3333333333333333,
+            "reject request": 0.33,
+            "pay compensation": 0.33,
+            "reinitiate request": 0.33,
             "register request": 0.0,
             "examine thoroughly": 0.0,
             "check ticket": 0.0,
@@ -77,8 +85,8 @@
             "reinitiate request": 0
         },
         "examine casually": {
-            "decide": 0.3333333333333333,
-            "check ticket": 0.6666666666666666,
+            "decide": 0.33,
+            "check ticket": 0.67,
             "register request": 0.0,
             "examine thoroughly": 0.0,
             "reject request": 0.0,
@@ -97,9 +105,9 @@
             "reinitiate request": 0
         },
         "reinitiate request": {
-            "examine thoroughly": 0.3333333333333333,
-            "check ticket": 0.3333333333333333,
-            "examine casually": 0.3333333333333333,
+            "examine thoroughly": 0.33,
+            "check ticket": 0.33,
+            "examine casually": 0.33,
             "register request": 0.0,
             "decide": 0.0,
             "reject request": 0.0,
@@ -109,13 +117,13 @@
     },
     {
         "register request": {
-            "check ticket": 0.23333333333333334,
+            "check ticket": 0.23,
             "decide": 0.3,
             "reject request": 0.1,
             "examine casually": 0.1,
             "pay compensation": 0.1,
             "reinitiate request": 0.1,
-            "examine thoroughly": 0.06666666666666667,
+            "examine thoroughly": 0.07,
             "register request": 0.0
         },
         "examine thoroughly": {
@@ -129,23 +137,23 @@
             "reinitiate request": 0.0
         },
         "check ticket": {
-            "reject request": 0.17857142857142858,
+            "reject request": 0.18,
             "decide": 0.25,
-            "pay compensation": 0.14285714285714285,
-            "reinitiate request": 0.14285714285714285,
-            "examine thoroughly": 0.03571428571428571,
-            "check ticket": 0.14285714285714285,
-            "examine casually": 0.10714285714285714,
+            "pay compensation": 0.14,
+            "reinitiate request": 0.14,
+            "examine thoroughly": 0.04,
+            "check ticket": 0.14,
+            "examine casually": 0.11,
             "register request": 0.0
         },
         "decide": {
-            "examine thoroughly": 0.0625,
+            "examine thoroughly": 0.06,
             "check ticket": 0.25,
             "decide": 0.25,
-            "pay compensation": 0.0625,
-            "examine casually": 0.1875,
-            "reinitiate request": 0.0625,
-            "reject request": 0.125,
+            "pay compensation": 0.06,
+            "examine casually": 0.19,
+            "reinitiate request": 0.06,
+            "reject request": 0.12,
             "register request": 0.0
         },
         "reject request": {
@@ -159,13 +167,13 @@
             "reinitiate request": 0
         },
         "examine casually": {
-            "pay compensation": 0.11538461538461539,
-            "decide": 0.3076923076923077,
-            "reinitiate request": 0.15384615384615385,
-            "examine thoroughly": 0.038461538461538464,
-            "check ticket": 0.15384615384615385,
-            "examine casually": 0.11538461538461539,
-            "reject request": 0.11538461538461539,
+            "pay compensation": 0.12,
+            "decide": 0.31,
+            "reinitiate request": 0.15,
+            "examine thoroughly": 0.04,
+            "check ticket": 0.15,
+            "examine casually": 0.12,
+            "reject request": 0.12,
             "register request": 0.0
         },
         "pay compensation": {
@@ -179,12 +187,12 @@
             "reinitiate request": 0
         },
         "reinitiate request": {
-            "check ticket": 0.23076923076923078,
-            "decide": 0.3076923076923077,
-            "pay compensation": 0.07692307692307693,
-            "examine casually": 0.15384615384615385,
-            "reinitiate request": 0.07692307692307693,
-            "reject request": 0.15384615384615385,
+            "check ticket": 0.23,
+            "decide": 0.31,
+            "pay compensation": 0.08,
+            "examine casually": 0.15,
+            "reinitiate request": 0.08,
+            "reject request": 0.15,
             "register request": 0.0,
             "examine thoroughly": 0.0
         }
