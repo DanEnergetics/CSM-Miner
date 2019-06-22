@@ -144,6 +144,10 @@
             left: 0;
         }
 
+        .grey {
+            background-color: grey;
+        }
+
         #statusBar {
             opacity: 0.1;
             -o-transition: .5s;
@@ -412,6 +416,7 @@
             g.refresh();
         }
         function clearGraphClicks(g){
+            console.log(g);
             for(c in g.getModel().cells){
                 unClick(g.getModel().getCell(c),g);
             }
@@ -422,7 +427,7 @@
                 clearGraphClicks(graph);
             }else{
                 for(g in graphs){
-                    clearGraphClicks(g);
+                    clearGraphClicks(graphs[g]);
                 }
             }
         }
@@ -453,7 +458,7 @@
                 highLightCellInGraph(sender,send);
             }else{
                 for(g in graphs){
-                    highLightCellInGraph(g,send);
+                    highLightCellInGraph(graphs[g],send);
                 }
             }
         }
@@ -612,11 +617,18 @@
                 graph.getStylesheet().putCellStyle('unclicked', style2);
                 return false;
             }else{
+                var switching = true;
                 var mElement
                 for(e in parsed){
                     pGraph.push(parsed[e]);
-                    var gContainer = document.create('div');
+                    var gContainer = document.createElement('div');
                     gContainer.classList.add('view');
+                    if(switching){
+                        switching = false;
+                        gContainer.classList.add('grey');
+                    }else{
+                        switching = true;
+                    }
                     container.appendChild(gContainer);
                     mxEvent.disableContextMenu(gContainer);
                     var tmpGraph = new mxGraph(gContainer);
@@ -634,11 +646,11 @@
                     var style = new Object();
                     style[mxConstants.STYLE_FILLCOLOR] = "red";
                     style[mxConstants.STYLE_STROKECOLOR] = "red";
-                    tmpgraph.getStylesheet().putCellStyle('clicked', style);
+                    tmpGraph.getStylesheet().putCellStyle('clicked', style);
                     var style2 = new Object();
                     style2[mxConstants.STYLE_FILLCOLOR] = "blue";
                     style2[mxConstants.STYLE_STROKECOLOR] = "blue";
-                    tmpgraph.getStylesheet().putCellStyle('unclicked', style2);
+                    tmpGraph.getStylesheet().putCellStyle('unclicked', style2);
                     graphs.push(tmpGraph);
                 }
                 return true;

@@ -1,4 +1,5 @@
 import json
+import os
 
 from Views import buildViewFromXES
 from Views.View import View
@@ -34,13 +35,25 @@ class BackEnd:
         # with open(pathToViewJSON, 'r') as input:
         view = View.fromJsonFile(pathToViewJSON)
 
+        indexPath = pathToViewJSON.replace("graph","index")
+        old_string = "true"
+        new_string = "false"
+        with open(indexPath) as f:
+                s = f.read()
+        with open(indexPath, 'w') as f:
+                s = s.replace(old_string, new_string)
+                f.write(s)
         # read label map from string and partition the the views
         labelMap = parseLabelString(labelJSONString)
         viewset = ViewSet()
         viewset.partition(view, labelMap)
-
         # write viewset to JSON file (overwrites view json)
         viewset.toJsonFile(pathToViewJSON) 
+        with open(indexPath) as f:
+                s = f.read()
+        with open(indexPath, 'w') as f:
+                s = s.replace(new_string, old_string)
+                f.write(s)
 
 
 # unit tests
