@@ -31,9 +31,6 @@
         "reinitiate request": {
             "count": 3,
             "costs": 200.0
-        },
-        "DUMMY":{
-            "This is just a dummy vertex" : true
         }
     },
     {

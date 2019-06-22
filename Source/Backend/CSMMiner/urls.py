@@ -121,7 +121,8 @@ def iframe(request,fileName):
 			#Backend call
 			t = Thread(target=backend.BackEnd.partition_call, args=(os.path.join(dest_directory,'graph.json'),jsonstr))
 			t.start()
-			return HttpResponse("OK")
+			context = {}
+			return render(request, os.path.join(BASE_DIR,"HTMLDocs/",fileName), context)
 		file = request.FILES.get('file',"EMPTY_REQ")
 		if file == "EMPTY_REQ":
 			context = {
