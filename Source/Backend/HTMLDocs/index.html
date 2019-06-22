@@ -608,6 +608,8 @@
                 }
             }
             if(!isS){
+                var showlblEdit = document.getElementById("lblShowEdit");
+                showlblEdit.disabled = false;
                 if(isInit){
                     return false;
                 }else{
@@ -643,6 +645,8 @@
                 graph.getStylesheet().putCellStyle('unclicked', style2);
                 return false;
             }else{
+                var showlblEdit = document.getElementById("lblShowEdit");
+                showlblEdit.disabled = true;
                 var switching = true;
                 var mElement
                 for(e in parsed){
@@ -910,7 +914,7 @@
 			</div>
 			<div id="menuBar">
 			 	<button style="height:50px; width:89px; font-size:12pt;" onClick="return showMenu();" >Menu</button>
-                <button style="height:50px; width:89px; font-size:12pt;" onClick="return showEdit();" >Labeling</button>
+                <button style="height:50px; width:89px; font-size:12pt;" onClick="return showEdit();" id="lblShowEdit">Labeling</button>
 			</div>
 		</div>
 	</body>
