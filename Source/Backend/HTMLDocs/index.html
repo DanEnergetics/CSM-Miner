@@ -511,6 +511,8 @@
 		}
         var rmChilds = [];
 		function showMenu(){
+            var textElement = document.getElementById("statusBar");
+            textElement.innerText = "";
 			inProject = false;
             displayed = "";
             graphs = [];
@@ -905,7 +907,6 @@
 			<div id="viewHub">
             </div>
 			<div id="statusBar">
-				Such menuBar. Much Wow.
 			</div>
 			<div id="menuBar">
 			 	<button style="height:50px; width:89px; font-size:12pt;" onClick="return showMenu();" >Menu</button>
