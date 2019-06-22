@@ -137,13 +137,6 @@
             width: 100%;
         }
 
-        #viewHub {
-            z-index: 5;
-            width: 100% height : 100%;
-            top: 0;
-            left: 0;
-        }
-
         .grey {
             background-color: grey;
         }
@@ -227,6 +220,12 @@
             height:100%;
             width:100%;
             overflow-x: scroll;
+            max-height: 100%;
+            white-space: nowrap;
+            display: grid | inline-grid;
+            grid-gap: 20px;
+            grid-template-columns: repeat(100%, 600px);
+            grid-template-rows: 100%;
         }
 
         .element:hover {
@@ -263,7 +262,6 @@
             background: grey;
             height: 100%;
         }
-
         #editing {
             left: 50px;
             border: none;
@@ -416,7 +414,6 @@
             g.refresh();
         }
         function clearGraphClicks(g){
-            console.log(g);
             for(c in g.getModel().cells){
                 unClick(g.getModel().getCell(c),g);
             }
@@ -453,12 +450,25 @@
             inGraphHighlight(actualCell,g);
         }
 
+        function highLightSpecial(send,sender){
+            if(isInit){
+                highLightCellInGraph(sender,send);
+            }else{
+                for(var i = 0;i < pGraph.length;i++){
+                    highLightCellInGraph(graphs[i],send);
+                }
+            }
+        }
+
         function highLight(send,sender){
             if(isInit){
                 highLightCellInGraph(sender,send);
             }else{
-                for(g in graphs){
-                    highLightCellInGraph(graphs[g],send);
+                for(var i = 0;i < pGraph.length;i++){
+                    highLightCellInGraph(graphs[i],send);
+                    for(suc in pGraph[i].indirectSuccessors[send]){
+                        highLightSpecial(suc,graphs[i]);
+                    }
                 }
             }
         }
@@ -496,9 +506,19 @@
             }
             document.getElementById('projectDrawer').classList.add('hideMe');
 		}
-
+        var rmChilds = [];
 		function showMenu(){
 			inProject = false;
+            displayed = "";
+            graphs = [];
+            pGraph = [];
+            isInit = false;
+            if(!isInit){
+                var elm = document.getElementById("viewHub");
+                while(elm.children.length > 0){
+                    elm.removeChild(elm.children[0]);
+                }
+            }
 			document.getElementById('projectDrawer').classList.remove('hideMe');
 		}	
 		
@@ -717,9 +737,12 @@
                             "NAME" : node,
                         };
                         for(var itm in pGraph[m].nodes){
-                            addN[itm] = pGraph[m].nodes[itm];
+                            for(var vari in pGraph[m].nodes[itm]){
+                                addN[vari] = pGraph[m].nodes[itm][vari];
+                            }
                         }
-                        if(m == 0)graph_backbone.push(addN);
+                        if(getBBfN(node) == undefined)
+                            graph_backbone.push(addN);
                     }finally{
                         graphs[m].getModel().endUpdate();
                     }    
