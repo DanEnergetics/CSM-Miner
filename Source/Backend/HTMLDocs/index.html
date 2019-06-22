@@ -149,7 +149,7 @@
             -webkit-transition: .5s;
             position: fixed;
             left: 0;
-            bottom: 0;
+            bottom: 20px;
             z-index: 9;
             font-size: 2em;
             background-color: grey;
@@ -291,6 +291,9 @@
         canvas {
             width: 100%;
             height: 100%;
+        }
+        .noY {
+            display: inline-block;
         }
 
         noscript {
@@ -511,6 +514,7 @@
 			inProject = false;
             displayed = "";
             graphs = [];
+            firstTimeShow = "";
             pGraph = [];
             isInit = false;
             if(!isInit){
@@ -643,6 +647,7 @@
                     pGraph.push(parsed[e]);
                     var gContainer = document.createElement('div');
                     gContainer.classList.add('view');
+                    gContainer.classList.add('noY');
                     if(switching){
                         switching = false;
                         gContainer.classList.add('grey');
