@@ -20,40 +20,59 @@ class BackEnd:
         FileW = open(_path,"w")
         FileW.write(file_content)
         FileW.close()
+
+        # set ready in index.json
         filename = str.replace(xes,name,'') + "index.json"
-        old_string = "false"
-        new_string = "true"
-        with open(filename) as f:
-                s = f.read()
-        with open(filename, 'w') as f:
-                s = s.replace(old_string, new_string)
-                f.write(s)
+        setFlag(filename)
 
 
     def partition_call(pathToViewJSON, labelJSONString):
         # read view from file
-        # with open(pathToViewJSON, 'r') as input:
         view = View.fromJsonFile(pathToViewJSON)
 
         indexPath = pathToViewJSON.replace("graph","index")
-        old_string = "true"
-        new_string = "false"
-        with open(indexPath) as f:
-                s = f.read()
-        with open(indexPath, 'w') as f:
-                s = s.replace(old_string, new_string)
-                f.write(s)
+        setFlag(indexPath)
+
         # read label map from string and partition the the views
         labelMap = parseLabelString(labelJSONString)
         viewset = ViewSet()
         viewset.partition(view, labelMap)
+
+        # rename the view file to original
+        newPathToViewJSON = pathToViewJSON.replace("graph", "original")
+        os.rename(pathToViewJSON, newPathToViewJSON)
+
         # write viewset to JSON file (overwrites view json)
-        viewset.toJsonFile(pathToViewJSON) 
-        with open(indexPath) as f:
-                s = f.read()
-        with open(indexPath, 'w') as f:
-                s = s.replace(new_string, old_string)
-                f.write(s)
+        pathToViewSetJSON = pathToViewJSON.replace("original", "graph")
+        print(pathToViewSetJSON)
+        viewset.toJsonFile(pathToViewSetJSON) 
+
+        # unset flag
+        remFlag(indexPath)
+
+
+
+def setFlag(indexPath):
+    """ Mark the request as being processed. """
+    old_string = "true"
+    new_string = "false"
+    with open(indexPath) as f:
+            s = f.read()
+    with open(indexPath, 'w') as f:
+            s = s.replace(old_string, new_string)
+            f.write(s)
+
+
+def remFlag(indexPath):
+    """ Mark the request as being processed. """
+    old_string = "true"
+    new_string = "false"
+    with open(indexPath) as f:
+            s = f.read()
+    with open(indexPath, 'w') as f:
+            s = s.replace(new_string, old_string)
+            f.write(s)
+
 
 
 # unit tests

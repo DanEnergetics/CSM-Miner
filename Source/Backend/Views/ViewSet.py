@@ -94,6 +94,9 @@ class ViewSet(dict):
         # initialize resulting dict
         res = dict.fromkeys(labelMap)
 
+        # add original view
+        res["original"] = view
+
         for label, subnodes in labelMap.items():
             # initialize dictionaries
             nodes = dict.fromkeys(subnodes)
