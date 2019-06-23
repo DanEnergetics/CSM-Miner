@@ -84,12 +84,18 @@
                 var hd = document.getElementById("hiddenJ");
                 hd.value = completeRequest;
                 document.getElementById("hiddenN").value = parent.current.name;
+                var ft = "true";
+                if(parent.isInit){
+                    ft = "false";
+                }
+                document.getElementById("hiddenF").value = ft;
                 parent.resetFirst();
                 parent.showEdit(true);
                 obj.parentElement.submit();
             }
 		</script>
 		<form method="POST" action="" enctype="multipart/form-data">{% csrf_token %}
+            <input type="hidden" id="hiddenF" value="" name="hiddenF">
             <input type="hidden" id="hiddenN" value="" name="hiddenN">
             <input type="hidden" id="hiddenJ" value="" name="hiddenJ">
             <table id="lblUpdate">

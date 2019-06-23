@@ -608,8 +608,6 @@
                 }
             }
             if(!isS){
-                var showlblEdit = document.getElementById("lblShowEdit");
-                showlblEdit.disabled = false;
                 if(isInit){
                     return false;
                 }else{
@@ -645,8 +643,6 @@
                 graph.getStylesheet().putCellStyle('unclicked', style2);
                 return false;
             }else{
-                var showlblEdit = document.getElementById("lblShowEdit");
-                showlblEdit.disabled = true;
                 var switching = true;
                 var mElement
                 for(e in parsed){

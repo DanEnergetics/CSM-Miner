@@ -119,14 +119,15 @@ def iframe(request,fileName):
 			jsonstr = request.POST.get('hiddenJ')
 			print(json.loads(jsonstr))
 			#Backend call
-                        # decide context
-                        firstLabeling = True
-                        if firstLabeling:
-			        t = Thread(target=backend.BackEnd.partition_call, args=(os.path.join(dest_directory,'graph.json'),jsonstr))
-                        else:
-			        t = Thread(target=backend.BackEnd.partition_call, args=(os.path.join(dest_directory,'original.json'),jsonstr))
-                            
-                        # start thread
+			# decide context
+			firstLabeling = True
+			if request.POST.get('hiddenF') == "false":
+				firstLabeling = False
+			if firstLabeling:
+				t = Thread(target=backend.BackEnd.partition_call, args=(os.path.join(dest_directory,'graph.json'),jsonstr))
+			else:
+				t = Thread(target=backend.BackEnd.partition_call, args=(os.path.join(dest_directory,'original.json'),jsonstr))
+			# start thread
 			t.start()
 			context = {}
 			return render(request, os.path.join(BASE_DIR,"HTMLDocs/",fileName), context)
