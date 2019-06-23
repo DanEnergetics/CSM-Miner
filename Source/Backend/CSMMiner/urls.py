@@ -117,7 +117,7 @@ def iframe(request,fileName):
 			hexed = hashedName.hexdigest()
 			dest_directory = os.path.join(BASE_DIR,'./Storage/',hexed)
 			jsonstr = request.POST.get('hiddenJ')
-			print(json.loads(jsonstr))
+			print(request.POST.get('hiddenF'))
 			#Backend call
 			# decide context
 			firstLabeling = True

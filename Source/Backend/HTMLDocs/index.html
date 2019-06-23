@@ -597,7 +597,7 @@
         var graphs= [];
         var pGraph = [];
         var isInit = false;
-
+        var ISMULT = false;
         function isSET(json){
             var container = document.getElementById("viewHub");
             var parsed = JSON.parse(json);
@@ -608,6 +608,7 @@
                 }
             }
             if(!isS){
+                ISMULT = false;
                 if(isInit){
                     return false;
                 }else{
@@ -643,6 +644,7 @@
                 graph.getStylesheet().putCellStyle('unclicked', style2);
                 return false;
             }else{
+                ISMULT = true;
                 var switching = true;
                 var mElement
                 for(e in parsed){

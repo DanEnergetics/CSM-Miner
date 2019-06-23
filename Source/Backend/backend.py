@@ -23,7 +23,7 @@ class BackEnd:
 
         # set ready in index.json
         filename = str.replace(xes,name,'') + "index.json"
-        setFlag(filename)
+        remFlag(filename)
 
 
     def partition_call(pathToViewJSON, labelJSONString):
