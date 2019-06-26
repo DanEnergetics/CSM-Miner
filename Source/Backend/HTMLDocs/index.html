@@ -423,16 +423,13 @@
 
         function click(c,g){
             g.getModel().setStyle(c,'clicked');
-            g.refresh();
         }
         function unClick(c,g){
             g.getModel().setStyle(c,'unclicked');
-            g.refresh();
         }
         function resetName(c,g){
             c.value = c.id;
             g.updateCellSize(c);
-            g.refresh();
         }
         function resetNames(g){
             for(c in g.getModel().cells){
@@ -487,7 +484,6 @@
                 return;
             ac.value +=  " " + v;
             g.updateCellSize(ac);
-            g.refresh();
         }
 
         function highLightSpecial(send,sender,val){
