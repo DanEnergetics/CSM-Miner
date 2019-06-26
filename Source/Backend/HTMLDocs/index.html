@@ -140,6 +140,14 @@
         .grey {
             background-color: grey;
         }
+        
+        .NAME {
+            position : absolute;
+            top : -10px;
+            z-index: 8;
+            display: inline-block;
+            vertical-align: top; /* here */
+        }
 
         #statusBar {
             opacity: 0.1;
@@ -217,6 +225,10 @@
         }
 
         #viewhub{
+            text-align : center;
+            vertical-align : middle;
+            font-size: 12pt;
+            color: black;
             height:100%;
             width:100%;
             overflow-x: scroll;
@@ -270,6 +282,7 @@
         }
 
         .view{
+            padding : 20px;
             height:100%;
             width: 600px;
         }
@@ -416,6 +429,16 @@
             g.getModel().setStyle(c,'unclicked');
             g.refresh();
         }
+        function resetName(c,g){
+            c.value = c.id;
+            g.updateCellSize(c);
+            g.refresh();
+        }
+        function resetNames(g){
+            for(c in g.getModel().cells){
+                resetName(g.getModel().getCell(c),g);
+            }
+        }
         function clearGraphClicks(g){
             for(c in g.getModel().cells){
                 unClick(g.getModel().getCell(c),g);
@@ -427,6 +450,7 @@
                 clearGraphClicks(graph);
             }else{
                 for(g in graphs){
+                    resetNames(graphs[g]);
                     clearGraphClicks(graphs[g]);
                 }
             }
@@ -453,11 +477,27 @@
             inGraphHighlight(actualCell,g);
         }
 
-        function highLightSpecial(send,sender){
+        function textAddToCell(g,c,v,s){
+            if(g == s)
+                return;
+            var ac = g.getModel().getCell(c);
+            if(ac == undefined)
+                return;
+            if(ac.value != ac.id)
+                return;
+            ac.value +=  " " + v;
+            g.updateCellSize(ac);
+            g.refresh();
+        }
+
+        function highLightSpecial(send,sender,val){
             if(isInit){
                 highLightCellInGraph(sender,send);
             }else{
                 for(var i = 0;i < pGraph.length;i++){
+                    if(graphs[i] == sender)
+                        continue;
+                    textAddToCell(graphs[i],send,val,sender)
                     highLightCellInGraph(graphs[i],send);
                 }
             }
@@ -470,8 +510,8 @@
                 for(var i = 0;i < pGraph.length;i++){
                     highLightCellInGraph(graphs[i],send);
                     for(suc in pGraph[i].indirectSuccessors[send]){
-                        if(pGraph[i].indirectSuccessors[send][suc] > 0){
-                            highLightSpecial(suc,graphs[i]);
+                        if(pGraph[i].indirectSuccessors[send][suc] > 0 && graphs[i] != sender){
+                            highLightSpecial(suc,sender,pGraph[i].indirectSuccessors[send][suc]);
                         }
                     }
                 }
@@ -479,8 +519,16 @@
         }
 
 		function mouseDownInGraph(sender,evt){
-            if(evt.sourceState == undefined)
+            if(evt.sourceState == undefined){
+                removeAllClicks();
+                for(var m=0;m < graphs.length;m++){
+                    var Aparent = graphs[m].getDefaultParent();
+                    var testings = new mxHierarchicalLayout(graphs[m]).execute(Aparent);
+                    graphs[m].refresh();
+                }
+                document.getElementById('statusBar').innerText ="";
                 return;
+            }
             removeAllClicks();
             var n = evt.sourceState.cell.value;
             highLight(n,sender);
@@ -491,6 +539,11 @@
                 if(setting != "obj"){
                     state_changed.innerText += setting + " : " + getBBfN(n)[setting] + ", ";
                 }
+            }
+            for(var m=0;m < graphs.length;m++){
+                var Aparent = graphs[m].getDefaultParent();
+                var testings = new mxHierarchicalLayout(graphs[m]).execute(Aparent);
+                graphs[m].refresh();
             }
 		}
 		
@@ -619,7 +672,8 @@
                 mxEvent.disableContextMenu(container);
                 // Creates the graph inside the given container
                 graph = new mxGraph(container);
-
+                graph.setAutoSizeCells(true);
+                graph.setCellsResizable(true);
                 // Enables rubberband selection
                 //new mxRubberband(graph);
 
@@ -639,10 +693,12 @@
                 var style = new Object();
                 style[mxConstants.STYLE_FILLCOLOR] = "red";
                 style[mxConstants.STYLE_STROKECOLOR] = "red";
+                style[mxConstants.STYLE_OVERFLOW] = "fill";
                 graph.getStylesheet().putCellStyle('clicked', style);
                 var style2 = new Object();
                 style2[mxConstants.STYLE_FILLCOLOR] = "blue";
                 style2[mxConstants.STYLE_STROKECOLOR] = "blue";
+                style2[mxConstants.STYLE_OVERFLOW] = "fill";
                 graph.getStylesheet().putCellStyle('unclicked', style2);
                 return false;
             }else{
@@ -652,6 +708,11 @@
                 for(e in parsed){
                     pGraph.push(parsed[e]);
                     var gContainer = document.createElement('div');
+                    var tCon = document.createElement('p');
+                    var textName = document.createTextNode(e);
+                    tCon.classList.add("NAME");
+                    tCon.appendChild(textName);
+                    gContainer.appendChild(tCon);
                     gContainer.classList.add('view');
                     gContainer.classList.add('noY');
                     if(switching){
@@ -664,7 +725,8 @@
                     mxEvent.disableContextMenu(gContainer);
                     var tmpGraph = new mxGraph(gContainer);
                     var parent = tmpGraph.getDefaultParent();
-
+                    tmpGraph.setAutoSizeCells(true);
+                    tmpGraph.setCellsResizable(true);
                     tmpGraph.addMouseListener({
                         mouseDown: function(sender, evt){
                             mouseDownInGraph(sender,evt);
@@ -677,10 +739,12 @@
                     var style = new Object();
                     style[mxConstants.STYLE_FILLCOLOR] = "red";
                     style[mxConstants.STYLE_STROKECOLOR] = "red";
+                    style[mxConstants.STYLE_OVERFLOW] = "fill";
                     tmpGraph.getStylesheet().putCellStyle('clicked', style);
                     var style2 = new Object();
                     style2[mxConstants.STYLE_FILLCOLOR] = "blue";
                     style2[mxConstants.STYLE_STROKECOLOR] = "blue";
+                    style2[mxConstants.STYLE_OVERFLOW] = "fill";
                     tmpGraph.getStylesheet().putCellStyle('unclicked', style2);
                     graphs.push(tmpGraph);
                 }
@@ -699,6 +763,7 @@
                 try{
                     var v1 = graph.insertVertex(parent,edg,edg, 20+x, 120+((x%200)/100)*(x/2), 80, 30);
                     x+= 100;
+                    graph.updateCellSize(v1);
                     var addN = {
                         "NAME" : edg,
                         "obj" : v1,
@@ -728,7 +793,8 @@
                 }
             }
             var Aparent = graph.getDefaultParent();
-            var testings = new mxHierarchicalLayout(graph).execute(Aparent);
+            var testings = new mxHierarchicalLayout(graph,mxConstants.DIRECTION_EAST);
+            testings.execute(Aparent);
             
             graph.refresh();
             removeAllClicks();
@@ -742,6 +808,7 @@
                     graphs[m].getModel().beginUpdate();
                     try{
                         var v1 = graphs[m].insertVertex(parent,node,node, 20+x, 120+((x%200)/100)*(x/2), 80, 30);
+                        graphs[m].updateCellSize(v1);
                         x+= 100;
                         var addN = {
                             "obj" : v1,
