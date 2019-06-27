@@ -1,7 +1,7 @@
 <html>
 <head>
     <title>
-        A CSM-Miner dummy
+        CSM-Miner
     </title>
     <script src="client.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -187,6 +187,20 @@
             right: 0;
             height: 100%;
         }
+        
+        .round {
+            display:block !important;
+            border-radius: 50% !important;
+            border: 1px solid grey !important;
+            width: 40px !important;
+            height: 40px !important;
+            overflow:hidden !important;
+        }
+
+        .round:focus {
+            border-color:transparent!important;
+            outline:none !important;
+        }
 
         #menuBar {
             border-radius: 0 0 5px 5px;
@@ -195,7 +209,7 @@
             -moz-transition: .5s;
             -webkit-transition: .5s;
             top: 0;
-            background-color: green;
+            background-color: transparent;
             position: fixed;
             z-index: 10;
             left: 3em;
@@ -204,6 +218,52 @@
             max-height: fit-content;
             min-width: fit-content;
             max-width: fit-content;
+        }
+
+        .left {
+            position: fixed;
+            left: -10px;
+            top: -10px;
+        }
+        .right {
+            position: fixed;
+            right: -10px;
+            top: -10px;
+        }
+
+        .lBottom {
+            position: fixed;
+            bottom: -10px;
+            left: -10px;
+        }
+
+        .jumpForm {
+            position: fixed;
+            z-index : 8;
+            width: 400px !important;
+            height: 100px !important;
+            min-width: 400px !important;
+            max-width: 800px !important;
+            margin : -50 0 0 -200;
+            top:50%;
+            left:50%;
+            -webkit-box-shadow: 0px 0px 50px -1px rgba(0,0,0,0.79);
+            -moz-box-shadow: 0px 0px 50px -1px rgba(0,0,0,0.79);
+            box-shadow: 0px 0px 50px -1px rgba(0,0,0,0.79);
+            background-color : white !important;
+        }
+
+        .jumpForm select {
+            position : absolute;
+            left: 40%;
+            top : 20px;
+        }
+
+        .jumpForm button {
+            position : absolute;
+            left : 40%;
+            bottom : 10px;
+
         }
 
         #menuBar:hover {
@@ -605,6 +665,7 @@
 		}, false);
 			
 		var pReq = new XMLHttpRequest();
+        var autoUp = new XMLHttpRequest();
 
         function jsonContains(element, json) {
             json.forEach(function (el) {
@@ -687,13 +748,13 @@
   					}
 				});
                 var style = new Object();
-                style[mxConstants.STYLE_FILLCOLOR] = "red";
-                style[mxConstants.STYLE_STROKECOLOR] = "red";
+                style[mxConstants.STYLE_FILLCOLOR] = "orange";
+                style[mxConstants.STYLE_STROKECOLOR] = "orange";
                 style[mxConstants.STYLE_OVERFLOW] = "fill";
                 graph.getStylesheet().putCellStyle('clicked', style);
                 var style2 = new Object();
-                style2[mxConstants.STYLE_FILLCOLOR] = "blue";
-                style2[mxConstants.STYLE_STROKECOLOR] = "blue";
+                style2[mxConstants.STYLE_FILLCOLOR] = "#73AD21";
+                style2[mxConstants.STYLE_STROKECOLOR] = "#73AD21";
                 style2[mxConstants.STYLE_OVERFLOW] = "fill";
                 graph.getStylesheet().putCellStyle('unclicked', style2);
                 return false;
@@ -704,8 +765,10 @@
                 for(e in parsed){
                     pGraph.push(parsed[e]);
                     var gContainer = document.createElement('div');
+                    pGraph[pGraph.length-1]["container"] = gContainer;
                     var tCon = document.createElement('p');
                     var textName = document.createTextNode(e);
+                    pGraph[pGraph.length-1]["name"] = e;
                     tCon.classList.add("NAME");
                     tCon.appendChild(textName);
                     gContainer.appendChild(tCon);
@@ -733,13 +796,13 @@
                         }
                     });
                     var style = new Object();
-                    style[mxConstants.STYLE_FILLCOLOR] = "red";
-                    style[mxConstants.STYLE_STROKECOLOR] = "red";
+                    style[mxConstants.STYLE_FILLCOLOR] = "orange";
+                    style[mxConstants.STYLE_STROKECOLOR] = "orange";
                     style[mxConstants.STYLE_OVERFLOW] = "fill";
                     tmpGraph.getStylesheet().putCellStyle('clicked', style);
                     var style2 = new Object();
-                    style2[mxConstants.STYLE_FILLCOLOR] = "blue";
-                    style2[mxConstants.STYLE_STROKECOLOR] = "blue";
+                    style2[mxConstants.STYLE_FILLCOLOR] = "#73AD21";
+                    style2[mxConstants.STYLE_STROKECOLOR] = "#73AD21";
                     style2[mxConstants.STYLE_OVERFLOW] = "fill";
                     tmpGraph.getStylesheet().putCellStyle('unclicked', style2);
                     graphs.push(tmpGraph);
@@ -873,6 +936,12 @@
                     if (oldtext == pReq.responseText && displayed == current.name){
                         return;
                     }
+                    if(oldtext != "" && displayed == current.name){
+                        var elm = document.getElementById("viewHub");
+                        while(elm.children.length > 0){
+                            elm.removeChild(elm.children[0]);
+                        }
+                    }
                     displayed = current.name;
                     oldtext = pReq.responseText;
                     if(isSET(pReq.responseText)){
@@ -890,9 +959,20 @@
 				console.warn(pReq.statusText,pReq.responseText);
 			}
 		}
+        var tmpDoc = "";
+        function autoLD(evt){
+            if(tmpDoc == ""){
+                tmpDoc = autoUp.responseText;
+                return;
+            }
+            if(tmpDoc != autoUp.responseText){
+                location.reload();
+            }
+        }
 			
 		pReq.addEventListener("load", loadDone);
-			
+		autoUp.addEventListener("load", autoLD);
+
 		setInterval(function(){
 			if(inProject){
 				pReq.open("GET","/request/" + current.name + ".json");
@@ -902,6 +982,10 @@
 				pReq.send();
 			}
 		},1000);
+        setInterval(function(){
+            autoUp.open("GET","");
+            autoUp.send();
+        },10000);
 		var rmv = false;
 		function remove(){
 			if(rmv){
@@ -929,6 +1013,7 @@
             firstTimeShow = "";
         }
         function showEdit(upload){
+            edt = !edt;
             var elm = document.getElementById("editing");
             var frm = document.getElementById("lblUpload");
             if(firstTimeShow == "" || firstTimeShow != current.name){
@@ -944,6 +1029,73 @@
             }
             elm.classList.remove("hideMe");
         }
+        var edt = false;
+        var jmp = false;
+
+        function showJump(){
+            var bd = document.getElementById("mainContainer");
+            var jpo = document.getElementById("jumpWindow");
+            jmp = !jmp;
+            if(bd.contains(jpo)){
+                bd.removeChild(jpo);
+                return;
+            }
+            var jp = document.createElement('div');
+            jp.id = "jumpWindow";
+            jp.classList.add('jumpForm');
+            jp.classList.add('scrollable');
+            var fm = document.createElement('div');
+            fm.classList.add('form');
+            var sl = document.createElement('select');
+            for(m in graphs){
+                var opt = document.createElement('option');
+                opt.value = m;
+                opt.appendChild(document.createTextNode(pGraph[m]['name']));
+                sl.appendChild(opt);
+            }
+            fm.appendChild(sl);
+            fm.appendChild(document.createElement('br'));
+            var btn = document.createElement('button');
+            fm.appendChild(btn);
+            btn.appendChild(document.createTextNode('Jump to'));
+            btn.disabled = true;
+            sl.onchange = function(evt){
+                if(typeof sl.selectedIndex === "number" && sl.options[sl.selectedIndex].value !== "")
+                    btn.disabled = false;
+                else
+                    btn.disabled = true;
+            };
+            btn.onclick = function(evt){
+                var selection = sl.options[sl.selectedIndex].value;
+                graphs[selection].container.scrollIntoView();
+                showJump();
+                return;
+            };
+            sl.dispatchEvent(new Event("change"));
+            jp.appendChild(fm);
+            bd.appendChild(jp);
+            return;
+        }
+
+        document.onkeydown = function(evt) {
+            evt = evt || window.event;
+            if(!evt.ctrlKey)
+                return;
+            if (evt.keyCode == 77 || evt.keyCode == 109) {
+                showMenu();
+                return;
+            }else if(evt.keyCode == 76 || evt.keyCode == 108){
+                if(jmp)
+                    showJump();
+                showEdit();
+                return;
+            }else if(evt.keyCode == 74 || evt.keyCode == 106){
+                if(edt)
+                    showEdit();
+                showJump();
+                return;
+            }
+        };
     </script>
 </head>
 	<body>
@@ -975,9 +1127,10 @@
             </div>
 			<div id="statusBar">
 			</div>
-			<div id="menuBar">
-			 	<button style="height:50px; width:89px; font-size:12pt;" onClick="return showMenu();" >Menu</button>
-                <button style="height:50px; width:89px; font-size:12pt;" onClick="return showEdit();" id="lblShowEdit">Labeling</button>
+			<div id="menuBar" class="">
+			 	<button style="height:50px; width:89px; font-size:12pt;" class="round left" onClick="return showMenu();" >M</button>
+                <button style="height:50px; width:89px; font-size:12pt;" class="round right" onClick="return showEdit();" id="lblShowEdit">L</button>
+                <button style="height:50px; width:89px; font-size:12pt;" class="round lBottom" onClick="return showJump();" id="lblShowJump">J</button>
 			</div>
 		</div>
 	</body>
