@@ -614,19 +614,30 @@
             	return;
             }
             inProject = true;
+            resetFirst();
             current = getJson(e.getAttribute("name"));
             if (!mxClient.isBrowserSupported()){
                 mxUtils.error('Browser is not supported!', 200, false);
             }
+            document.getElementById('lblUpload').contentWindow.location.reload(true);
+
             document.getElementById('projectDrawer').classList.add('hideMe');
 		}
         var rmChilds = [];
+        var ON_ENTER_UPDATE = false;
 		function showMenu(){
+            document.getElementById('lblUpload').contentWindow.location.reload(true);
+            if(jmp)
+                showJump();
+            if(edt)
+                showEdit();
             var textElement = document.getElementById("statusBar");
             textElement.innerText = "";
 			inProject = false;
+            graph_backbone = [];
             displayed = "";
             graphs = [];
+            ON_ENTER_UPDATE = true;
             firstTimeShow = "";
             pGraph = [];
             isInit = false;
