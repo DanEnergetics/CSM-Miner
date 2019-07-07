@@ -811,6 +811,14 @@
             }
         }
 
+        var imaginaryAddidions = [];
+
+        function addImaginaryParent(graph,logic,parent){
+            if(logic.directSuccessors[parent] == null){
+
+            }
+        }
+
 
         function displayView(b){
             i = JSON.parse(b);
@@ -852,7 +860,7 @@
                 }
             }
             var Aparent = graph.getDefaultParent();
-            var testings = new mxHierarchicalLayout(graph,mxConstants.DIRECTION_EAST);
+            var testings = new mxHierarchicalLayout(graph);
             testings.execute(Aparent);
             
             graph.refresh();
