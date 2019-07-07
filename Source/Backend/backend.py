@@ -27,6 +27,7 @@ class BackEnd:
 
 
     def partition_call(pathToViewJSON, labelJSONString):
+        print("Partition call with view file {}".format(pathToViewJSON))
         # read view from file
         view = View.fromJsonFile(pathToViewJSON)
 
@@ -48,6 +49,7 @@ class BackEnd:
         viewset.toJsonFile(pathToViewSetJSON) 
 
         # unset flag
+        print("Remove flag (set it to true)!")
         remFlag(indexPath)
 
 

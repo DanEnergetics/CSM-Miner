@@ -6,13 +6,13 @@ class View:
     directSucc = None
     indirectSucc = None
 
-    def __init__(self, nodes = {},_directSucc= None,_indirectSucc = None):
+    def __init__(self, nodes = {},directSuccessors= None,indirectSuccessors = None):
         # initiate nodes
         self.nodes = nodes
 
         # initiate direct and indirect successors as double dictionaries 
-        self.directSucc = initdoubleDict(self.nodes) if _directSucc == None else _directSucc
-        self.indirectSucc = initdoubleDict(self.nodes) if _indirectSucc == None else _indirectSucc
+        self.directSucc = initdoubleDict(self.nodes) if directSuccessors == None else directSuccessors
+        self.indirectSucc = initdoubleDict(self.nodes) if indirectSuccessors == None else indirectSuccessors
 
     
     def addNode(self,node, params):
@@ -65,7 +65,11 @@ class View:
             # load dictionary representation
             rawView = json.load(f)
             # construct View object
-            view = View(*rawView)
+            if "original" in rawView:
+                view = View(**rawView["original"])
+                print("Nodes from the original view: ", view.getNodes())
+            else:
+                view = View(*rawView)
     
         return view
 

@@ -91,6 +91,8 @@ class ViewSet(dict):
         # examine labelMap (unnecessary since parseLabelString() ensures correct format)
         # labelMap = self.checkLabels(view, labelMap)
 
+        print("Nodes: ", type(view.getNodes()))
+
         # initialize resulting dict
         res = dict.fromkeys(labelMap)
 
