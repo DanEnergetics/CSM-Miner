@@ -864,6 +864,7 @@
                         var edgeTo = graph.getModel().getCell(to);
                         if(graph.getModel().getEdgesBetween(edgeFrom,edgeTo).length == 0 && i[1][from][to] != "0"){
                             var e1 = graph.insertEdge(parent, null,i[1][from][to], edgeFrom,edgeTo);
+                            e1.id = e1.value;
                         }
                     }finally{
                         graph.getModel().endUpdate();
@@ -912,6 +913,7 @@
                             var edgeTo = graphs[m].getModel().getCell(to);
                             if(graphs[m].getModel().getEdgesBetween(edgeFrom,edgeTo).length == 0 && pGraph[m].directSuccessors[from][to] != "0"){
                                 var e1 = graphs[m].insertEdge(parent, null,pGraph[m].directSuccessors[from][to], edgeFrom,edgeTo);
+                                e1.id = e1.value;
                             }
                         }finally{
                             graphs[m].getModel().endUpdate();
