@@ -57,6 +57,7 @@ def createProject(name):
 			"creationTime": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
 			"lastEdit": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
 			"backgroundImgPath": "./images/matrix.png",
+			"a_unlabeled": 1,
 			"preProcessed": False
 		}
 		jsonConvert = json.dumps(jsonContent, indent=4, sort_keys=True)

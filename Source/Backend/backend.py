@@ -51,6 +51,7 @@ class BackEnd:
         # unset flag
         print("Remove flag (set it to true)!")
         remFlag(indexPath)
+        remLBL(indexPath)
 
 
 
@@ -73,6 +74,15 @@ def remFlag(indexPath):
             s = f.read()
     with open(indexPath, 'w') as f:
             s = s.replace(new_string, old_string)
+            f.write(s)
+
+def remLBL(indexPath):
+    """ Mark the request as being processed. """
+    old_string = "\"a_unlabeled\": 1,"
+    with open(indexPath) as f:
+            s = f.read()
+    with open(indexPath, 'w') as f:
+            s = s.replace(old_string, "")
             f.write(s)
 
 

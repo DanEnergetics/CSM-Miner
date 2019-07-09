@@ -70,6 +70,7 @@
             text-align: center;
             margin: 0;
             background-size: cover;
+            overflow : hidden;
         }
 
         #app .centered {
@@ -231,6 +232,19 @@
             top: -10px;
         }
 
+        .preP {
+            position: absolute;
+            z-index: 2;
+            top: 5px;
+            left: 5px;
+            width: 10px;
+            height: 10px;
+            display:block !important;
+            border-radius: 50% !important;
+            border: 1px solid grey !important;
+            background-color: red;
+        }
+
         .lBottom {
             position: fixed;
             bottom: -10px;
@@ -309,6 +323,10 @@
 
         .elementUpdate {
             animation: borderUpdate 1s linear 1;
+        }
+
+        .lastOpened {
+            border: 3px solid orange !important;
         }
 
         @keyframes borderUpdate {
@@ -482,10 +500,18 @@
         var newClick = 0;
 
         function click(c,g){
-            g.getModel().setStyle(c,'clicked');
+            if(c.getStyle() != undefined && (c.getStyle().indexOf('iVC') != -1 || c.getStyle().indexOf('iVU') != -1)){
+                g.getModel().setStyle(c,'iVC');
+            }else{
+                g.getModel().setStyle(c,'clicked');
+            }
         }
         function unClick(c,g){
-            g.getModel().setStyle(c,'unclicked');
+            if(c.getStyle() != undefined && (c.getStyle().indexOf('iVC') != -1 || c.getStyle().indexOf('iVU') != -1)){
+                g.getModel().setStyle(c,'iVU');
+            }else{
+                g.getModel().setStyle(c,'unclicked');
+            }
         }
         function resetName(c,g){
             c.value = c.id;
@@ -522,7 +548,9 @@
                 return;
             click(actualCell,g);
             for(edg in actualCell.edges){
-                if(actualCell.edges[edg].target.id != actualCell.id){
+                if(actualCell.edges[edg].target == undefined)
+                    continue;
+                if(actualCell.edges[edg].target.id != actualCell.id && actualCell.edges[edg].target.style.indexOf("clicked") != -1){
                     click(actualCell.edges[edg],g);
                     inGraphHighlight(actualCell.edges[edg].target,g);
                 }
@@ -534,29 +562,17 @@
             inGraphHighlight(actualCell,g);
         }
 
-        function textAddToCell(g,c,v,s){
-            if(g == s)
-                return;
+        function textAddToCell(g,c,v){
             var ac = g.getModel().getCell(c);
-            if(ac == undefined)
-                return;
-            if(ac.value != ac.id)
+            if(ac == undefined || ac.value != ac.id)
                 return;
             ac.value +=  " " + v;
             g.updateCellSize(ac);
         }
 
         function highLightSpecial(send,sender,val){
-            if(isInit){
-                highLightCellInGraph(sender,send);
-            }else{
-                for(var i = 0;i < pGraph.length;i++){
-                    if(graphs[i] == sender)
-                        continue;
-                    textAddToCell(graphs[i],send,val,sender)
-                    highLightCellInGraph(graphs[i],send);
-                }
-            }
+            textAddToCell(sender,send,val);
+            highLightCellInGraph(sender,send);
         }
 
         function highLight(send,sender){
@@ -566,8 +582,8 @@
                 for(var i = 0;i < pGraph.length;i++){
                     highLightCellInGraph(graphs[i],send);
                     for(suc in pGraph[i].indirectSuccessors[send]){
-                        if(pGraph[i].indirectSuccessors[send][suc] > 0 && graphs[i] != sender){
-                            highLightSpecial(suc,sender,pGraph[i].indirectSuccessors[send][suc]);
+                        if(pGraph[i].indirectSuccessors[send][suc] > 0){
+                            highLightSpecial(suc,graphs[i],pGraph[i].indirectSuccessors[send][suc]);
                         }
                     }
                 }
@@ -604,7 +620,7 @@
 		}
 		
 		var graph;
-		
+		var mm;
 		function load (e){
 			if(e.classList.contains("rmApp")){
             	var rmReq = new XMLHttpRequest();
@@ -613,7 +629,16 @@
             	alert("Attempting to remove...");
             	return;
             }
+            for(var m in e.parentNode.children){
+                if(e.parentNode.children[m].classList === undefined)
+                    continue;
+                if(e.parentNode.children[m].classList.contains("lastOpened")){
+                    e.parentNode.children[m].classList.remove("lastOpened");
+                }
+            }
             inProject = true;
+            e.classList.add("lastOpened");
+            mm = e;
             resetFirst();
             current = getJson(e.getAttribute("name"));
             if (!mxClient.isBrowserSupported()){
@@ -692,6 +717,11 @@
             var pDiv = document.createElement("div");
 			pDiv.setAttribute("name",el.filename);
 			pDiv.id = "app";
+            if(el.a_unlabeled === 1){
+                var unlbl = document.createElement('div');
+                unlbl.classList.add('preP');
+                pDiv.appendChild(unlbl);
+            }
 			pDiv.style = "background-image: url('" + el.backgroundImgPath +"');"
 			var lblName = document.createTextNode(el.name);
 			var pVar = document.createElement('p');
@@ -816,6 +846,18 @@
                     style2[mxConstants.STYLE_STROKECOLOR] = "#73AD21";
                     style2[mxConstants.STYLE_OVERFLOW] = "fill";
                     tmpGraph.getStylesheet().putCellStyle('unclicked', style2);
+                    var dotted = new Object();
+                    dotted[mxConstants.STYLE_DASHED] = true;
+                    dotted[mxConstants.STYLE_FILLCOLOR] = "orange";
+                    dotted[mxConstants.STYLE_OVERFLOW] = "fill";
+                    dotted[mxConstants.STYLE_STROKECOLOR] = "orange";
+                    tmpGraph.getStylesheet().putCellStyle('iVC', dotted);
+                    var dottedU = new Object();
+                    dottedU[mxConstants.STYLE_DASHED] = true;
+                    dottedU[mxConstants.STYLE_FILLCOLOR] = "#73AD21";
+                    dottedU[mxConstants.STYLE_STROKECOLOR] = "#73AD21";
+                    dottedU[mxConstants.STYLE_OVERFLOW] = "fill";
+                    tmpGraph.getStylesheet().putCellStyle('iVU', dottedU);
                     graphs.push(tmpGraph);
                 }
                 return true;
@@ -914,10 +956,30 @@
                             if(graphs[m].getModel().getEdgesBetween(edgeFrom,edgeTo).length == 0 && pGraph[m].directSuccessors[from][to] != "0"){
                                 var e1 = graphs[m].insertEdge(parent, null,pGraph[m].directSuccessors[from][to], edgeFrom,edgeTo);
                                 e1.id = e1.value;
+                                e1.style = "unclicked";
                             }
                         }finally{
                             graphs[m].getModel().endUpdate();
                         }    
+                    }
+                }
+                for(var from in pGraph[m].indirectSuccessors){
+                    for(var to in pGraph[m].indirectSuccessors[from]){
+                        var parent = graphs[m].getDefaultParent();
+                        graphs[m].getModel().beginUpdate();
+                        try{
+                            var edgeFrom = graphs[m].getModel().getCell(from);
+                            var edgeTo = graphs[m].getModel().getCell(to);
+                            if(edgeFrom == undefined || edgeTo == undefined)
+                                continue;
+                            if(graphs[m].getModel().getEdgesBetween(edgeFrom,edgeTo).length == 0 && pGraph[m].indirectSuccessors[from][to] != "0"){
+                                var e1 = graphs[m].insertEdge(parent, null,pGraph[m].indirectSuccessors[from][to], edgeFrom,edgeTo);
+                                e1.id = e1.value;
+                                e1.style = "iVU";
+                            }
+                        }finally{
+                            graphs[m].getModel().endUpdate();
+                        }
                     }
                 }
                 var Aparent = graphs[m].getDefaultParent();
@@ -941,6 +1003,11 @@
                     makeElement(element, parent);
                 }
             });
+            if(mm !== undefined){
+                if(document.getElementsByName(mm.getAttribute("name"))[0] !== undefined){
+                    document.getElementsByName(mm.getAttribute("name"))[0].classList.add("lastOpened");
+                }
+            }
             dec = jString.replace(/&quot;/g, '"');
 			jsonObj = JSON.parse(dec);
         }
@@ -985,9 +1052,6 @@
             if(tmpDoc == ""){
                 tmpDoc = autoUp.responseText;
                 return;
-            }
-            if(tmpDoc != autoUp.responseText){
-                location.reload();
             }
         }
 			
@@ -1100,8 +1164,6 @@
 
         document.onkeydown = function(evt) {
             evt = evt || window.event;
-            if(!evt.ctrlKey)
-                return;
             if (evt.keyCode == 77 || evt.keyCode == 109) {
                 showMenu();
                 return;
