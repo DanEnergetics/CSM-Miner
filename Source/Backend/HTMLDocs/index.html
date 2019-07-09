@@ -548,7 +548,7 @@
                 return;
             click(actualCell,g);
             for(edg in actualCell.edges){
-                if(actualCell.edges[edg].target == undefined)
+                if(actualCell.edges[edg].target == undefined || actualCell.edges[edg].style === "iVU")
                     continue;
                 if(actualCell.edges[edg].target.id != actualCell.id && actualCell.edges[edg].target.style.indexOf("clicked") != -1){
                     click(actualCell.edges[edg],g);
@@ -570,9 +570,18 @@
             g.updateCellSize(ac);
         }
 
-        function highLightSpecial(send,sender,val){
+        function highLightSpecial(send,sender,val,old){
             textAddToCell(sender,send,val);
-            highLightCellInGraph(sender,send);
+            var acc = sender.getModel().getCell(old);
+            var ac = sender.getModel().getCell(send);
+            if(acc !== undefined)
+                click(acc,sender);
+            if(ac !== undefined)
+                click(ac,sender);
+            sender.getModel().getEdgesBetween(acc,ac).forEach(function(e){
+                if(e.style == "iVU")
+                    click(e,sender);
+            });
         }
 
         function highLight(send,sender){
@@ -583,7 +592,7 @@
                     highLightCellInGraph(graphs[i],send);
                     for(suc in pGraph[i].indirectSuccessors[send]){
                         if(pGraph[i].indirectSuccessors[send][suc] > 0){
-                            highLightSpecial(suc,graphs[i],pGraph[i].indirectSuccessors[send][suc]);
+                            highLightSpecial(suc,graphs[i],pGraph[i].indirectSuccessors[send][suc],send);
                         }
                     }
                 }
