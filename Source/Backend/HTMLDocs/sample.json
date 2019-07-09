@@ -1,0 +1,18 @@
+{
+    "view": {
+        "name": "example name",
+        "id": "example id",
+		"nodeInfo": {
+            "totalCount": "x",
+            ...
+        }
+        "directVertices": {
+        	"a" : "y%",
+        	...
+        }
+    	"indirectVertices": {
+        	"b" : "z%",
+        	...
+        }
+    }
+}

@@ -2,8 +2,10 @@
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
-        A CSM-Miner dummy
+        CSM-Miner
     </title>
+    <script src="client.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="apple-touch-icon" sizes="57x57" href="/images/apple-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="/images/apple-icon-60x60.png">
     <link rel="apple-touch-icon" sizes="72x72" href="/images/apple-icon-72x72.png">
@@ -54,6 +56,11 @@
             grid-template-columns: repeat(auto-fill, 150px);
             grid-template-rows: repeat(auto-fill, 150px);
         }
+        
+        .dummyView {
+        	 background-image: url("./images/apple-icon.png");
+        	 background-size: cover;
+        }
 
         #app {
             position: relative;
@@ -64,6 +71,7 @@
             text-align: center;
             margin: 0;
             background-size: cover;
+            overflow : hidden;
         }
 
         #app .centered {
@@ -111,6 +119,11 @@
             opacity: 0;
             visibility: hidden;
         }
+        .rmApp {
+        	-webkit-box-shadow: 0px 0px 50px -1px rgba(0,0,0,0.79);
+            -moz-box-shadow: 0px 0px 50px -1px rgba(0,0,0,0.79);
+            box-shadow: 0px 0px 50px -1px rgba(0,0,0,0.79);
+        }
 
         #loading {
             position: fixed;
@@ -126,11 +139,16 @@
             width: 100%;
         }
 
-        #mainGraph {
-            z-index: 5;
-            width: 100% height : 100%;
-            top: 0;
-            left: 0;
+        .grey {
+            background-color: grey;
+        }
+        
+        .NAME {
+            position : absolute;
+            top : -10px;
+            z-index: 8;
+            display: inline-block;
+            vertical-align: top; /* here */
         }
 
         #statusBar {
@@ -141,8 +159,9 @@
             -webkit-transition: .5s;
             position: fixed;
             left: 0;
-            bottom: 0;
+            bottom: 20px;
             z-index: 9;
+            font-size: 2em;
             background-color: grey;
             min-height: fit-content;
             max-height: fit-content;
@@ -170,6 +189,20 @@
             right: 0;
             height: 100%;
         }
+        
+        .round {
+            display:block !important;
+            border-radius: 50% !important;
+            border: 1px solid grey !important;
+            width: 40px !important;
+            height: 40px !important;
+            overflow:hidden !important;
+        }
+
+        .round:focus {
+            border-color:transparent!important;
+            outline:none !important;
+        }
 
         #menuBar {
             border-radius: 0 0 5px 5px;
@@ -178,7 +211,7 @@
             -moz-transition: .5s;
             -webkit-transition: .5s;
             top: 0;
-            background-color: green;
+            background-color: transparent;
             position: fixed;
             z-index: 10;
             left: 3em;
@@ -187,6 +220,65 @@
             max-height: fit-content;
             min-width: fit-content;
             max-width: fit-content;
+        }
+
+        .left {
+            position: fixed;
+            left: -10px;
+            top: -10px;
+        }
+        .right {
+            position: fixed;
+            right: -10px;
+            top: -10px;
+        }
+
+        .preP {
+            position: absolute;
+            z-index: 2;
+            top: 5px;
+            left: 5px;
+            width: 10px;
+            height: 10px;
+            display:block !important;
+            border-radius: 50% !important;
+            border: 1px solid grey !important;
+            background-color: red;
+        }
+
+        .lBottom {
+            position: fixed;
+            bottom: -10px;
+            left: -10px;
+        }
+
+        .jumpForm {
+            position: fixed;
+            z-index : 8;
+            width: 400px !important;
+            height: 100px !important;
+            min-width: 400px !important;
+            max-width: 800px !important;
+            margin : -50 0 0 -200;
+            top:50%;
+            left:50%;
+            -webkit-box-shadow: 0px 0px 50px -1px rgba(0,0,0,0.79);
+            -moz-box-shadow: 0px 0px 50px -1px rgba(0,0,0,0.79);
+            box-shadow: 0px 0px 50px -1px rgba(0,0,0,0.79);
+            background-color : white !important;
+        }
+
+        .jumpForm select {
+            position : absolute;
+            left: 40%;
+            top : 20px;
+        }
+
+        .jumpForm button {
+            position : absolute;
+            left : 40%;
+            bottom : 10px;
+
         }
 
         #menuBar:hover {
@@ -207,6 +299,22 @@
             background-color: yellow;
         }
 
+        #viewhub{
+            text-align : center;
+            vertical-align : middle;
+            font-size: 12pt;
+            color: black;
+            height:100%;
+            width:100%;
+            overflow-x: scroll;
+            max-height: 100%;
+            white-space: nowrap;
+            display: grid | inline-grid;
+            grid-gap: 20px;
+            grid-template-columns: repeat(100%, 600px);
+            grid-template-rows: 100%;
+        }
+
         .element:hover {
             box-sizing: border-box;
             -moz-box-sizing: border-box;
@@ -216,6 +324,10 @@
 
         .elementUpdate {
             animation: borderUpdate 1s linear 1;
+        }
+
+        .lastOpened {
+            border: 3px solid orange !important;
         }
 
         @keyframes borderUpdate {
@@ -241,6 +353,18 @@
             background: grey;
             height: 100%;
         }
+        #editing {
+            left: 50px;
+            border: none;
+            min-width: fit-content;
+            min height: fit-content;
+        }
+
+        .view{
+            padding : 20px;
+            height:100%;
+            width: 600px;
+        }
 
         .scrollable::-webkit-scrollbar {
 	        display: none;
@@ -260,7 +384,20 @@
             width: 100%;
             height: 100%;
         }
+        .noY {
+            display: inline-block;
+        }
 
+        noscript {
+            position : absolute;
+            width : 100%;
+            height : 100%;
+            font-size : 4em;
+            background-color : white;
+            color : black;
+            z-index : 99999999;
+        }
+        #editing iframe,
         #add-project iframe {
             position: fixed;
             z-index: 999;
@@ -278,6 +415,15 @@
             transform: translate(30%, 30%) !important;
             background-image: url('load.svg');
         }
+
+        #editing{
+            position:absolute;
+            background-color:white;
+            z-index:9999999;
+            width: 100%;
+            height:100%;
+            top: 200px;
+        }
         
     </style>
     <!-- Sets the basepath for the library if not in same directory -->
@@ -292,6 +438,17 @@
 			var ifm = document.getElementById("add-project");
 			ifm.classList.add("hideMe");
 		}
+		
+		function stopRM(){
+			var container = document.getElementById("projectAdds");
+			for(var i = 0;i < container.childElementCount-2;i++){
+				if(container.children[i].getAttribute('name') != "Dummy.xes"){
+					container.children[i].classList.remove("rmApp");
+				}
+			}
+		}
+
+
 
 
 		function parentCall(check){
@@ -303,77 +460,234 @@
 				alert(check);
 			}
 		}
-
-		function load (e){
-            alert("Dummy");
-            var container = document.getElementById("mainGraph");
-            if (!mxClient.isBrowserSupported()){
-                mxUtils.error('Browser is not supported!', 200, false);
-            }else{
-                // Creates the graph inside the given container
-                var graph = new mxGraph(container);
-
-                // Enables rubberband selection
-                new mxRubberband(graph);
-
-                // Gets the default parent for inserting new cells. This
-                // is normally the first child of the root (ie. layer 0).
-                var parent = graph.getDefaultParent();
-
-                // Adds cells to the model in a single step
-                graph.getModel().beginUpdate();
-                try{
-                    var v1 = graph.insertVertex(parent, null,'Hello,', 20, 20, 80, 30);
-                    var v2 = graph.insertVertex(parent, null,'World!', 200, 150, 80, 30);
-                    var e1 = graph.insertEdge(parent, null, '', v1, v2);
-                }finally{
-                    // Updates the display
-                    graph.getModel().endUpdate();
+		
+		var current;
+		
+		function getJson(name){
+			var rt = null;
+			jsonObj.forEach(function(element,index){
+                if(element.filename == name){
+                	rt = jsonObj[index];
                 }
+			});
+			if ( rt == null )
+				return "Error";
+			else
+				return rt;
+		}
+		
+		function notDoneOrRM(e){
+			if(e.classList.contains("rmApp")){
+            	var rmReq = new XMLHttpRequest();
+            	rmReq.open("GET","/request/rm/" + e.getAttribute("name"));
+            	rmReq.send();
+            	alert("Attempting to remove...");
+            }else{
+            	alert("Still processing...");
             }
-            document.getElementById('projectDrawer').classList.add('hideMe');
 		}
 
+        function getBBfN(name){
+            var rt = null;
+            graph_backbone.forEach(function(el){
+                if(el.NAME == name){
+                    rt = el;
+                }
+            });
+            return rt;
+        }
+
+        var oldClick = 0;
+        var newClick = 0;
+
+        function click(c,g){
+            if(c.getStyle() != undefined && (c.getStyle().indexOf('iVC') != -1 || c.getStyle().indexOf('iVU') != -1)){
+                g.getModel().setStyle(c,'iVC');
+            }else{
+                g.getModel().setStyle(c,'clicked');
+            }
+        }
+        function unClick(c,g){
+            if(c.getStyle() != undefined && (c.getStyle().indexOf('iVC') != -1 || c.getStyle().indexOf('iVU') != -1)){
+                g.getModel().setStyle(c,'iVU');
+            }else{
+                g.getModel().setStyle(c,'unclicked');
+            }
+        }
+        function resetName(c,g){
+            c.value = c.id;
+            g.updateCellSize(c);
+        }
+        function resetNames(g){
+            for(c in g.getModel().cells){
+                resetName(g.getModel().getCell(c),g);
+            }
+        }
+        function clearGraphClicks(g){
+            for(c in g.getModel().cells){
+                unClick(g.getModel().getCell(c),g);
+            }
+        }
+
+        function removeAllClicks(){
+            if(isInit){
+                clearGraphClicks(graph);
+            }else{
+                for(g in graphs){
+                    resetNames(graphs[g]);
+                    clearGraphClicks(graphs[g]);
+                }
+            }
+        }
+
+        function inGraphHighlight(actualCell,g){
+            if(actualCell == undefined || g == undefined)
+                return;
+            if(actualCell.edge)
+                return;
+            if(g.getModel().getStyle(actualCell) == "clicked")
+                return;
+            click(actualCell,g);
+            for(edg in actualCell.edges){
+                if(actualCell.edges[edg].target == undefined || actualCell.edges[edg].style === "iVU")
+                    continue;
+                if(actualCell.edges[edg].target.id != actualCell.id && actualCell.edges[edg].target.style.indexOf("clicked") != -1){
+                    click(actualCell.edges[edg],g);
+                    inGraphHighlight(actualCell.edges[edg].target,g);
+                }
+            }
+        }
+
+        function highLightCellInGraph(g,cV){
+            var actualCell = g.getModel().getCell(cV);
+            inGraphHighlight(actualCell,g);
+        }
+
+        function textAddToCell(g,c,v){
+            var ac = g.getModel().getCell(c);
+            if(ac == undefined || ac.value != ac.id)
+                return;
+            ac.value +=  " " + v;
+            g.updateCellSize(ac);
+        }
+
+        function highLightSpecial(send,sender,val,old){
+            textAddToCell(sender,send,val);
+            var acc = sender.getModel().getCell(old);
+            var ac = sender.getModel().getCell(send);
+            if(acc !== undefined)
+                click(acc,sender);
+            if(ac !== undefined)
+                click(ac,sender);
+            sender.getModel().getEdgesBetween(acc,ac).forEach(function(e){
+                if(e.style == "iVU")
+                    click(e,sender);
+            });
+        }
+
+        function highLight(send,sender){
+            if(isInit){
+                highLightCellInGraph(sender,send);
+            }else{
+                for(var i = 0;i < pGraph.length;i++){
+                    highLightCellInGraph(graphs[i],send);
+                    for(suc in pGraph[i].indirectSuccessors[send]){
+                        if(pGraph[i].indirectSuccessors[send][suc] > 0){
+                            highLightSpecial(suc,graphs[i],pGraph[i].indirectSuccessors[send][suc],send);
+                        }
+                    }
+                }
+            }
+        }
+
+		function mouseDownInGraph(sender,evt){
+            if(evt.sourceState == undefined){
+                removeAllClicks();
+                for(var m=0;m < graphs.length;m++){
+                    var Aparent = graphs[m].getDefaultParent();
+                    var testings = new mxHierarchicalLayout(graphs[m]).execute(Aparent);
+                    graphs[m].refresh();
+                }
+                document.getElementById('statusBar').innerText ="";
+                return;
+            }
+            removeAllClicks();
+            var n = evt.sourceState.cell.value;
+            highLight(n,sender);
+			var state_changed = document.getElementById('statusBar');
+			state_changed.style.opacity = 1;
+			state_changed.innerText = "";
+			for(setting in getBBfN(n)){
+                if(setting != "obj"){
+                    state_changed.innerText += setting + " : " + getBBfN(n)[setting] + ", ";
+                }
+            }
+            for(var m=0;m < graphs.length;m++){
+                var Aparent = graphs[m].getDefaultParent();
+                var testings = new mxHierarchicalLayout(graphs[m]).execute(Aparent);
+                graphs[m].refresh();
+            }
+		}
+		
+		var graph;
+		var mm;
+		function load (e){
+			if(e.classList.contains("rmApp")){
+            	var rmReq = new XMLHttpRequest();
+            	rmReq.open("GET","/request/rm/" + e.getAttribute("name"));
+            	rmReq.send();
+            	alert("Attempting to remove...");
+            	return;
+            }
+            for(var m in e.parentNode.children){
+                if(e.parentNode.children[m].classList === undefined)
+                    continue;
+                if(e.parentNode.children[m].classList.contains("lastOpened")){
+                    e.parentNode.children[m].classList.remove("lastOpened");
+                }
+            }
+            inProject = true;
+            e.classList.add("lastOpened");
+            mm = e;
+            resetFirst();
+            current = getJson(e.getAttribute("name"));
+            if (!mxClient.isBrowserSupported()){
+                mxUtils.error('Browser is not supported!', 200, false);
+            }
+            document.getElementById('lblUpload').contentWindow.location.reload(true);
+
+            document.getElementById('projectDrawer').classList.add('hideMe');
+		}
+        var rmChilds = [];
+        var ON_ENTER_UPDATE = false;
+		function showMenu(){
+            document.getElementById('lblUpload').contentWindow.location.reload(true);
+            if(jmp)
+                showJump();
+            if(edt)
+                showEdit();
+            var textElement = document.getElementById("statusBar");
+            textElement.innerText = "";
+			inProject = false;
+            graph_backbone = [];
+            displayed = "";
+            graphs = [];
+            ON_ENTER_UPDATE = true;
+            firstTimeShow = "";
+            pGraph = [];
+            isInit = false;
+            if(!isInit){
+                var elm = document.getElementById("viewHub");
+                while(elm.children.length > 0){
+                    elm.removeChild(elm.children[0]);
+                }
+            }
+			document.getElementById('projectDrawer').classList.remove('hideMe');
+		}	
+		
 		function add(){
 			var rm = document.getElementById('add-project');
 			rm.classList.remove('hideMe');
-		}
-
-		const formType = {
-			REQUEST_FORM: 'RQ',
-			YES_NO_FORM: 'YN',
-			INFO_FORM: 'IF'
-		}
-
-		class Form{
-			constructor(name, parent){
-				this.form = document.createElement('form');
-				parent.appendChild(this.form);
-				this.form.name = name;
-			}
-
-			add(element) {
-				this.form.appendChild(element);
-			}
-
-
-
-			get(){
-				return this.form;
-			}
-		}
-
-		function mkForm(name,type,parent){
-			const f = new Form(name,parent);
-
-			switch(type){
-				case formType.REQUEST_FORM:
-					f.add(document.createElement('label'));
-				case formType.YES_NO_FORM:
-
-				case formType.INFO_FORM:
-
-			}
 		}
 
 				
@@ -397,6 +711,7 @@
 		}, false);
 			
 		var pReq = new XMLHttpRequest();
+        var autoUp = new XMLHttpRequest();
 
         function jsonContains(element, json) {
             json.forEach(function (el) {
@@ -412,6 +727,11 @@
             var pDiv = document.createElement("div");
 			pDiv.setAttribute("name",el.filename);
 			pDiv.id = "app";
+            if(el.a_unlabeled === 1){
+                var unlbl = document.createElement('div');
+                unlbl.classList.add('preP');
+                pDiv.appendChild(unlbl);
+            }
 			pDiv.style = "background-image: url('" + el.backgroundImgPath +"');"
 			var lblName = document.createTextNode(el.name);
 			var pVar = document.createElement('p');
@@ -422,7 +742,7 @@
 				var ld = document.createElement('div');
 				ld.id = "unfinished";
 				pDiv.appendChild(ld);
-                pDiv.setAttribute("onClick", "alert('Still processing files.');");
+                pDiv.setAttribute("onClick", "return notDoneOrRM(this);");
                 pDiv.classList.add("notDone");
 			}else{
 				pDiv.setAttribute("onClick","return load(this);");
@@ -437,6 +757,249 @@
         function updateElement(element) {
             element.classList.add("elementUpdate");
         }
+        var graphs= [];
+        var pGraph = [];
+        var isInit = false;
+        var ISMULT = false;
+        function isSET(json){
+            var container = document.getElementById("viewHub");
+            var parsed = JSON.parse(json);
+            var isS = true;
+            for(e in parsed){
+                if(parsed[e].nodes === undefined){
+                    isS = false;
+                }
+            }
+            if(!isS){
+                ISMULT = false;
+                if(isInit){
+                    return false;
+                }else{
+                    isInit = true;
+                }
+                mxEvent.disableContextMenu(container);
+                // Creates the graph inside the given container
+                graph = new mxGraph(container);
+                graph.setAutoSizeCells(true);
+                graph.setCellsResizable(true);
+                // Enables rubberband selection
+                //new mxRubberband(graph);
+
+                // Gets the default parent for inserting new cells. This
+                // is normally the first child of the root (ie. layer 0).
+                var parent = graph.getDefaultParent();
+
+                graph.addMouseListener({
+					mouseDown: function(sender, evt){
+						mouseDownInGraph(sender,evt);
+					},mouseMove: function(sender, evt){
+						
+  					},mouseUp: function(sender, evt){
+    					
+  					}
+				});
+                var style = new Object();
+                style[mxConstants.STYLE_FILLCOLOR] = "orange";
+                style[mxConstants.STYLE_STROKECOLOR] = "orange";
+                style[mxConstants.STYLE_OVERFLOW] = "fill";
+                graph.getStylesheet().putCellStyle('clicked', style);
+                var style2 = new Object();
+                style2[mxConstants.STYLE_FILLCOLOR] = "#73AD21";
+                style2[mxConstants.STYLE_STROKECOLOR] = "#73AD21";
+                style2[mxConstants.STYLE_OVERFLOW] = "fill";
+                graph.getStylesheet().putCellStyle('unclicked', style2);
+                return false;
+            }else{
+                ISMULT = true;
+                var switching = true;
+                var mElement
+                for(e in parsed){
+                    pGraph.push(parsed[e]);
+                    var gContainer = document.createElement('div');
+                    pGraph[pGraph.length-1]["container"] = gContainer;
+                    var tCon = document.createElement('p');
+                    var textName = document.createTextNode(e);
+                    pGraph[pGraph.length-1]["name"] = e;
+                    tCon.classList.add("NAME");
+                    tCon.appendChild(textName);
+                    gContainer.appendChild(tCon);
+                    gContainer.classList.add('view');
+                    gContainer.classList.add('noY');
+                    if(switching){
+                        switching = false;
+                        gContainer.classList.add('grey');
+                    }else{
+                        switching = true;
+                    }
+                    container.appendChild(gContainer);
+                    mxEvent.disableContextMenu(gContainer);
+                    var tmpGraph = new mxGraph(gContainer);
+                    var parent = tmpGraph.getDefaultParent();
+                    tmpGraph.setAutoSizeCells(true);
+                    tmpGraph.setCellsResizable(true);
+                    tmpGraph.addMouseListener({
+                        mouseDown: function(sender, evt){
+                            mouseDownInGraph(sender,evt);
+                        },mouseMove: function(sender, evt){
+                            
+                        },mouseUp: function(sender, evt){
+                            
+                        }
+                    });
+                    var style = new Object();
+                    style[mxConstants.STYLE_FILLCOLOR] = "orange";
+                    style[mxConstants.STYLE_STROKECOLOR] = "orange";
+                    style[mxConstants.STYLE_OVERFLOW] = "fill";
+                    tmpGraph.getStylesheet().putCellStyle('clicked', style);
+                    var style2 = new Object();
+                    style2[mxConstants.STYLE_FILLCOLOR] = "#73AD21";
+                    style2[mxConstants.STYLE_STROKECOLOR] = "#73AD21";
+                    style2[mxConstants.STYLE_OVERFLOW] = "fill";
+                    tmpGraph.getStylesheet().putCellStyle('unclicked', style2);
+                    var dotted = new Object();
+                    dotted[mxConstants.STYLE_DASHED] = true;
+                    dotted[mxConstants.STYLE_FILLCOLOR] = "orange";
+                    dotted[mxConstants.STYLE_OVERFLOW] = "fill";
+                    dotted[mxConstants.STYLE_STROKECOLOR] = "orange";
+                    tmpGraph.getStylesheet().putCellStyle('iVC', dotted);
+                    var dottedU = new Object();
+                    dottedU[mxConstants.STYLE_DASHED] = true;
+                    dottedU[mxConstants.STYLE_FILLCOLOR] = "#73AD21";
+                    dottedU[mxConstants.STYLE_STROKECOLOR] = "#73AD21";
+                    dottedU[mxConstants.STYLE_OVERFLOW] = "fill";
+                    tmpGraph.getStylesheet().putCellStyle('iVU', dottedU);
+                    graphs.push(tmpGraph);
+                }
+                return true;
+            }
+        }
+
+        var imaginaryAddidions = [];
+
+        function addImaginaryParent(graph,logic,parent){
+            if(logic.directSuccessors[parent] == null){
+
+            }
+        }
+
+
+        function displayView(b){
+            i = JSON.parse(b);
+            graph.getModel().clear();
+            TEST = i;
+            for(var edg in i[0]){
+                var parent = graph.getDefaultParent();
+                graph.getModel().beginUpdate();
+                try{
+                    var v1 = graph.insertVertex(parent,edg,edg, 20+x, 120+((x%200)/100)*(x/2), 80, 30);
+                    x+= 100;
+                    graph.updateCellSize(v1);
+                    var addN = {
+                        "NAME" : edg,
+                        "obj" : v1,
+                    };
+                    for(var itm in i[0][edg]){
+                        addN[itm] = i[0][edg][itm];
+                    }
+                    graph_backbone.push(addN);
+                }finally{
+                    graph.getModel().endUpdate();
+                }    
+            }
+            var testing = 0;
+            for(var from in i[1]){
+                for(var to in i[1][from]){
+                    var parent = graph.getDefaultParent();
+                    graph.getModel().beginUpdate();
+                    try{
+                        var edgeFrom = graph.getModel().getCell(from);
+                        var edgeTo = graph.getModel().getCell(to);
+                        if(graph.getModel().getEdgesBetween(edgeFrom,edgeTo).length == 0 && i[1][from][to] != "0"){
+                            var e1 = graph.insertEdge(parent, null,i[1][from][to], edgeFrom,edgeTo);
+                            e1.id = e1.value;
+                        }
+                    }finally{
+                        graph.getModel().endUpdate();
+                    }    
+                }
+            }
+            var Aparent = graph.getDefaultParent();
+            var testings = new mxHierarchicalLayout(graph);
+            testings.execute(Aparent);
+            
+            graph.refresh();
+            removeAllClicks();
+        }
+
+        function displaySet(){
+            for(var m = 0;m < graphs.length;m++){
+                graphs[m].getModel().clear();
+                for(node in pGraph[m].nodes){
+                    var parent = graphs[m].getDefaultParent();
+                    graphs[m].getModel().beginUpdate();
+                    try{
+                        var v1 = graphs[m].insertVertex(parent,node,node, 20+x, 120+((x%200)/100)*(x/2), 80, 30);
+                        graphs[m].updateCellSize(v1);
+                        x+= 100;
+                        var addN = {
+                            "obj" : v1,
+                            "NAME" : node,
+                        };
+                        for(var itm in pGraph[m].nodes){
+                            for(var vari in pGraph[m].nodes[itm]){
+                                addN[vari] = pGraph[m].nodes[itm][vari];
+                            }
+                        }
+                        if(getBBfN(node) == undefined)
+                            graph_backbone.push(addN);
+                    }finally{
+                        graphs[m].getModel().endUpdate();
+                    }    
+                }
+                for(var from in pGraph[m].directSuccessors){
+                    for(var to in pGraph[m].directSuccessors[from]){
+                        var parent = graphs[m].getDefaultParent();
+                        graphs[m].getModel().beginUpdate();
+                        try{
+                            var edgeFrom = graphs[m].getModel().getCell(from);
+                            var edgeTo = graphs[m].getModel().getCell(to);
+                            if(graphs[m].getModel().getEdgesBetween(edgeFrom,edgeTo).length == 0 && pGraph[m].directSuccessors[from][to] != "0"){
+                                var e1 = graphs[m].insertEdge(parent, null,pGraph[m].directSuccessors[from][to], edgeFrom,edgeTo);
+                                e1.id = e1.value;
+                                e1.style = "unclicked";
+                            }
+                        }finally{
+                            graphs[m].getModel().endUpdate();
+                        }    
+                    }
+                }
+                for(var from in pGraph[m].indirectSuccessors){
+                    for(var to in pGraph[m].indirectSuccessors[from]){
+                        var parent = graphs[m].getDefaultParent();
+                        graphs[m].getModel().beginUpdate();
+                        try{
+                            var edgeFrom = graphs[m].getModel().getCell(from);
+                            var edgeTo = graphs[m].getModel().getCell(to);
+                            if(edgeFrom == undefined || edgeTo == undefined)
+                                continue;
+                            if(graphs[m].getModel().getEdgesBetween(edgeFrom,edgeTo).length == 0 && pGraph[m].indirectSuccessors[from][to] != "0"){
+                                var e1 = graphs[m].insertEdge(parent, null,pGraph[m].indirectSuccessors[from][to], edgeFrom,edgeTo);
+                                e1.id = e1.value;
+                                e1.style = "iVU";
+                            }
+                        }finally{
+                            graphs[m].getModel().endUpdate();
+                        }
+                    }
+                }
+                var Aparent = graphs[m].getDefaultParent();
+                var testings = new mxHierarchicalLayout(graphs[m]).execute(Aparent);
+                graphs[m].refresh();
+            }
+            removeAllClicks();
+        }
+        
+        var inProject = false;
 
 		function updateProjects(){
 			var parent = document.getElementById('projectAdds');
@@ -450,55 +1013,217 @@
                     makeElement(element, parent);
                 }
             });
+            if(mm !== undefined){
+                if(document.getElementsByName(mm.getAttribute("name"))[0] !== undefined){
+                    document.getElementsByName(mm.getAttribute("name"))[0].classList.add("lastOpened");
+                }
+            }
             dec = jString.replace(/&quot;/g, '"');
 			jsonObj = JSON.parse(dec);
         }
-			
+		var x = 0;
+		var myViews = 0;
+        var oldtext = "";
+        var displayed = "";
+		var firsttime = true;
+        var TEST = null;
+        var graph_backbone = [];
 		function loadDone(evt){
 			if(pReq.status >= 200 && pReq.status < 300){
-				jString = pReq.responseText;
-				if(dec != jString.replace(/&quot;/g, '"')){
-					console.log("Change noticed.");
-					updateProjects();
+				if(inProject){
+                    if (oldtext == pReq.responseText && displayed == current.name){
+                        return;
+                    }
+                    if(oldtext != "" && displayed == current.name){
+                        var elm = document.getElementById("viewHub");
+                        while(elm.children.length > 0){
+                            elm.removeChild(elm.children[0]);
+                        }
+                    }
+                    displayed = current.name;
+                    oldtext = pReq.responseText;
+                    if(isSET(pReq.responseText)){
+                        displaySet();
+                    }else{
+                        displayView(pReq.responseText);
+                    }
+				}else{
+					jString = pReq.responseText;
+					if(dec != jString.replace(/&quot;/g, '"')){
+						updateProjects();
+					}
 				}
 			}else{
 				console.warn(pReq.statusText,pReq.responseText);
 			}
 		}
+        var tmpDoc = "";
+        function autoLD(evt){
+            if(tmpDoc == ""){
+                tmpDoc = autoUp.responseText;
+                return;
+            }
+        }
 			
 		pReq.addEventListener("load", loadDone);
-			
+		autoUp.addEventListener("load", autoLD);
+
 		setInterval(function(){
-			pReq.open("GET","/request/PROJECTS.json");
-			pReq.send();
+			if(inProject){
+				pReq.open("GET","/request/" + current.name + ".json");
+				pReq.send();
+			}else{
+				pReq.open("GET","/request/PROJECTS.json");
+				pReq.send();
+			}
 		},1000);
+        setInterval(function(){
+            autoUp.open("GET","");
+            autoUp.send();
+        },10000);
+		var rmv = false;
+		function remove(){
+			if(rmv){
+				stopRM();
+				rmv = false;
+				return;
+			}
+			rmv = true;
+			var container = document.getElementById('projectAdds');
+			for(var i = 0;i < container.childElementCount-2;i++){
+				if(container.children[i].getAttribute('name') != "Dummy.xes"){
+					container.children[i].classList.add("rmApp");
+				}
+			}
+			alert("Click Project to delete");
+		}
+        var textNodes = [];
+        var rmNodes = [];
+        
+        function getBackBone(){
+            return graph_backbone;
+        }
+        var firstTimeShow = "";
+        function resetFirst(){
+            firstTimeShow = "";
+        }
+        function showEdit(upload){
+            edt = !edt;
+            var elm = document.getElementById("editing");
+            var frm = document.getElementById("lblUpload");
+            if(firstTimeShow == "" || firstTimeShow != current.name){
+                firstTimeShow = current.name;
+                frm.contentWindow.call();
+            }
+            if(!elm.classList.contains("hideMe")){
+                elm.classList.add("hideMe");
+                if(upload){
+                    showMenu();
+                }
+                return;
+            }
+            elm.classList.remove("hideMe");
+        }
+        var edt = false;
+        var jmp = false;
+
+        function showJump(){
+            var bd = document.getElementById("mainContainer");
+            var jpo = document.getElementById("jumpWindow");
+            jmp = !jmp;
+            if(bd.contains(jpo)){
+                bd.removeChild(jpo);
+                return;
+            }
+            var jp = document.createElement('div');
+            jp.id = "jumpWindow";
+            jp.classList.add('jumpForm');
+            jp.classList.add('scrollable');
+            var fm = document.createElement('div');
+            fm.classList.add('form');
+            var sl = document.createElement('select');
+            for(m in graphs){
+                var opt = document.createElement('option');
+                opt.value = m;
+                opt.appendChild(document.createTextNode(pGraph[m]['name']));
+                sl.appendChild(opt);
+            }
+            fm.appendChild(sl);
+            fm.appendChild(document.createElement('br'));
+            var btn = document.createElement('button');
+            fm.appendChild(btn);
+            btn.appendChild(document.createTextNode('Jump to'));
+            btn.disabled = true;
+            sl.onchange = function(evt){
+                if(typeof sl.selectedIndex === "number" && sl.options[sl.selectedIndex].value !== "")
+                    btn.disabled = false;
+                else
+                    btn.disabled = true;
+            };
+            btn.onclick = function(evt){
+                var selection = sl.options[sl.selectedIndex].value;
+                graphs[selection].container.scrollIntoView();
+                showJump();
+                return;
+            };
+            sl.dispatchEvent(new Event("change"));
+            jp.appendChild(fm);
+            bd.appendChild(jp);
+            return;
+        }
+
+        document.onkeydown = function(evt) {
+            evt = evt || window.event;
+            if (evt.keyCode == 77 || evt.keyCode == 109) {
+                showMenu();
+                return;
+            }else if(evt.keyCode == 76 || evt.keyCode == 108){
+                if(jmp)
+                    showJump();
+                showEdit();
+                return;
+            }else if(evt.keyCode == 74 || evt.keyCode == 106){
+                if(edt)
+                    showEdit();
+                showJump();
+                return;
+            }
+        };
     </script>
 </head>
 	<body>
-		<div id="projectDrawer" class="scrollable" onLoad="showProjects();"> 
+        <noscript>
+            Javascript is disabled.
+        </noscript>
+        </div>
+		<div id="projectDrawer" class="scrollable" onLoad="showProjects();" onClick=""> 
 			<div id="add-project" class="hideMe" onclick="return hideUpload();">
 				<iframe id="myframe" frameborder="0" src="./uploadForm.html" width="600px" height="800px">Your Browser does not support the iframe tag.</iframe>
 			</div>
 			<h3 style="text-align:center;">Projects</h3>
 			<div class="projectContainer" id="projectAdds" class="scrollable">
 				<div onclick="return add();"  id="app" name="addProj">
-				<p class="centered">+</p>
-				<p class="bottom">Add new</p>
+					<p class="centered">+</p>
+					<p class="bottom">Add new</p>
+				</div>
+				<div onclick="return remove();"  id="app" name="rmProj">
+					<p class="centered">-</p>
+					<p class="bottom">Remove</p>
 				</div>
 			</div>
 		</div>
 		<div id="mainContainer">
-			<div id="mainGraph"></div>
-			<div id="views" class="scrollable">
-				<!--
-					TO-DO : ADD VIEW-LOADING
-				-->
-			</div>
+            <div id="editing" class="hideMe scrollable">
+                <iframe id="lblUpload" frameborder="0" src="./lblForm.html" width="600px" height="800px">Not supported.</iframe>
+            </div>
+			<div id="viewHub">
+            </div>
 			<div id="statusBar">
-			 Such status info. Much Wow.
 			</div>
-			<div id="menuBar">
-			 Such menuBar. Much Wow.
+			<div id="menuBar" class="">
+			 	<button style="height:50px; width:89px; font-size:12pt;" class="round left" onClick="return showMenu();" >M</button>
+                <button style="height:50px; width:89px; font-size:12pt;" class="round right" onClick="return showEdit();" id="lblShowEdit">L</button>
+                <button style="height:50px; width:89px; font-size:12pt;" class="round lBottom" onClick="return showJump();" id="lblShowJump">J</button>
 			</div>
 		</div>
 	</body>

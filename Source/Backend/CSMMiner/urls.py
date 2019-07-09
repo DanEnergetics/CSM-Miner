@@ -13,30 +13,32 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-import datetime
+import shutil
 import os
-from django.shortcuts import render
-from django.contrib import admin
-from django.urls import path
-from django.http import HttpResponse
-from django import template, forms
-from django.shortcuts import render
-from django.http import HttpResponse
-from django.template import RequestContext, loader, Template, Context
-from django.views.decorators.csrf import csrf_protect
-from django.core.files import File
-from django.http import HttpResponseNotFound
-from django.conf.urls import (handler400, handler403, handler404, handler500)
-from xml.dom import minidom
-import hashlib
 import json
-from shutil import copyfile
-from django.conf import settings
-from django.views.generic.base import RedirectView
+import hashlib
+import datetime
 import backend
+from threading import Thread
+from xml.dom import minidom
+from shutil import copyfile
+from django.views.generic.base import RedirectView
+from django.views.decorators.csrf import csrf_protect
+from django.urls import path
+from django.template import RequestContext, loader, Template, Context
+from django.shortcuts import render
+from django.http import HttpResponse, HttpResponseNotFound
+from django.core.files import File
+from django.contrib import admin
+from django.conf.urls import (handler400, handler403, handler404, handler500)
+from django.conf.urls import include, url
+from django.conf import settings
+from django import template, forms
+
 
 register = template.Library()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+snooping = HttpResponse("<body>Mr Moony presents his compliments to Professor Snape and begs him to keep his abnormally large nose out of other people's business. Mr Prongs agrees with Mr Moony and would like to add that Professor Snape is an ugly git. Mr Padfoot would like to register his astonishment that an idiot like that ever became a Professor. Mr Wormtail bids Professor Snape good day, and advises him to wash his hair, the slime-ball.</body>",content_type="text/html")
 
 def file_get_contents(filename):
     with open(filename) as f:
@@ -55,6 +57,7 @@ def createProject(name):
 			"creationTime": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
 			"lastEdit": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
 			"backgroundImgPath": "./images/matrix.png",
+			"a_unlabeled": 1,
 			"preProcessed": False
 		}
 		jsonConvert = json.dumps(jsonContent, indent=4, sort_keys=True)
@@ -94,17 +97,41 @@ def request(rq,action):
 		return HttpResponseNotFound("Error.")
 	if action == "PROJECTS":
 		return HttpResponse(get_projects(), content_type="application/json")
+	elif action == "Dummy":
+		return HttpResponse('{"viewCount" : 4}', content_type="application/json")
 	try:
-		jFile = file_get_contents(BASE_DIR + "/Storage/" + action + "/graph.json")
+		print(action)
+		jFile = file_get_contents(BASE_DIR + "/Storage/" + hashlib.sha256((action + ".xes").encode()).hexdigest() + "/graph.json")
 		return HttpResponse(jFile, content_type="application/json")
 	except IOError:
-		return HttpResponseNotFound("404")
+		return snooping
 	
 @register.filter
 @csrf_protect
 def iframe(request,fileName):
+	isLBL = (fileName == "lblForm")
 	fileName += ".html"
 	if request.method == 'POST':
+		if isLBL:
+			pName = request.POST.get('hiddenN') + ".xes"
+			hashedName = hashlib.sha256(pName.encode())
+			hexed = hashedName.hexdigest()
+			dest_directory = os.path.join(BASE_DIR,'./Storage/',hexed)
+			jsonstr = request.POST.get('hiddenJ')
+			print(request.POST.get('hiddenF'))
+			#Backend call
+			# decide context
+			firstLabeling = True
+			if request.POST.get('hiddenF') == "false":
+				firstLabeling = False
+			if firstLabeling:
+				t = Thread(target=backend.BackEnd.partition_call, args=(os.path.join(dest_directory,'graph.json'),jsonstr))
+			else:
+				t = Thread(target=backend.BackEnd.partition_call, args=(os.path.join(dest_directory,'original.json'),jsonstr))
+			# start thread
+			t.start()
+			context = {}
+			return render(request, os.path.join(BASE_DIR,"HTMLDocs/",fileName), context)
 		file = request.FILES.get('file',"EMPTY_REQ")
 		if file == "EMPTY_REQ":
 			context = {
@@ -127,7 +154,8 @@ def iframe(request,fileName):
 			with open(os.path.join(DEST_DIR,filename),'wb+') as dest:
 				for chunk in md.chunks():
 					dest.write(chunk)
-			backend.BackEnd.call()
+			t = Thread(target=backend.BackEnd.call, args=(os.path.join(DEST_DIR,filename),filename))
+			t.start()
 			return render(request, os.path.join(BASE_DIR,"HTMLDocs/",fileName), context)
 		context = {
 			'msg' : "Project already exists."
@@ -144,49 +172,72 @@ def getImg(request,fileName):
 		with open(BASE_DIR + "/HTMLDocs/images/" + fileName + ".png", "rb") as f:
 			return HttpResponse(f.read(), content_type="image/jpeg")
 	except IOError:
-		red = Image.new('RGBA', (1, 1), (255,0,0,0))
-		response = HttpResponse(content_type="image/jpeg")
-		red.save(response, "JPEG")
-		return response
-		
+		return snooping
+
 def getSVG(request,fileName):
 	try:
 		with open(BASE_DIR + "/HTMLDocs/images/" + fileName + ".svg", "rb") as f:
 			return HttpResponse(f.read(), content_type="image/svg+xml")
 	except IOError:
-		red = Image.new('RGBA', (1, 1), (255,0,0,0))
-		response = HttpResponse(content_type="image/svg+xml")
-		red.save(response, "JPEG")
-		return response
+			return snooping
+
 		
 def getJs(request,fileName):
 	try:
 		with open(BASE_DIR + "/HTMLDocs/ext/" + fileName + ".js") as js:
 			return HttpResponse(js.read(), content_type="application/x-javascript")
 	except IOError:
-		return HttpResponse("<body>ERROR.</body>")
+		return snooping
 
 def getText(request,fileName):
 	try:
 		content = file_get_contents(BASE_DIR + "/HTMLDocs/ext/res/" + fileName + ".txt")
 		return HttpResponse(content, content_type="text")
 	except IOError:
-		return HttpResponse("<body>ERROR.</body>")
+		return snooping
 	
 def getCSS(request):
 	try:
 		content = file_get_contents(BASE_DIR + "/HTMLDocs/ext/css/common.css")
 		return HttpResponse(content, content_type="text/css")
 	except IOError:
-		return HttpResponse("<body>ERROR.</body>")
+		return snooping
 	
 def getMani(request):
 	try:
 		content = file_get_contents(BASE_DIR + "/HTMLDocs/images/manifest.json")
 		return HttpResponse(content, content_type="application/json")
 	except IOError:
-		return HttpResponse("<body>ERROR.</body>")
-	
+		return snooping
+def rm(r,project):
+	if project != "Dummy":
+		name = project + ".xes"
+		hashedName = hashlib.sha256(name.encode())
+		hexed = hashedName.hexdigest()
+		print(hexed)
+		dir = os.path.join(BASE_DIR,'./Storage/',hexed)	
+		shutil.rmtree(dir,True)
+		return HttpResponse("OK")
+
+def getSampleJson(r):
+	jsonF = file_get_contents(BASE_DIR + "/HTMLDocs/sample.json")
+	return HttpResponse(jsonF,content_type="application/json")
+
+def labeling(r,project):
+	name = project + ".xes"
+	hashedName = hashlib.sha256(name.encode())
+	hexed = hashedName.hexdigest()
+	print(hexed)
+	dir = os.path.join(BASE_DIR,'./Storage/',hexed)	
+	dir += "/index.json"
+	old_string = "true"
+	new_string = "false"
+	with open(dir) as f:
+		s = f.read()
+	with open(dir, 'w') as f:
+		s = s.replace(old_string, new_string)
+		f.write(s)
+	return HttpResponse("OK")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -195,6 +246,8 @@ urlpatterns = [
 	path('images/<slug:fileName>.png', getImg, name="fileName"),
 	path('<slug:fileName>.svg', getSVG, name="fileName"),
 	path('<slug:fileName>.html', iframe, name="fileName"),
+	path('request/LABEL/<slug:project>.json', labeling, name="project"),
+	path('request/rm/<slug:project>.xes', rm, name="project"),
 	path('request/<slug:action>.json', request , name='action'),
 	#The following patterns are exclusively used by mxClient, therefor ONLY mxClient resources should be stored in the corresponding paths.
 	path('resources/<slug:fileName>.txt', getText, name="fileName"),
@@ -202,4 +255,6 @@ urlpatterns = [
 	#Favicon links
 	path('manifest.json',getMani),
 	path('favicon.ico', RedirectView.as_view(url=settings.STATIC_URL + 'favicon.ico')),
+	#sample json
+	path('sample.json',getSampleJson),
 ]
