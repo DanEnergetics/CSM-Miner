@@ -985,6 +985,7 @@
                                 var e1 = graphs[m].insertEdge(parent, null,pGraph[m].indirectSuccessors[from][to], edgeFrom,edgeTo);
                                 e1.id = e1.value;
                                 e1.style = "iVU";
+                                graphs[m].getModel().setVisible(e1, false);
                             }
                         }finally{
                             graphs[m].getModel().endUpdate();
