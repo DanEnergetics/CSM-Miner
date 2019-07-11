@@ -1,9 +1,9 @@
 {
-    
+    "a_unlabeled": 1,
     "backgroundImgPath": "./images/matrix.png",
-    "creationTime": "2019-07-09 15:49:40",
+    "creationTime": "2019-07-11 12:31:04",
     "filename": "running-example.xes",
-    "lastEdit": "2019-07-09 15:49:40",
+    "lastEdit": "2019-07-11 12:31:04",
     "name": "running-example",
     "preProcessed": true
 }
