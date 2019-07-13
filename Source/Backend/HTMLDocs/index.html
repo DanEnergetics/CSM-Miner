@@ -596,6 +596,12 @@
                             highLightSpecial(suc,graphs[i],pGraph[i].indirectSuccessors[send][suc],send);
                         }
                     }
+                    // Check original for missing indirect Successors
+                    for(suc in pGraph[pGraph.length-1].indirectSuccessors[send]){
+                        if(pGraph[pGraph.length-1].indirectSuccessors[send][suc] > 0){
+                            highLightSpecial(suc,graphs[i],pGraph[pGraph.length-1].indirectSuccessors[send][suc],send);
+                        }
+                    }
                 }
             }
         }
