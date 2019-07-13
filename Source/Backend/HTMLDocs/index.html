@@ -596,6 +596,12 @@
                             highLightSpecial(suc,graphs[i],pGraph[i].indirectSuccessors[send][suc],send);
                         }
                     }
+                    // Check original for missing indirect Successors
+                    for(suc in pGraph[pGraph.length-1].indirectSuccessors[send]){
+                        if(pGraph[pGraph.length-1].indirectSuccessors[send][suc] > 0){
+                            highLightSpecial(suc,graphs[i],pGraph[pGraph.length-1].indirectSuccessors[send][suc],send);
+                        }
+                    }
                 }
             }
         }
@@ -654,14 +660,15 @@
             if (!mxClient.isBrowserSupported()){
                 mxUtils.error('Browser is not supported!', 200, false);
             }
-            document.getElementById('lblUpload').contentWindow.location.reload(true);
-
+            //document.getElementById('lblUpload').contentWindow.location.reload(true);
+            document.getElementById('lblUpload').contentWindow.callRM();
             document.getElementById('projectDrawer').classList.add('hideMe');
 		}
         var rmChilds = [];
         var ON_ENTER_UPDATE = false;
 		function showMenu(){
-            document.getElementById('lblUpload').contentWindow.location.reload(true);
+            document.getElementById('lblUpload').contentWindow.callRM();
+            //document.getElementById('lblUpload').contentWindow.location.reload(true);
             if(jmp)
                 showJump();
             if(edt)
@@ -682,6 +689,7 @@
                     elm.removeChild(elm.children[0]);
                 }
             }
+            document.getElementById('lblUpload').contentWindow.callRM();
 			document.getElementById('projectDrawer').classList.remove('hideMe');
 		}	
 		

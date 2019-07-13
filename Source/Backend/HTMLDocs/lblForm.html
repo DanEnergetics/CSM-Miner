@@ -49,12 +49,22 @@
 	<body>
 		<script>
             var list = [];
-
+            function callRM(){
+                var elm = document.getElementById("lblUpdate");
+                for(var sub in elm.children){
+                    if(elm.children[sub].tagName == "TR"){
+                        elm.removeChild(elm.children[sub]);
+                    }
+                }
+                list = [];
+            }
             function call(){
+                callRM();
                 var elm = document.getElementById("lblUpdate");
                 var l = parent.getBackBone();
                 l.forEach(function(ctnEl){
                     var tr = document.createElement("tr");
+                    tr.name = "RM";
                     var txt = document.createTextNode(ctnEl.NAME);
                     var th1 = document.createElement("th");
                     var th2 = document.createElement("th");

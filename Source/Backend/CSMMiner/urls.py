@@ -254,7 +254,7 @@ urlpatterns = [
 	path('css/common.css',getCSS),
 	#Favicon links
 	path('manifest.json',getMani),
-	path('favicon.ico', RedirectView.as_view(url=settings.STATIC_URL + 'favicon.ico')),
+	path('Images/favicon.ico', RedirectView.as_view(url=settings.STATIC_URL + 'favicon.ico')),
 	#sample json
 	path('sample.json',getSampleJson),
 ]
