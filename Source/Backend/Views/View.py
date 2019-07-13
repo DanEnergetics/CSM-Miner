@@ -32,7 +32,7 @@ class View:
     def getNodes(self):
         return self.nodes
     
-    def getIndir(self):
+    def getIndir(self, node=None):
         return self.indirectSucc
 
     def getDirect(self):
