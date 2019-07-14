@@ -922,7 +922,6 @@
                     try{
                         var edgeFrom = graph.getModel().getCell(from);
                         var edgeTo = graph.getModel().getCell(to);
-			    //graph.getModel().getEdgesBetween(edgeFrom,edgeTo).length == 0 &&
                         if(i[1][from][to] != "0"){
                             var e1 = graph.insertEdge(parent, null,i[1][from][to], edgeFrom,edgeTo);
                             e1.id = e1.value;
@@ -972,7 +971,6 @@
                         try{
                             var edgeFrom = graphs[m].getModel().getCell(from);
                             var edgeTo = graphs[m].getModel().getCell(to);
-				//graphs[m].getModel().getEdgesBetween(edgeFrom,edgeTo).length == 0 && 
                             if(pGraph[m].directSuccessors[from][to] != "0"){
                                 var e1 = graphs[m].insertEdge(parent, null,pGraph[m].directSuccessors[from][to], edgeFrom,edgeTo);
                                 e1.id = e1.value;
@@ -992,7 +990,7 @@
                             var edgeTo = graphs[m].getModel().getCell(to);
                             if(edgeFrom == undefined || edgeTo == undefined)
                                 continue;
-                            if(graphs[m].getModel().getEdgesBetween(edgeFrom,edgeTo).length == 0 && pGraph[m].indirectSuccessors[from][to] != "0"){
+                            if(pGraph[m].indirectSuccessors[from][to] != "0"){
                                 var e1 = graphs[m].insertEdge(parent, null,pGraph[m].indirectSuccessors[from][to], edgeFrom,edgeTo);
                                 e1.id = e1.value;
                                 e1.style = "iVU";
